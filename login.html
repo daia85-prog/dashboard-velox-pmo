@@ -639,63 +639,69 @@ function fillDemo(e,s){document.getElementById('email').value=e;document.getElem
 <!-- Terminal typewriter animation -->
 <script>
 (function(){
-  /* Sequências do terminal — geradas com dados reais */
-  const _pAtivos = (typeof PROJETOS!=='undefined'&&typeof calcStatus!=='undefined')
-    ? PROJETOS.filter(p=>{const s=calcStatus(p);return s!=='Concluído'&&s!=='Standby'&&s!=='Não Iniciado';}).length : 14;
-  const _pBloq   = (typeof PROJETOS!=='undefined'&&typeof calcStatus!=='undefined')
-    ? PROJETOS.filter(p=>calcStatus(p)==='Bloqueado').length : 5;
-  const _pConc   = (typeof PROJETOS!=='undefined'&&typeof calcStatus!=='undefined')
-    ? PROJETOS.filter(p=>calcStatus(p)==='Concluído').length : 16;
-  const _pPmos   = (typeof PROJETOS!=='undefined')
-    ? [...new Set(PROJETOS.filter(p=>p.pmo&&p.pmo.trim()).map(p=>p.pmo.trim()))].length : 5;
-  const _health  = (typeof calcPortfolioHealth!=='undefined') ? calcPortfolioHealth() : 78;
-  const _noPrazo = Math.max(0, _pAtivos - _pBloq);
-
+  /* ── Sequências 100% ilustrativas — sem dados reais ── */
   const SEQS = [
     [
-      {t:'cmd', v:'velox status'},
-      {t:'ok',  v:`✓  Projetos ativos: ${_pAtivos}`},
-      {t:'ok',  v:`✓  Concluídos histórico: ${_pConc}`},
-      {t:'warn',v:`⚠  Bloqueados: ${_pBloq}`},
-      {t:'ok',  v:`✓  PMOs conectados: ${_pPmos}`},
+      {t:'cmd',  v:'velox system --status'},
+      {t:'ok',   v:'✓  Core          · operacional'},
+      {t:'ok',   v:'✓  Auth          · ativo'},
+      {t:'ok',   v:'✓  Scheduler     · em execução'},
+      {t:'info', v:'■  v16.0  · build 2026.05'},
     ],
     [
-      {t:'cmd', v:'velox health --check'},
-      {t:'ok',  v:'●  API · online'},
-      {t:'ok',  v:'●  DB  · sincronizado'},
-      {t:'ok',  v:'●  Auth· operacional'},
-      {t:'info',v:'■  v16.0 · build 2026.05'},
+      {t:'cmd',  v:'velox health --check'},
+      {t:'ok',   v:'●  API           · online'},
+      {t:'ok',   v:'●  DB            · sincronizado'},
+      {t:'ok',   v:'●  Cache         · limpo'},
+      {t:'ok',   v:'●  Módulos       · carregados'},
     ],
     [
-      {t:'cmd', v:'velox portfolio --resumo'},
-      {t:'ok',  v:`■  No prazo    · ${_noPrazo} proj`},
-      {t:'warn',v:`■  Bloqueados  · ${_pBloq} proj`},
-      {t:'ok',  v:`■  Concluídos  · ${_pConc} proj`},
-      {t:'info',v:`■  Health: ${_health} %`},
+      {t:'cmd',  v:'velox modules --list'},
+      {t:'ok',   v:'■  Dashboard     · ativo'},
+      {t:'ok',   v:'■  Portfólio     · ativo'},
+      {t:'ok',   v:'■  Squads        · ativo'},
+      {t:'ok',   v:'■  Alertas       · ativo'},
+    ],
+    [
+      {t:'cmd',  v:'velox auth --init'},
+      {t:'info', v:'■  Carregando perfis…'},
+      {t:'ok',   v:'✓  Permissões    · configuradas'},
+      {t:'ok',   v:'✓  Sessão        · pronta'},
+      {t:'warn', v:'›  Aguardando login'},
+    ],
+    [
+      {t:'cmd',  v:'velox sync --verificar'},
+      {t:'ok',   v:'✓  Conectividade · ok'},
+      {t:'ok',   v:'✓  Integridade   · verificada'},
+      {t:'ok',   v:'✓  Relatórios    · prontos'},
+      {t:'info', v:'■  Invent Corp © 2026'},
     ],
   ];
 
-  const body = document.getElementById('term-body');
-  if(!body) return;
+  const termBody = document.getElementById('term-body');
+  if(!termBody) return;
 
-  const CHAR_MS  = 48;   /* velocidade por caractere */
-  const LINE_MS  = 420;  /* pausa entre linhas */
-  const END_MS   = 2600; /* pausa no fim da sequência */
-  const CLEAR_MS = 700;  /* pausa antes de limpar */
+  const CHAR_MS  = 44;   /* ms por caractere */
+  const LINE_MS  = 400;  /* pausa entre linhas */
+  const END_MS   = 2800; /* pausa no fim da sequência */
+  const FADE_MS  = 340;  /* duração do fade */
+  const WAIT_MS  = 500;  /* pausa antes de reiniciar */
 
   let seqIdx = 0, lineIdx = 0, charIdx = 0;
-  let curEl = null;
-  let cursorEl = null;
+  let curEl = null, cursorEl = null;
+  let timer = null;
+
+  function schedule(fn, ms){ timer = setTimeout(fn, ms); }
 
   function mkCursor(){
-    if(cursorEl) cursorEl.remove();
+    if(cursorEl && cursorEl.parentNode) cursorEl.remove();
     cursorEl = document.createElement('span');
     cursorEl.className = 'term-cursor';
-    body.appendChild(cursorEl);
+    termBody.appendChild(cursorEl);
   }
 
   function mkRow(type){
-    const row  = document.createElement('div');
+    const row = document.createElement('div');
     row.className = 'term-row';
     if(type === 'cmd'){
       const pr = document.createElement('span');
@@ -706,49 +712,49 @@ function fillDemo(e,s){document.getElementById('email').value=e;document.getElem
     const txt = document.createElement('span');
     txt.className = 'term-' + (type === 'cmd' ? 'cmd' : type);
     row.appendChild(txt);
-    body.insertBefore(row, cursorEl);
+    if(cursorEl && cursorEl.parentNode === termBody){
+      termBody.insertBefore(row, cursorEl);
+    } else {
+      termBody.appendChild(row);
+    }
     return txt;
+  }
+
+  function nextCycle(){
+    seqIdx = (seqIdx + 1) % SEQS.length;
+    lineIdx = 0; charIdx = 0; curEl = null;
+    termBody.style.transition = 'opacity ' + (FADE_MS/1000) + 's ease';
+    termBody.style.opacity = '0';
+    schedule(()=>{
+      termBody.innerHTML = '';
+      mkCursor();
+      termBody.style.opacity = '1';
+      schedule(tick, WAIT_MS);
+    }, FADE_MS);
   }
 
   function tick(){
     const seq  = SEQS[seqIdx];
     const line = seq[lineIdx];
 
-    if(!curEl){
-      curEl    = mkRow(line.t);
-      charIdx  = 0;
-    }
+    if(!curEl){ curEl = mkRow(line.t); charIdx = 0; }
 
     if(charIdx < line.v.length){
       curEl.textContent += line.v[charIdx++];
-      setTimeout(tick, CHAR_MS);
+      schedule(tick, CHAR_MS);
     } else {
       curEl = null;
       lineIdx++;
       if(lineIdx < seq.length){
-        setTimeout(tick, LINE_MS);
+        schedule(tick, LINE_MS);
       } else {
-        /* Fim da sequência */
-        setTimeout(()=>{
-          /* Limpa e passa para próxima sequência */
-          seqIdx = (seqIdx + 1) % SEQS.length;
-          lineIdx = 0;
-          /* Fade out, limpa, fade in */
-          body.style.transition = 'opacity .35s';
-          body.style.opacity = '0';
-          setTimeout(()=>{
-            body.innerHTML = '';
-            mkCursor();
-            body.style.opacity = '1';
-            setTimeout(tick, CLEAR_MS);
-          }, 360);
-        }, END_MS);
+        schedule(nextCycle, END_MS);
       }
     }
   }
 
-  /* Inicia após o terminal aparecer (animação 1.8s + offset) */
-  setTimeout(()=>{ mkCursor(); tick(); }, 2400);
+  /* Aguarda o terminal deslizar (1.8s CSS) + pequeno buffer */
+  schedule(()=>{ mkCursor(); tick(); }, 2200);
 })();
 </script>
 </body>
