@@ -37,6 +37,13 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
 @keyframes wmBeltAnim{from{stroke-dashoffset:0}to{stroke-dashoffset:-80}}
 .wm-flow{animation:wmFlowAnim 4s linear infinite}
 @keyframes wmFlowAnim{from{stroke-dashoffset:0}to{stroke-dashoffset:-24}}
+/* ── Caixas deslizando na esteira ── */
+@keyframes wmBoxSlide{from{transform:translateX(1520px)}to{transform:translateX(-200px)}}
+#wmb1{animation:wmBoxSlide 24s linear 0s     infinite}
+#wmb2{animation:wmBoxSlide 24s linear -4.8s  infinite}
+#wmb3{animation:wmBoxSlide 24s linear -9.6s  infinite}
+#wmb4{animation:wmBoxSlide 24s linear -14.4s infinite}
+#wmb5{animation:wmBoxSlide 24s linear -19.2s infinite}
 
 /* ── Login wrap ── */
 .login-wrap{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
@@ -366,36 +373,35 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
   <line x1="1320" y1="774" x2="1320" y2="860" stroke-width="3"/><line x1="1312" y1="860" x2="1328" y2="860" stroke-width="2"/>
   <!-- Piso -->
   <line x1="0" y1="860" x2="1440" y2="860" stroke-width="1.5"/>
-  <!-- ─── Produtos sobre a esteira ─── -->
-  <!-- Caixa 1 (padrão) -->
-  <rect x="60"  y="682" width="42" height="32" rx="3" stroke-width="1.5"/>
-  <line x1="60"  y1="698" x2="102" y2="698" stroke-width=".8"/>
-  <line x1="81"  y1="682" x2="81"  y2="714" stroke-width=".8"/>
-  <!-- Caixa 2 (alta) -->
-  <rect x="218" y="666" width="32" height="48" rx="3" stroke-width="1.5"/>
-  <line x1="218" y1="682" x2="250" y2="682" stroke-width=".8"/>
-  <!-- Caixa 3 (larga) -->
-  <rect x="370" y="690" width="58" height="24" rx="3" stroke-width="1.5"/>
-  <line x1="399" y1="690" x2="399" y2="714" stroke-width=".8"/>
-  <!-- Caixa 4 -->
-  <rect x="538" y="682" width="40" height="32" rx="3" stroke-width="1.5"/>
-  <line x1="538" y1="698" x2="578" y2="698" stroke-width=".8"/>
-  <line x1="558" y1="682" x2="558" y2="714" stroke-width=".8"/>
-  <!-- Tambor/barril -->
-  <rect x="698" y="679" width="36" height="35" rx="18" stroke-width="1.5"/>
-  <line x1="698" y1="696" x2="734" y2="696" stroke-width=".8"/>
-  <!-- Caixa 6 -->
-  <rect x="858" y="686" width="44" height="28" rx="3" stroke-width="1.5"/>
-  <line x1="880" y1="686" x2="880" y2="714" stroke-width=".8"/>
-  <!-- Engradado (X) -->
-  <rect x="1018" y="681" width="38" height="33" rx="2" stroke-width="1.5"/>
-  <line x1="1018" y1="681" x2="1056" y2="714" stroke-width=".8"/>
-  <line x1="1056" y1="681" x2="1018" y2="714" stroke-width=".8"/>
-  <!-- Caixa 8 -->
-  <rect x="1178" y="684" width="42" height="30" rx="3" stroke-width="1.5"/>
-  <line x1="1178" y1="699" x2="1220" y2="699" stroke-width=".8"/>
-  <!-- Caixa 9 -->
-  <rect x="1358" y="688" width="36" height="26" rx="3" stroke-width="1.5"/>
+  <!-- ─── Caixas animadas sobre a esteira ─── -->
+  <!-- Caixa padrão com grade -->
+  <g id="wmb1" stroke="#a78bfa" fill="none" stroke-linecap="round">
+    <rect x="0" y="682" width="42" height="32" rx="3" stroke-width="1.5"/>
+    <line x1="0" y1="698" x2="42" y2="698" stroke-width=".8"/>
+    <line x1="21" y1="682" x2="21" y2="714" stroke-width=".8"/>
+  </g>
+  <!-- Caixa alta -->
+  <g id="wmb2" stroke="#a78bfa" fill="none" stroke-linecap="round">
+    <rect x="0" y="666" width="30" height="48" rx="3" stroke-width="1.5"/>
+    <line x1="0"  y1="682" x2="30" y2="682" stroke-width=".8"/>
+    <line x1="0"  y1="698" x2="30" y2="698" stroke-width=".8"/>
+  </g>
+  <!-- Caixa larga e baixa -->
+  <g id="wmb3" stroke="#a78bfa" fill="none" stroke-linecap="round">
+    <rect x="0" y="692" width="58" height="22" rx="3" stroke-width="1.5"/>
+    <line x1="29" y1="692" x2="29" y2="714" stroke-width=".8"/>
+  </g>
+  <!-- Engradado com X -->
+  <g id="wmb4" stroke="#a78bfa" fill="none" stroke-linecap="round">
+    <rect x="0" y="681" width="36" height="33" rx="2" stroke-width="1.5"/>
+    <line x1="0"  y1="681" x2="36" y2="714" stroke-width=".8"/>
+    <line x1="36" y1="681" x2="0"  y2="714" stroke-width=".8"/>
+  </g>
+  <!-- Barril/cilindro -->
+  <g id="wmb5" stroke="#a78bfa" fill="none" stroke-linecap="round">
+    <rect x="0" y="679" width="36" height="35" rx="18" stroke-width="1.5"/>
+    <line x1="0" y1="696" x2="36" y2="696" stroke-width=".8"/>
+  </g>
   <!-- Setas de direção -->
   <path d="M 476,742 L 508,742 L 500,735 M 508,742 L 500,749" stroke-width="1.5" fill="none"/>
   <path d="M 936,742 L 968,742 L 960,735 M 968,742 L 960,749" stroke-width="1.5" fill="none"/>
