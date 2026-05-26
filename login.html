@@ -154,52 +154,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
 }
 @keyframes termBlink{0%,100%{opacity:1}50%{opacity:0}}
 
-/* ── Cards flutuantes (esquerda) ── */
-.float-stats{position:fixed;left:28px;top:50%;transform:translateY(-50%);z-index:4;display:flex;flex-direction:column;gap:12px;pointer-events:none}
-.float-stat{
-  width:168px;
-  background:rgba(4,8,26,.8);
-  border:1px solid rgba(99,102,241,.26);
-  border-top:1px solid rgba(99,102,241,.4);
-  border-radius:14px;padding:14px 16px;
-  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  box-shadow:0 12px 36px rgba(0,0,0,.45),0 0 0 1px rgba(99,102,241,.05),inset 0 1px 0 rgba(255,255,255,.04);
-}
-.float-stat::before{content:'';position:absolute;inset:0;border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 55%);pointer-events:none}
-.float-stat{position:relative;overflow:hidden}
-.float-stat:nth-child(1){animation:floatBob 7s ease-in-out infinite alternate,  statSlideIn .8s cubic-bezier(.34,1.2,.64,1) 2.2s both}
-.float-stat:nth-child(2){animation:floatBob 9s ease-in-out -3s infinite alternate, statSlideIn .8s cubic-bezier(.34,1.2,.64,1) 2.5s both}
-.float-stat:nth-child(3){animation:floatBob 8s ease-in-out -1.5s infinite alternate,statSlideIn .8s cubic-bezier(.34,1.2,.64,1) 2.8s both}
-@keyframes floatBob{from{transform:translateY(-7px)}to{transform:translateY(7px)}}
-@keyframes statSlideIn{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
-.fs-icon{font-size:17px;margin-bottom:7px;display:block;opacity:.85}
-.fs-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:#f1f5f9;font-family:'Inter',sans-serif}
-.fs-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#475569;margin-top:4px;font-family:'Inter',sans-serif}
-.fs-sub{font-size:10px;font-weight:600;color:#6366f1;margin-top:5px;font-family:'Inter',sans-serif;opacity:.85}
-.fs-bar{height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:9px;overflow:hidden}
-.fs-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#6366f1,#a78bfa);transition:width .8s ease}
-
-/* ── Barra de status inferior ── */
-.sys-bar{
-  position:fixed;bottom:0;left:0;right:0;z-index:6;
-  padding:7px 28px;
-  background:rgba(2,4,18,.9);
-  border-top:1px solid rgba(99,102,241,.13);
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  display:flex;align-items:center;justify-content:center;gap:20px;
-  animation:sysBarIn .6s ease 3.2s both;
-}
-@keyframes sysBarIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.sb-item{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:.35px;color:#374151;font-family:'Inter',sans-serif;white-space:nowrap}
-.sb-live{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,.7);animation:livePulse 2s ease-in-out infinite;flex-shrink:0}
-@keyframes livePulse{0%,100%{box-shadow:0 0 4px rgba(34,197,94,.5)}50%{box-shadow:0 0 12px rgba(34,197,94,.9)}}
-.sb-div{width:1px;height:11px;background:rgba(99,102,241,.18);flex-shrink:0}
-.sb-brand{color:#6366f1;font-weight:700}
-
-/* ── Partículas ── */
-@keyframes ptDrift{from{transform:translateY(0) scale(1);opacity:0}8%{opacity:1}85%{opacity:.55}to{transform:translateY(-102vh) scale(.35);opacity:0}}
-
-@media(max-width:920px){.term-widget{display:none}.float-stats{display:none}}
+@media(max-width:920px){.term-widget{display:none}}
 </style>
 </head>
 <body>
@@ -616,15 +571,6 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
 <!-- Grid overlay -->
 <div class="grid-bg"></div>
 
-<!-- Partículas de fundo -->
-<div id="pt-field" style="position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden"></div>
-
-<!-- Cards flutuantes (esquerda) -->
-<div class="float-stats" id="float-stats"></div>
-
-<!-- Barra de status inferior -->
-<div class="sys-bar" id="sys-bar"></div>
-
 <!-- ── Terminal animado ── -->
 <div class="term-widget" id="term-widget" aria-hidden="true">
   <div class="term-header">
@@ -689,73 +635,6 @@ document.getElementById('login-form').addEventListener('submit',function(e){
 function fillDemo(e,s){document.getElementById('email').value=e;document.getElementById('senha').value=s;}
 </script>
 
-<!-- Cards flutuantes + barra de status + partículas -->
-<script>
-(function(){
-  /* ── Dados reais do portfólio ── */
-  const total  = (typeof PROJETOS!=='undefined') ? PROJETOS.length : 0;
-  const ativos = (typeof PROJETOS!=='undefined' && typeof calcStatus!=='undefined')
-    ? PROJETOS.filter(p=>{ const s=calcStatus(p); return s!=='Concluído'&&s!=='Standby'&&s!=='Não Iniciado'; }).length
-    : 0;
-  const bloq = (typeof PROJETOS!=='undefined' && typeof calcStatus!=='undefined')
-    ? PROJETOS.filter(p=>calcStatus(p)==='Bloqueado').length : 0;
-  const pmos = (typeof PROJETOS!=='undefined')
-    ? [...new Set(PROJETOS.filter(p=>p.pmo&&p.pmo.trim()).map(p=>p.pmo.trim()))].length : 0;
-  const health = (typeof calcPortfolioHealth!=='undefined')
-    ? calcPortfolioHealth()
-    : (ativos>0 ? Math.max(0,Math.round((ativos-bloq*2)/ativos*100)) : 0);
-
-  /* ── Cards flutuantes ── */
-  const statsEl = document.getElementById('float-stats');
-  if(statsEl && total > 0){
-    const cards = [
-      { icon:'📋', val:ativos,    lbl:'Projetos Ativos',   sub:total+' no portfólio total',  pct:Math.round(ativos/total*100) },
-      { icon:'📊', val:health+'%',lbl:'Portfolio Health',  sub:bloq>0?bloq+' bloqueado'+(bloq>1?'s':''):'todos operacionais', pct:health },
-      { icon:'👥', val:pmos,      lbl:'Gestores PMO',      sub:'em monitoramento ativo', pct:100 },
-    ];
-    statsEl.innerHTML = cards.map(c=>`
-      <div class="float-stat">
-        <span class="fs-icon">${c.icon}</span>
-        <div class="fs-val">${c.val}</div>
-        <div class="fs-lbl">${c.lbl}</div>
-        <div class="fs-sub">${c.sub}</div>
-        <div class="fs-bar"><div class="fs-bar-fill" style="width:${c.pct}%"></div></div>
-      </div>`).join('');
-  }
-
-  /* ── Barra de status ── */
-  const sysEl = document.getElementById('sys-bar');
-  if(sysEl){
-    sysEl.innerHTML = `
-      <div class="sb-item"><span class="sb-live"></span>SISTEMA ONLINE</div>
-      <div class="sb-div"></div>
-      <div class="sb-item">${ativos} projetos monitorados</div>
-      <div class="sb-div"></div>
-      <div class="sb-item"><span class="sb-brand">Velox PMO</span> · v16</div>
-      <div class="sb-div"></div>
-      <div class="sb-item">Invent Corp © 2026</div>`;
-  }
-
-  /* ── Campo de partículas ── */
-  const ptEl = document.getElementById('pt-field');
-  if(ptEl){
-    const paleta = ['rgba(99,102,241,','rgba(139,92,246,','rgba(59,130,246,','rgba(167,139,250,'];
-    for(let i=0;i<22;i++){
-      const el = document.createElement('div');
-      const sz  = .8+Math.random()*2.2;
-      const col = paleta[Math.floor(Math.random()*paleta.length)];
-      const op  = .12+Math.random()*.3;
-      const dur = 8+Math.random()*12;
-      const del = Math.random()*14;
-      el.style.cssText =
-        `position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;`+
-        `background:${col+op});left:${Math.random()*100}%;bottom:-8px;`+
-        `animation:ptDrift ${dur}s linear ${del}s infinite`;
-      ptEl.appendChild(el);
-    }
-  }
-})();
-</script>
 
 <!-- Terminal typewriter animation -->
 <script>
