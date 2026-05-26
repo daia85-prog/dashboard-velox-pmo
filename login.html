@@ -847,7 +847,7 @@ document.getElementById('login-form').addEventListener('submit',function(e){
   btn.disabled=true; btn.innerHTML='<span style="display:inline-block;animation:spin .7s linear infinite">⟳</span> Verificando…'; errEl.classList.remove('show');
   setTimeout(()=>{
     const user=USUARIOS.find(u=>u.email.toLowerCase()===email&&u.senha===senha&&u.ativo);
-    if(user){setCurrentUser(user);if(user.primeiroAcesso)paShow(user);else location.href='index.html';}
+    if(user){if(user.primeiroAcesso)paShow(user);else{setCurrentUser(user);location.href='index.html';}}
     else{
       errEl.textContent=USUARIOS.find(u=>u.email.toLowerCase()===email&&!u.ativo)?'Conta desativada. Contate o administrador.':'Usuário ou senha incorretos.';
       errEl.classList.add('show'); btn.disabled=false; btn.innerHTML='Entrar →';
