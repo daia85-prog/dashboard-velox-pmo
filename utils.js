@@ -1290,6 +1290,14 @@ function loadUsers(){
     const raw = localStorage.getItem('v16_users');
     USUARIOS = raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(USUARIOS_PADRAO));
   } catch(e){ USUARIOS = JSON.parse(JSON.stringify(USUARIOS_PADRAO)); }
+  // Migração: garante que usuários novos do USUARIOS_PADRAO sejam adicionados
+  // automaticamente, sem apagar usuários existentes
+  let changed = false;
+  USUARIOS_PADRAO.forEach(padrao => {
+    const existe = USUARIOS.find(u => u.email === padrao.email || u.id === padrao.id);
+    if(!existe){ USUARIOS.push(JSON.parse(JSON.stringify(padrao))); changed = true; }
+  });
+  if(changed) saveUsers();
 }
 function saveUsers(){
   localStorage.setItem('v16_users', JSON.stringify(USUARIOS));
