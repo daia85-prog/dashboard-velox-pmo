@@ -1,8 +1,12 @@
 # 🚀 Velox PMO Dashboard — Release V16
 
 **Data:** Maio 2026
-**Acesso:** https://invent-dashboard.netlify.app/login.html
 **Versão:** 16.0 · build 2026.05
+
+| Ambiente | Link | Observação |
+|---|---|---|
+| 🟡 **Netlify** | https://invent-dashboard.netlify.app/login.html | Principal · limite 300 min/mês |
+| 🔵 **GitHub Pages** | https://daia85-prog.github.io/dashboard-velox-pmo/login.html | Backup · sem limite |
 
 ---
 
@@ -130,6 +134,15 @@ Suas credenciais de acesso:
 5. Em **Squads**, explore os times e seus projetos
 6. Na **Central de Alertas**, veja os alertas ativos por prioridade
 
+### Sobre sua senha
+Na primeira vez que fizer login, o sistema vai pedir para você definir uma senha pessoal. Ela precisa ter:
+- ✅ Mínimo 8 caracteres
+- ✅ Pelo menos uma letra maiúscula
+- ✅ Pelo menos um número
+- ✅ Pelo menos um caractere especial (`!@#$%` etc.)
+
+Depois disso, sua senha fica salva e você entra normalmente nas próximas vezes.
+
 ### O que anotar enquanto navega:
 - Algo que ficou confuso ou pouco intuitivo?
 - Alguma informação que você esperava ver e não encontrou?
@@ -144,7 +157,6 @@ Suas credenciais de acesso:
 | Feature | Descrição |
 |---|---|
 | 🔐 Hash de senha | Senhas armazenadas com SHA-256 |
-| 🔑 Troca no 1º acesso | Força nova senha com critérios de força visíveis |
 | 👤 Papéis expandidos | Super Admin · Dept Admin · Editor · Viewer |
 | 📋 Log de auditoria | Quem criou, editou ou deletou — e quando |
 | 🔔 Alerta de deleção | P0 automático na Central quando algo é removido |
