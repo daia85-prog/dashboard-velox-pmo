@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gerencial — Velox by Invent v16</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23F5C300'/><text x='16' y='23' text-anchor='middle' font-size='18' font-weight='900' font-family='Inter,sans-serif' fill='%230a0e19'>VX</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#F5C300;--brand-dim:rgba(245,195,0,.15);
+  --bg:#030610;--bg2:#100c2a;--surface:rgba(255,255,255,.065);
+  --surface2:rgba(255,255,255,.1);--border:rgba(255,255,255,.12);
+  --text:#f1f5f9;--muted:#64748b;--muted2:#94a3b8;
+  --sidebar-w:240px;--sidebar-collapsed:60px;
+  --radius:14px;--radius-sm:8px;
+  --green:#22c55e;--blue:#3b82f6;--red:#ef4444;--amber:#f59e0b;
+}
+[data-theme="light"]{--bg:#f1f5f9;--bg2:#e2e8f0;--surface:rgba(255,255,255,.9);--surface2:rgba(255,255,255,.7);--border:rgba(0,0,0,.08);--text:#0f172a;--muted:#64748b;--muted2:#475569;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(ellipse 120% 60% at 50% -5%,#1a1060 0%,#0a0520 35%,#030610 70%);color:var(--text);overflow:hidden}
+[data-theme="light"] body{background:#f0f4f8!important}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;z-index:10;overflow:hidden}
+#sidebar.collapsed{width:var(--sidebar-collapsed);min-width:var(--sidebar-collapsed)}
+.sb-header{padding:20px 16px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sb-logo{width:32px;height:32px;min-width:32px;background:linear-gradient(135deg,var(--brand),#d97706);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#0a0e19;letter-spacing:-0.5px;flex-shrink:0}
+.sb-brand{overflow:hidden;opacity:1;transition:opacity .2s;line-height:1.2}
+.sb-brand-name{font-size:15px;font-weight:900;letter-spacing:-1px;white-space:nowrap;color:var(--text)}
+.sb-brand-name .vy{color:var(--brand)}.sb-brand-name .dot{color:var(--brand)}
+.sb-brand-by{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+#sidebar.collapsed .sb-brand{opacity:0;width:0;overflow:hidden}
+#sidebar-toggle{margin-left:auto;color:var(--muted);font-size:18px;padding:4px;border-radius:6px;flex-shrink:0;transition:color .2s}
+#sidebar-toggle:hover{color:var(--text)}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius-sm);color:var(--muted2);font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap;overflow:hidden}
+.nav-item:hover{background:var(--surface2);color:var(--text)}.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.nav-icon{font-size:18px;flex-shrink:0;width:20px;text-align:center}.nav-label{transition:opacity .2s}
+#sidebar.collapsed .nav-label{opacity:0;width:0;overflow:hidden}
+.sb-footer{padding:12px 8px;border-top:1px solid var(--border)}
+#sidebar-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm)}
+.su-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.su-info{overflow:hidden;flex:1}.su-nome{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.su-papel{font-size:10px;color:var(--muted);text-transform:capitalize}
+.su-logout{padding:4px 6px;color:var(--muted);font-size:14px;border-radius:4px;transition:color .2s}.su-logout:hover{color:var(--red)}
+#sidebar.collapsed .su-info,.su-info.hidden{opacity:0;width:0;overflow:hidden}
+
+/* ── Main ────────────────────────────────────────────────── */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:16px 28px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:5}
+.topbar-title{font-size:18px;font-weight:700;flex:1}
+.topbar-subtitle{font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.btn-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);color:var(--muted2);font-size:15px;transition:all .2s}
+.btn-icon:hover{background:var(--surface2);color:var(--text)}
+.tab-bar{display:flex;gap:0;padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto}
+.tab-btn{padding:13px 20px;font-size:13px;font-weight:500;color:var(--muted2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:700}
+.content{padding:24px 28px}
+
+/* ── Cards ───────────────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;border-radius:var(--radius);background:linear-gradient(135deg,rgba(255,255,255,.015) 0%,transparent 60%);pointer-events:none}
+.card-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;justify-content:space-between;color:var(--text)}
+.card-title-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--brand-dim);color:var(--brand);letter-spacing:.5px;text-transform:uppercase}
+
+/* ── KPI Strip ───────────────────────────────────────────── */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.kpi-card::after{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.kpi-card.blue::after{background:var(--blue)}
+.kpi-card.green::after{background:var(--green)}
+.kpi-card.red::after{background:var(--red)}
+.kpi-card.amber::after{background:var(--amber)}
+.kpi-card.brand::after{background:var(--brand)}
+.kpi-v{font-size:30px;font-weight:800;letter-spacing:-1.5px;line-height:1;margin-bottom:4px}
+.kpi-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+.kpi-sub{font-size:11px;color:var(--muted2);margin-top:2px}
+
+/* ── Farol Table ─────────────────────────────────────────── */
+.farol-table{width:100%;border-collapse:collapse}
+.farol-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.farol-table td{padding:12px 14px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;transition:background .15s}
+.farol-table tr{cursor:pointer;transition:background .15s;position:relative}
+/* Left-border accent via first td */
+.farol-table td:first-child{border-left:3px solid transparent}
+.farol-table tr.critico-row td{background:rgba(239,68,68,.07)}
+.farol-table tr.critico-row td:first-child{border-left-color:#ef4444}
+.farol-table tr.critico-row:hover td{background:rgba(239,68,68,.13)!important}
+.farol-table tr.bloqueado-row td{background:rgba(249,115,22,.07)}
+.farol-table tr.bloqueado-row td:first-child{border-left-color:#f97316}
+.farol-table tr.bloqueado-row:hover td{background:rgba(249,115,22,.13)!important}
+.farol-table tr.atrasado-row td{background:rgba(245,158,11,.05)}
+.farol-table tr.atrasado-row td:first-child{border-left-color:#f59e0b}
+.farol-table tr.atrasado-row:hover td{background:rgba(245,158,11,.10)!important}
+.farol-table tr:hover td{background:var(--surface2)}
+@keyframes pulse-red{0%,100%{opacity:1}50%{opacity:.55}}
+.critico-row .semaforo{animation:pulse-red 2s infinite}
+
+.semaforo{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.s-verde  {background:rgba(34,197,94,.12) ;border:1px solid rgba(34,197,94,.3)}
+.s-amarelo{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3)}
+.s-laranja{background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3)}
+.s-vermelho{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3)}
+.s-cinza  {background:rgba(100,116,139,.12);border:1px solid rgba(100,116,139,.3)}
+
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.prog-bar-wrap{display:flex;align-items:center;gap:8px}
+.prog-bar-bg{flex:1;min-width:60px;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.prog-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.prog-pct{font-size:11px;color:var(--muted2);min-width:32px;text-align:right}
+
+.risk-dot{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600}
+.dias-parado{font-size:12px;font-weight:600}
+.dp-ok{color:var(--muted2)}.dp-warn{color:var(--amber)}.dp-crit{color:var(--red)}
+
+/* ── Arena PMO ───────────────────────────────────────────── */
+.arena-row{margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.arena-row:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.arena-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.arena-name{font-size:14px;font-weight:700}
+.arena-stats{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.arena-badge-item{font-size:11px;padding:3px 10px;border-radius:10px;font-weight:600}
+.arena-track{height:34px;background:var(--border);border-radius:8px;overflow:hidden;display:flex}
+.arena-seg{height:100%;transition:width .9s cubic-bezier(.4,0,.2,1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.9)}
+.arena-legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+.arena-legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.arena-legend-dot{width:10px;height:10px;border-radius:3px}
+.pmo-score{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* ── Heatmap ─────────────────────────────────────────────── */
+.heatmap-grid{display:grid;gap:4px}
+.heatmap-row{display:grid;gap:3px;align-items:center}
+.heatmap-label{font-size:10px;color:var(--muted);width:60px;text-align:right;padding-right:8px}
+.heatmap-cell{height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;transition:all .2s;cursor:default;position:relative}
+.heatmap-cell:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100%+5px);left:50%;transform:translateX(-50%);background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:4px 10px;border-radius:6px;font-size:11px;white-space:nowrap;z-index:10;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.months-header{display:grid;gap:3px;margin-bottom:4px}
+.month-lbl{font-size:9px;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.5px}
+.heatmap-legend{display:flex;align-items:center;gap:8px;margin-top:14px}
+.hm-swatch{width:20px;height:12px;border-radius:3px}
+
+/* ── Table ───────────────────────────────────────────────── */
+.gtable{width:100%;border-collapse:collapse}
+.gtable th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+.gtable td{padding:11px 14px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04)}
+.gtable tr{cursor:pointer;transition:background .15s}.gtable tr:hover td{background:var(--surface2)}
+
+/* ── Viewer / Command Palette ────────────────────────────── */
+.viewer-mode .edit-only{display:none!important}
+#cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:9000;display:none;align-items:flex-start;justify-content:center;padding-top:15vh}
+#cmd-overlay.open{display:flex}
+#cmd-palette{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:520px;max-width:90vw;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+#cmd-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border)}
+#cmd-icon{font-size:18px;color:var(--muted)}
+#cmd-input{flex:1;background:none;border:none;outline:none;font-size:15px;color:var(--text);font-family:'Inter',sans-serif}
+#cmd-list{max-height:360px;overflow-y:auto;padding:8px}
+.cmd-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:var(--muted2);transition:all .15s}
+.cmd-item:hover,.cmd-item.active{background:var(--brand-dim);color:var(--brand)}
+.cmd-empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@media(max-width:768px){
+  .kpi-strip{grid-template-columns:repeat(3,1fr)}
+  .topbar-subtitle{display:none}
+}
+.btn-print{display:flex;align-items:center;gap:7px;padding:8px 16px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);border-radius:var(--radius-sm);font-size:12px;font-weight:700;color:#a78bfa;transition:all .2s}
+.btn-print:hover{background:rgba(139,92,246,.22);border-color:#a78bfa}
+/* ── Print / PDF ──────────────────────────────────────── */
+.print-header-bar{display:none}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  html,body{overflow:visible!important;height:auto!important;min-height:0!important;font-size:11px!important}
+  #sidebar,.topbar,#cmd-overlay,.no-print{display:none!important}
+  .app{display:block!important;height:auto!important;overflow:visible!important}
+  #main{margin-left:0!important;padding:0!important;height:auto!important;overflow:visible!important}
+  .print-header-bar{
+    display:flex!important;justify-content:space-between;align-items:center;
+    padding:8px 0 10px;border-bottom:2px solid var(--border);margin-bottom:12px;
+    font-size:10px;color:var(--muted);
+  }
+  .print-header-bar strong{font-size:14px;color:var(--text);font-weight:800}
+  .kpi-strip{display:grid!important;grid-template-columns:repeat(6,1fr)!important;gap:6px!important}
+  .kpi-card{break-inside:avoid!important}
+  .farol-table td,.farol-table th{border:1px solid var(--border)!important}
+  .arena-seg{-webkit-print-color-adjust:exact!important}
+  .card,.panel{break-inside:avoid!important}
+  a{text-decoration:none!important}
+  @page{margin:15mm 14mm;size:A4 landscape}
+}
+</style>
+</head>
+<body>
+
+<!-- Popup rápido de projeto -->
+<div id="proj-popup" onclick="if(event.target===this)closeProjPopup()" style="position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);z-index:8000;display:none;align-items:center;justify-content:center">
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:520px;max-width:94vw;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.8);overflow:hidden">
+    <div id="pp-header" style="padding:18px 20px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div style="flex:1;min-width:0">
+        <div id="pp-nome" style="font-size:16px;font-weight:900;letter-spacing:-.5px;color:var(--text);margin-bottom:5px"></div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span id="pp-status"></span>
+          <span id="pp-risco"></span>
+          <span id="pp-local" style="font-size:11px;color:var(--muted)"></span>
+        </div>
+      </div>
+      <button onclick="closeProjPopup()" style="font-size:18px;color:var(--muted);cursor:pointer;background:none;border:none;padding:4px 8px;border-radius:6px;flex-shrink:0;line-height:1;transition:color .2s" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--muted)'" title="Fechar (ESC)">✕</button>
+    </div>
+    <div id="pp-body" style="padding:18px 20px;overflow-y:auto;display:flex;flex-direction:column;gap:14px"></div>
+    <div style="padding:10px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <span style="font-size:11px;color:var(--muted)">Visão executiva — dados em tempo real</span>
+      <button onclick="closeProjPopup()" style="font-size:12px;font-weight:600;color:var(--muted2);background:var(--surface);border:1px solid var(--border);padding:5px 14px;border-radius:8px;cursor:pointer;transition:all .2s" onmouseenter="this.style.color='var(--text)'" onmouseleave="this.style.color='var(--muted2)'">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">VX</div>
+    <div class="sb-brand">
+      <div class="sb-brand-name"><span class="vy">v</span>elox<span class="dot">.</span></div>
+      <div class="sb-brand-by">by invent</div>
+    </div>
+    <button id="sidebar-toggle" title="Recolher">☰</button>
+  </div>
+  <div class="sb-nav">
+    <a class="nav-item" href="index.html">           <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
+    <a class="nav-item active" href="gerencial.html"> <span class="nav-icon">⊞</span><span class="nav-label">Gerencial</span></a>
+    <a class="nav-item" href="projetos.html">         <span class="nav-icon">📋</span><span class="nav-label">Projetos</span></a>
+    <a class="nav-item" href="squads.html">           <span class="nav-icon">🏢</span><span class="nav-label">Áreas</span></a>
+    <a class="nav-item" href="alertas.html">          <span class="nav-icon">🔔</span><span class="nav-label" id="nav-alertas-label">Alertas</span></a>
+    <a class="nav-item edit-only" href="admin.html">  <span class="nav-icon">⚙</span><span class="nav-label">Admin</span></a>
+  </div>
+  <div class="sb-footer"><div id="sidebar-user"></div></div>
+</nav>
+
+<!-- Main -->
+<div id="main">
+  <div class="topbar">
+    <div style="flex:1;display:flex;align-items:baseline;gap:10px">
+      <div class="topbar-title">Visão Gerencial</div>
+      <div class="topbar-subtitle" id="topbar-date"></div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-print no-print" onclick="openPM()">📄 PDF / Imprimir</button>
+      <button class="btn-icon no-print" title="Ctrl+K" onclick="document.getElementById('cmd-overlay').classList.add('open')">⌘</button>
+      <button class="btn-icon no-print" onclick="toggleTheme()" title="Tema">◑</button>
+    </div>
+  </div>
+  <!-- Cabeçalho visível apenas no print -->
+  <div class="print-header-bar">
+    <div><strong>Velox PMO · Visão Gerencial</strong><span style="margin-left:12px;font-size:11px;color:#555" id="print-ger-date"></span></div>
+    <div style="font-size:9px;color:#888">velox. by invent · gerado em <span id="print-ger-ts"></span></div>
+  </div>
+
+  <div class="content" id="ger-content"></div>
+</div>
+</div>
+
+<!-- Command Palette -->
+<div id="cmd-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="cmd-palette">
+    <div id="cmd-header">
+      <span id="cmd-icon">⌘</span>
+      <input id="cmd-input" placeholder="Navegar para… (ex: projetos, alertas)" autocomplete="off">
+    </div>
+    <div id="cmd-list"></div>
+  </div>
+</div>
+
+<script src="utils.js"></script>
+<script>
+initTheme();
+checkAuth('gerencial');
+loadData();
+initSidebar();
+initPrintModal();
+initCommandPalette();
+
+// Topbar date
+(function(){
+  const d = HOJE;
+  const opts = {weekday:'long',day:'2-digit',month:'long',year:'numeric'};
+  document.getElementById('topbar-date').textContent =
+    d.toLocaleDateString('pt-BR', opts).replace(/^\w/, c => c.toUpperCase());
+})();
+
+// ── Render único — página gerencial sem abas ───────────────
+function renderGerencial(){
+  const el = document.getElementById('ger-content');
+  const ativos     = PROJETOS.filter(p=>{ const s=calcStatus(p); return s!=='Concluído'&&s!=='Não Iniciado'&&s!=='Standby'; });
+  const concluidos = PROJETOS.filter(p=>calcStatus(p)==='Concluído');
+  const atrasados  = PROJETOS.filter(p=>calcStatus(p)==='Atrasado');
+  const criticos   = PROJETOS.filter(p=>isCritico(p));
+  const bloqueados = PROJETOS.filter(p=>calcStatus(p)==='Bloqueado');
+  const health     = calcPortfolioHealth();
+  const hColor     = health>=70?'#22c55e':health>=45?'#f5c300':'#ef4444';
+
+  // ─ 1. KPI Strip ──────────────────────────────────────────
+  const kpiHtml=`
+  <div class="kpi-strip" style="margin-bottom:16px">
+    <div class="kpi-card blue">
+      <div class="kpi-v" style="color:var(--blue)">${ativos.length}</div>
+      <div class="kpi-l">Ativos</div>
+      <div class="kpi-sub">${PROJETOS.length} total no portfólio</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-v" style="color:var(--green)">${concluidos.length}</div>
+      <div class="kpi-l">Concluídos</div>
+      <div class="kpi-sub">${PROJETOS.length>0?Math.round(concluidos.length/PROJETOS.length*100):0}% do portfólio</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-v" style="color:var(--red)">${atrasados.length}</div>
+      <div class="kpi-l">Atrasados</div>
+      <div class="kpi-sub">${ativos.length>0?Math.round(atrasados.length/Math.max(ativos.length,1)*100):0}% dos ativos</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-v" style="color:var(--amber)">${criticos.length}</div>
+      <div class="kpi-l">Críticos</div>
+      <div class="kpi-sub">${bloqueados.length} com bloqueio ativo</div>
+    </div>
+    <div class="kpi-card brand">
+      <div class="kpi-v" style="color:${hColor}">${health}</div>
+      <div class="kpi-l">Health Score</div>
+      <div class="kpi-sub" style="color:${hColor}">${health>=70?'Portfólio saudável':health>=45?'Atenção necessária':'Em risco'}</div>
+    </div>
+  </div>`;
+
+  // ─ 2. Composição + Insights lado a lado ──────────────────
+  const total=PROJETOS.length||1;
+  const nAtiv=ativos.filter(p=>calcStatus(p)==='Em andamento').length;
+  const nAtras=atrasados.length, nBloq=bloqueados.length, nConc=concluidos.length;
+  const nOut=Math.max(0,total-nAtiv-nAtras-nBloq-nConc);
+  const pct=n=>(n/total*100).toFixed(1);
+  const compHtml=`
+  <div class="card" style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Composição do Portfólio</span>
+      <span style="font-size:13px;font-weight:700;color:${hColor}">Health Score: ${health}/100</span>
+    </div>
+    <div style="display:flex;height:14px;border-radius:7px;overflow:hidden;gap:2px;margin-bottom:10px">
+      ${nConc ?`<div style="flex:${nConc};background:#22c55e;border-radius:4px" title="${nConc} concluídos"></div>`:''}
+      ${nAtiv ?`<div style="flex:${nAtiv};background:#3b82f6;border-radius:4px" title="${nAtiv} em andamento"></div>`:''}
+      ${nOut  ?`<div style="flex:${nOut};background:#64748b;border-radius:4px" title="${nOut} outros"></div>`:''}
+      ${nAtras?`<div style="flex:${nAtras};background:#f59e0b;border-radius:4px;animation:pulse-red 2s infinite" title="${nAtras} atrasados"></div>`:''}
+      ${nBloq ?`<div style="flex:${nBloq};background:#f97316;border-radius:4px;animation:pulse-red 2s infinite" title="${nBloq} bloqueados"></div>`:''}
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap">
+      ${nConc ?`<span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#22c55e;display:inline-block"></span>${nConc} Concluídos</span>`:''}
+      ${nAtiv ?`<span style="font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#3b82f6;display:inline-block"></span>${nAtiv} Em andamento</span>`:''}
+      ${nAtras?`<span style="font-size:11px;color:#f59e0b;font-weight:700;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#f59e0b;display:inline-block"></span>${nAtras} Atrasados</span>`:''}
+      ${nBloq ?`<span style="font-size:11px;color:#f97316;font-weight:700;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#f97316;display:inline-block"></span>${nBloq} Bloqueados</span>`:''}
+      ${criticos.length?`<span style="font-size:11px;color:#ef4444;font-weight:700;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#ef4444;display:inline-block"></span>${criticos.length} Críticos</span>`:''}
+    </div>
+  </div>`;
+
+  // ─ 3. Auto-Insights ──────────────────────────────────────
+  const wl=calcWorkload();
+  const pmoData=Object.entries(wl).map(([nome,v])=>{
+    const pA=v.projetos.filter(p=>calcStatus(p)==='Atrasado').length;
+    const pB=v.projetos.filter(p=>calcStatus(p)==='Bloqueado').length;
+    const score=v.total?Math.max(0,Math.round(100-(pA*25+pB*15+v.criticos*10)/v.total)):100;
+    return {nome,total:v.total,atrasados:pA,bloqueados:pB,criticos:v.criticos,score};
+  }).sort((a,b)=>a.score-b.score);
+  const insights=[];
+  if(health>=75) insights.push({type:'positivo',icon:'✅',titulo:'Portfólio Saudável',msg:`Health <strong>${health}</strong> — portfólio em boa saúde.`});
+  else if(health>=50) insights.push({type:'atencao',icon:'⚠️',titulo:'Requer Atenção',msg:`Health <strong>${health}</strong> — pontos de atenção que precisam acompanhamento.`});
+  else insights.push({type:'critico',icon:'🔥',titulo:'Portfólio em Risco',msg:`Health <strong>${health}</strong> — situação crítica, intervenção recomendada.`});
+  if(atrasados.length) insights.push({type:'critico',icon:'⏰',titulo:`${atrasados.length} Projeto${atrasados.length!==1?'s':''} Atrasado${atrasados.length!==1?'s':''}`,msg:atrasados.slice(0,4).map(p=>`<strong>${p.nome}</strong>`).join(', ')+(atrasados.length>4?` +${atrasados.length-4} outros`:'')});
+  if(bloqueados.length) insights.push({type:'critico',icon:'🔒',titulo:`${bloqueados.length} Bloqueio${bloqueados.length!==1?'s':''} Ativo${bloqueados.length!==1?'s':''}`,msg:bloqueados.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
+  const glDias=p=>{const fe=getFimEfetivo(p)||p.fim;return fe?Math.round((new Date(fe)-HOJE)/86400000):null;};
+  const gl14 =ativos.filter(p=>{const d=glDias(p);return d!==null&&d>=0&&d<=14;});
+  const gl30 =ativos.filter(p=>{const d=glDias(p);return d!==null&&d>14&&d<=30;});
+  const gl90 =ativos.filter(p=>{const d=glDias(p);return d!==null&&d>30&&d<=90;});
+  if(gl14.length)  insights.push({type:'critico', icon:'🚨',titulo:`${gl14.length} Go Live${gl14.length!==1?'s':''} em até 14 dias`, msg:gl14.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
+  if(gl30.length)  insights.push({type:'atencao', icon:'🚀',titulo:`${gl30.length} Go Live${gl30.length!==1?'s':''} em até 30 dias`, msg:gl30.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
+  if(gl90.length)  insights.push({type:'info',    icon:'📅',titulo:`${gl90.length} Go Live${gl90.length!==1?'s':''} em até 90 dias`, msg:gl90.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
+  const worst=pmoData[0];
+  if(worst&&worst.score<70) insights.push({type:'atencao',icon:'👤',titulo:`${worst.nome} — Atenção`,msg:`Score <strong>${worst.score}</strong> · ${worst.total} projetos · ${worst.atrasados} atrasados · ${worst.bloqueados} bloqueados`});
+  const iColors={positivo:{border:'rgba(34,197,94,.3)',bg:'rgba(34,197,94,.07)'},atencao:{border:'rgba(245,195,0,.3)',bg:'rgba(245,195,0,.07)'},critico:{border:'rgba(239,68,68,.3)',bg:'rgba(239,68,68,.07)'},info:{border:'rgba(59,130,246,.3)',bg:'rgba(59,130,246,.07)'}};
+  const insightsHtml=`
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">🔍 Insights Automáticos
+      <span style="font-size:11px;font-weight:400;color:var(--muted)">${insights.length} observações</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">
+      ${insights.map(ins=>{const c=iColors[ins.type];return`<div style="background:${c.bg};border:1px solid ${c.border};border-radius:var(--radius-sm);padding:12px 14px;display:flex;gap:10px;align-items:flex-start"><div style="font-size:18px;flex-shrink:0">${ins.icon}</div><div><div style="font-size:12px;font-weight:700;margin-bottom:3px">${ins.titulo}</div><div style="font-size:11px;color:var(--muted2);line-height:1.5">${ins.msg}</div></div></div>`;}).join('')}
+    </div>
+  </div>`;
+
+  // ─ 4. Farol — helper de row ───────────────────────────────
+  function farolRow(p){
+    const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const r=calcRisco(p), rm=RISCO_MAP[r];
+    const sema=semaforo(p);
+    const prog=calcProgresso(p);
+    const fe=getFimEfetivo(p)||p.fim;
+    const dias=fe?Math.round((new Date(fe)-HOJE)/86400000):null;
+    const dc=dias===null?'var(--muted)':dias<0?'#ef4444':dias<=30?'#f5c300':'var(--muted2)';
+    const isBloq=st==='Bloqueado', isAtras=st==='Atrasado', isCrit=isCritico(p);
+    const rowCls=isBloq?'bloqueado-row':isCrit?'critico-row':isAtras?'atrasado-row':'';
+    const pmoLabel=p.pmo&&p.pmo.trim()&&p.pmo.trim()!=='PMO'?p.pmo.trim():'—';
+    return `<tr class="${rowCls}" onclick="location.href='projetos.html?p=${encodeURIComponent(p.nome)}'" title="Abrir ${escHtml(p.nome)}">
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="semaforo ${sema.cls}">${sema.icon}</div>
+        <div>
+          <div style="font-weight:700;font-size:13px">${escHtml(p.nome)}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:1px">${isBloq&&p.bloqueador?`<span style="color:#f97316">🔒 ${escHtml(p.bloqueador.split(';')[0].substring(0,50))}</span>`:escHtml(p.local||'—')}</div>
+        </div>
+      </div></td>
+      <td><span class="status-pill" style="background:${sm.bg};color:${sm.color}">${sm.icon} ${sm.label}</span></td>
+      <td style="font-size:12px;color:var(--muted2);font-weight:600">${escHtml(pmoLabel)}</td>
+      <td><div class="prog-bar-wrap"><div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${prog}%;background:${prog>=70?'var(--green)':prog>=35?'var(--blue)':'var(--amber)'}"></div></div><span class="prog-pct">${prog}%</span></div></td>
+      <td style="color:${dc};font-weight:700;font-size:12px;white-space:nowrap">${dias===null?'—':diasLabel(dias)}</td>
+      <td><span class="risk-dot" style="color:${rm.color}">${rm.dot} ${rm.label}</span></td>
+    </tr>`;
+  }
+
+  const sortedAll=[...PROJETOS].sort((a,b)=>{
+    const order={alto:0,medio:1,baixo:2};
+    const ra=calcRisco(a),rb=calcRisco(b);
+    if(order[ra]!==order[rb]) return order[ra]-order[rb];
+    return (getFimEfetivo(a)||a.fim||'9999').localeCompare(getFimEfetivo(b)||b.fim||'9999');
+  });
+
+  // MODO A — Visual 3 colunas ──────────────────────────────
+  function farolVisualCard(p){
+    const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const prog=calcProgresso(p);
+    const fe=getFimEfetivo(p)||p.fim;
+    const dias=fe?Math.round((new Date(fe)-HOJE)/86400000):null;
+    const dc=dias===null?'var(--muted)':dias<0?'#ef4444':dias<=30?'#f5c300':'var(--muted2)';
+    const isBloq=st==='Bloqueado';
+    const _safeNome = p.nome.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div onclick="openProjPopup('${_safeNome}')" style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all .2s" onmouseenter="this.style.borderColor='rgba(255,255,255,.2)';this.style.transform='translateY(-2px)'" onmouseleave="this.style.borderColor='var(--border)';this.style.transform=''">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="font-size:12px;font-weight:800;color:var(--text)">${escHtml(p.nome)}</div>
+        <span class="status-pill" style="background:${sm.bg};color:${sm.color};font-size:10px;padding:2px 7px">${sm.icon}</span>
+      </div>
+      ${isBloq&&p.bloqueador?`<div style="font-size:10px;color:#f97316;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔒 ${escHtml(p.bloqueador.split(';')[0].substring(0,40))}</div>`:''}
+      <div style="background:rgba(255,255,255,.06);border-radius:4px;height:5px;overflow:hidden;margin-bottom:6px">
+        <div style="height:100%;width:${prog}%;background:${prog>=70?'#22c55e':prog>=35?'#3b82f6':'#f59e0b'};border-radius:4px"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:10px;color:var(--muted)">${p.pmo&&p.pmo!=='PMO'?p.pmo:'—'}</span>
+        <span style="font-size:11px;font-weight:700;color:${dc}">${dias===null?'—':diasLabel(dias)}</span>
+      </div>
+    </div>`;
+  }
+  const vermelho=sortedAll.filter(p=>{const s=calcStatus(p);return s==='Bloqueado'||s==='Atrasado'||isCritico(p);});
+  const amarelo =sortedAll.filter(p=>{const s=calcStatus(p);const r=calcRisco(p);return !vermelho.includes(p)&&(s==='Aguardando'||r==='medio'||calcDiasParadoAuto(p)>=7)&&s!=='Concluído'&&s!=='Não Iniciado'&&s!=='Standby';});
+  const verde   =sortedAll.filter(p=>{const s=calcStatus(p);return !vermelho.includes(p)&&!amarelo.includes(p)&&(s==='Em andamento'||s==='Concluído'||s==='Não Iniciado'||s==='Standby');});
+  const modoVisual=`
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #ef4444">
+        <span style="font-size:16px">🔴</span>
+        <span style="font-size:12px;font-weight:800;color:#ef4444;text-transform:uppercase;letter-spacing:.8px">Crítico / Bloqueado</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:700;color:#ef4444;background:rgba(239,68,68,.12);padding:2px 8px;border-radius:10px">${vermelho.length}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">${vermelho.map(farolVisualCard).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">✓ Nenhum projeto crítico</div>'}</div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #f59e0b">
+        <span style="font-size:16px">🟡</span>
+        <span style="font-size:12px;font-weight:800;color:#f59e0b;text-transform:uppercase;letter-spacing:.8px">Atenção</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:700;color:#f59e0b;background:rgba(245,158,11,.12);padding:2px 8px;border-radius:10px">${amarelo.length}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">${amarelo.map(farolVisualCard).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">✓ Nenhum projeto em atenção</div>'}</div>
+    </div>
+    <div>
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid #22c55e">
+        <span style="font-size:16px">🟢</span>
+        <span style="font-size:12px;font-weight:800;color:#22c55e;text-transform:uppercase;letter-spacing:.8px">No Prazo / Ok</span>
+        <span style="margin-left:auto;font-size:11px;font-weight:700;color:#22c55e;background:rgba(34,197,94,.12);padding:2px 8px;border-radius:10px">${verde.length}</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">${verde.map(farolVisualCard).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">—</div>'}</div>
+    </div>
+  </div>`;
+
+  // MODO B — Tabela só em risco ────────────────────────────
+  const emRisco=sortedAll.filter(p=>{const s=calcStatus(p);return s==='Bloqueado'||s==='Atrasado'||isCritico(p)||calcDiasParadoAuto(p)>=15;});
+  const modoRisco=emRisco.length?`
+  <div style="overflow-x:auto">
+    <table class="farol-table">
+      <thead><tr><th style="min-width:220px">Projeto</th><th>Status</th><th>PMO</th><th style="min-width:140px">Progresso</th><th>Go Live</th><th>Risco</th></tr></thead>
+      <tbody>${emRisco.map(farolRow).join('')}</tbody>
+    </table>
+  </div>
+  <div style="padding:8px 4px 0;border-top:1px solid var(--border);margin-top:8px;font-size:11px;color:var(--muted)">
+    ${PROJETOS.length-emRisco.length} projetos saudáveis / concluídos ocultados
+  </div>`
+  :`<div style="text-align:center;padding:40px;color:#22c55e"><div style="font-size:36px;margin-bottom:8px">✅</div><div style="font-size:14px;font-weight:700">Nenhum projeto em risco</div><div style="font-size:11px;margin-top:4px;color:var(--muted)">Portfólio saudável</div></div>`;
+
+  // MODO C — Tabela completa ───────────────────────────────
+  const modoCompleto=`
+  <div style="overflow-x:auto">
+    <table class="farol-table">
+      <thead><tr><th style="min-width:220px">Projeto</th><th>Status</th><th>PMO</th><th style="min-width:140px">Progresso</th><th>Go Live</th><th>Risco</th></tr></thead>
+      <tbody>${sortedAll.map(farolRow).join('')}</tbody>
+    </table>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:10px 4px 2px;border-top:1px solid var(--border);margin-top:4px">
+    <span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:4px">Legenda:</span>
+    ${[['s-vermelho','🔴','Atrasado/Crítico'],['s-laranja','🔒','Bloqueado'],['s-amarelo','🟡','Risco Médio'],['s-verde','🟢','No prazo'],['s-cinza','✓','Concluído']].map(([cls,ic,lbl])=>`<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><span class="semaforo ${cls}" style="width:22px;height:22px;font-size:12px;border-radius:6px">${ic}</span>${lbl}</span>`).join('')}
+  </div>`;
+
+  const farolHtml=`
+  <div class="card" style="margin-bottom:16px">
+    <div class="card-title">
+      <span style="display:flex;align-items:center;gap:8px">🚦 Farol de Projetos
+        <span style="font-size:11px;color:var(--muted);font-weight:400">${sortedAll.length} projetos</span>
+      </span>
+      <span class="card-title-badge">executivo</span>
+    </div>
+    ${modoVisual}
+  </div>`;
+
+  // ─ 5. Go Lives + Arena PMO lado a lado ───────────────────
+  const upcoming=ativos.filter(p=>getFimEfetivo(p)||p.fim)
+    .sort((a,b)=>new Date(getFimEfetivo(a)||a.fim)-new Date(getFimEfetivo(b)||b.fim))
+    .slice(0,10);
+  const upRows=upcoming.map(p=>{
+    const fe=getFimEfetivo(p)||p.fim;
+    const dias=Math.round((new Date(fe)-HOJE)/86400000);
+    const dc=dias<0?'#ef4444':dias<=30?'#f5c300':'var(--muted2)';
+    const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const r=calcRisco(p), rm=RISCO_MAP[r];
+    const _sn = p.nome.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<tr onclick="openProjPopup('${_sn}')" style="cursor:pointer">
+      <td style="font-weight:700">${escHtml(p.nome)}</td>
+      <td><span class="status-pill" style="background:${sm.bg};color:${sm.color};font-size:10px">${sm.icon} ${sm.label}</span></td>
+      <td style="color:${dc};font-weight:700">${diasLabel(dias)}</td>
+      <td><span style="color:${rm.color};font-weight:600">${rm.dot} ${rm.label}</span></td>
+    </tr>`;
+  }).join('');
+  const pmos=Object.entries(wl).sort((a,b)=>{
+    if(a[0]==='Sem PMO') return 1; if(b[0]==='Sem PMO') return -1;
+    return b[1].total-a[1].total;
+  });
+  // Expõe dados para tooltip
+  window._gerWl = wl;
+  const arenaRows=pmos.map(([nome,v])=>{
+    const anda=v.projetos.filter(p=>calcStatus(p)==='Em andamento').length;
+    const atras=v.projetos.filter(p=>calcStatus(p)==='Atrasado').length;
+    const bloq=v.projetos.filter(p=>calcStatus(p)==='Bloqueado').length;
+    const outros=Math.max(0,v.total-anda-atras-bloq);
+    const score=v.total?Math.max(0,Math.round(100-(atras*25+bloq*15+v.criticos*10)/v.total)):100;
+    const sc=score>=80?'#22c55e':score>=60?'#f5c300':'#ef4444';
+    const sn=nome.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+    return `<div onmouseenter="__gerPmoHover(event,'${sn}')" onmouseleave="__gerPmoLeave()"
+      style="margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.05);cursor:default;transition:background .15s;border-radius:8px;padding:8px 6px 14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <div>
+          <div style="font-size:13px;font-weight:700">${escHtml(nome)}</div>
+          <div style="font-size:11px;color:var(--muted)">${v.total} projeto${v.total!==1?'s':''} · score <span style="color:${sc};font-weight:700">${score}</span></div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+          ${v.criticos?`<span style="font-size:10px;padding:2px 7px;border-radius:8px;background:rgba(239,68,68,.1);color:#ef4444;font-weight:700">⚠ ${v.criticos} crít.</span>`:''}
+          ${bloq?`<span style="font-size:10px;padding:2px 7px;border-radius:8px;background:rgba(249,115,22,.1);color:#f97316;font-weight:700">🔒 ${bloq} bloq.</span>`:''}
+          ${atras?`<span style="font-size:10px;padding:2px 7px;border-radius:8px;background:rgba(239,68,68,.07);color:#f59e0b;font-weight:700">⏰ ${atras} atras.</span>`:''}
+        </div>
+      </div>
+      <div style="height:28px;background:var(--border);border-radius:6px;overflow:hidden;display:flex">
+        ${anda ?`<div style="width:${v.total?(anda/v.total*100).toFixed(1):0}%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.9);transition:filter .15s">${anda}</div>`:''}
+        ${bloq ?`<div style="width:${v.total?(bloq/v.total*100).toFixed(1):0}%;background:#f97316;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.9);transition:filter .15s">${bloq}</div>`:''}
+        ${atras?`<div style="width:${v.total?(atras/v.total*100).toFixed(1):0}%;background:#ef4444;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.9);transition:filter .15s">${atras}</div>`:''}
+        ${outros>0?`<div style="width:${v.total?(outros/v.total*100).toFixed(1):0}%;background:#22c55e;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.8);transition:filter .15s">${outros}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  const bottomHtml=`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="card">
+      <div class="card-title">📅 Próximos Go Lives
+        <span style="font-size:11px;font-weight:400;color:var(--muted)">${upcoming.length} projetos</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="gtable">
+          <thead><tr><th>Projeto</th><th>Status</th><th>Prazo</th><th>Risco</th></tr></thead>
+          <tbody>${upRows||'<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Nenhum Go Live registrado</td></tr>'}</tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">👥 Carga por PMO/Gestor
+        <span style="font-size:11px;font-weight:400;color:var(--muted)">${pmos.length} gestores</span>
+      </div>
+      <div style="margin-bottom:10px;display:flex;gap:12px;flex-wrap:wrap">
+        <span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:3px;background:#3b82f6;display:inline-block"></span>Em andamento</span>
+        <span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:3px;background:#f97316;display:inline-block"></span>Bloqueado</span>
+        <span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:3px;background:#ef4444;display:inline-block"></span>Atrasado</span>
+        <span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;border-radius:3px;background:#22c55e;display:inline-block"></span>Outros ativos</span>
+      </div>
+      ${arenaRows||'<div style="text-align:center;padding:28px;color:var(--muted)">Nenhum dado</div>'}
+    </div>
+  </div>
+  <!-- PMO Tooltip -->
+  <div id="ger-pmo-tt" style="display:none;position:fixed;z-index:9999;pointer-events:none;
+    background:rgba(8,12,22,.97);border:1px solid rgba(99,102,241,.3);border-radius:12px;
+    padding:13px 15px;min-width:200px;max-width:260px;
+    box-shadow:0 12px 40px rgba(0,0,0,.7);backdrop-filter:blur(16px)"></div>`;
+
+  el.innerHTML = kpiHtml + compHtml + insightsHtml + bottomHtml + farolHtml;
+}
+
+// ── PMO Tooltip Hover (Gerencial) ─────────────────────────
+let _gerTtTimer = null;
+function __gerPmoHover(e, nome){
+  clearTimeout(_gerTtTimer);
+  const wl = window._gerWl;
+  if(!wl || !wl[nome]) return;
+  const v = wl[nome];
+  const tt = document.getElementById('ger-pmo-tt');
+  if(!tt) return;
+
+  const stColor={'Em andamento':'#3b82f6','Bloqueado':'#f97316','Atrasado':'#ef4444',
+    'Concluído':'#22c55e','Não Iniciado':'#64748b','Standby':'#64748b','Aguardando':'#f59e0b'};
+  const stIcon={'Em andamento':'🔵','Bloqueado':'🔒','Atrasado':'🔴','Concluído':'✅',
+    'Não Iniciado':'⭕','Standby':'⏸','Aguardando':'⏳'};
+
+  const projRows = (v.projetos||[]).map(p=>{
+    const st = calcStatus(p);
+    const col = isCritico(p)?'#ef4444':(p.bloqueador&&p.bloqueador.trim()?'#f97316':(stColor[st]||'#6366f1'));
+    const icon = stIcon[st]||'•';
+    const prog = Math.round(calcProgresso(p)||0);
+    const fe = getFimEfetivo(p)||p.fim;
+    const dias = fe ? Math.round((new Date(fe)-HOJE)/86400000) : null;
+    const diasStr = dias!==null ? (dias<0?`<span style="color:#ef4444;font-weight:700">${Math.abs(dias)}d atraso</span>`:`<span style="color:#64748b">${dias}d</span>`) : '';
+    return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+      <span style="width:8px;height:8px;border-radius:50%;background:${col};flex-shrink:0;box-shadow:0 0 6px ${col}99"></span>
+      <span style="font-size:11px;color:#e2e8f0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">${p.nome}</span>
+      <span style="font-size:10px;font-weight:700;color:${col};flex-shrink:0">${prog}%</span>
+      ${diasStr ? `<span style="font-size:9px;flex-shrink:0">${diasStr}</span>` : ''}
+    </div>`;
+  }).join('');
+
+  const score = v.total ? Math.max(0,Math.round(100-(v.atrasados*25+v.bloqueados*15+v.criticos*10)/v.total)) : 100;
+  const sc = score>=80?'#22c55e':score>=60?'#f5c300':'#ef4444';
+
+  tt.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:13px;font-weight:800;color:#f1f5f9">${nome}</div>
+      <div style="font-size:12px;font-weight:800;color:${sc}">Score ${score}</div>
+    </div>
+    <div style="font-size:10px;color:#475569;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,.08)">${v.total} projeto${v.total===1?'':'s'} ativos</div>
+    <div style="max-height:200px;overflow-y:auto;padding-right:2px">${projRows}</div>`;
+
+  tt.style.display = 'block';
+  tt.style.opacity = '0';
+  tt.style.transition = 'opacity .13s';
+  requestAnimationFrame(()=>{
+    const tw=tt.offsetWidth, th=tt.offsetHeight;
+    let x=e.clientX+14, y=e.clientY-10;
+    if(x+tw > window.innerWidth-8) x=e.clientX-tw-14;
+    if(y+th > window.innerHeight-8) y=window.innerHeight-th-8;
+    if(y<8) y=8;
+    tt.style.left=x+'px';
+    tt.style.top=y+'px';
+    tt.style.opacity='1';
+  });
+}
+function __gerPmoLeave(){
+  _gerTtTimer = setTimeout(()=>{
+    const tt=document.getElementById('ger-pmo-tt');
+    if(tt){ tt.style.opacity='0'; setTimeout(()=>{ if(tt) tt.style.display='none'; },130); }
+  },70);
+}
+
+// ── Helpers ────────────────────────────────────────────────
+function semaforo(p){
+  const st = calcStatus(p);
+  if(st==='Concluído')    return {cls:'s-cinza',    icon:'✓'};
+  if(st==='Não Iniciado') return {cls:'s-cinza',    icon:'○'};
+  if(st==='Standby')      return {cls:'s-cinza',    icon:'⏸'};
+  if(st==='Crítico')      return {cls:'s-vermelho', icon:'🔥'};
+  if(st==='Atrasado')     return {cls:'s-vermelho', icon:'🔴'};
+  if(st==='Bloqueado')    return {cls:'s-laranja',  icon:'🔒'};
+  if(st==='Aguardando')   return {cls:'s-amarelo',  icon:'⏳'};
+  const r = calcRisco(p);
+  if(r==='alto')  return {cls:'s-vermelho', icon:'🔴'};
+  if(r==='medio') return {cls:'s-amarelo',  icon:'🟡'};
+  return              {cls:'s-verde',   icon:'🟢'};
+}
+
+// ── Funções legadas (mantidas para compatibilidade, não chamadas) ──
+function renderFarol(el){
+  const ativos     = PROJETOS.filter(p=>{ const s=calcStatus(p); return s!=='Concluído'&&s!=='Não Iniciado'&&s!=='Standby'; });
+  const concluidos = PROJETOS.filter(p=>calcStatus(p)==='Concluído');
+  const atrasados  = PROJETOS.filter(p=>calcStatus(p)==='Atrasado');
+  const criticos   = PROJETOS.filter(p=>isCritico(p));
+  const health     = calcPortfolioHealth();
+  const hColor     = health>=70?'#22c55e':health>=45?'#f5c300':'#ef4444';
+
+  // KPI strip
+  const kpiHtml = `
+  <div class="kpi-strip">
+    <div class="kpi-card blue">
+      <div class="kpi-v" style="color:var(--blue)">${ativos.length}</div>
+      <div class="kpi-l">Ativos</div>
+      <div class="kpi-sub">${PROJETOS.length} total no portfólio</div>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-v" style="color:var(--green)">${concluidos.length}</div>
+      <div class="kpi-l">Concluídos</div>
+      <div class="kpi-sub">${PROJETOS.length>0?Math.round(concluidos.length/PROJETOS.length*100):0}% do portfólio</div>
+    </div>
+    <div class="kpi-card red">
+      <div class="kpi-v" style="color:var(--red)">${atrasados.length}</div>
+      <div class="kpi-l">Atrasados</div>
+      <div class="kpi-sub">${ativos.length>0?Math.round(atrasados.length/Math.max(ativos.length,1)*100):0}% dos ativos</div>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-v" style="color:var(--amber)">${criticos.length}</div>
+      <div class="kpi-l">Críticos</div>
+      <div class="kpi-sub">${criticos.filter(p=>p.bloqueador).length} com bloqueio</div>
+    </div>
+    <div class="kpi-card brand">
+      <div class="kpi-v" style="color:${hColor}">${health}</div>
+      <div class="kpi-l">Health Score</div>
+      <div class="kpi-sub" style="color:${hColor}">${health>=70?'Portfólio saudável':health>=45?'Atenção necessária':'Em risco'}</div>
+    </div>
+  </div>`;
+
+  // Portfolio composition strip
+  const total = PROJETOS.length || 1;
+  const nAtiv  = ativos.filter(p=>calcStatus(p)==='Em andamento').length;
+  const nAtras = atrasados.length;
+  const nBloq  = PROJETOS.filter(p=>calcStatus(p)==='Bloqueado').length;
+  const nConc  = concluidos.length;
+  const nOther = Math.max(0, total - nAtiv - nAtras - nBloq - nConc);
+  const pct = n => (n/total*100).toFixed(1);
+  const stripHtml = `
+  <div style="margin-bottom:16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Composição do Portfólio</span>
+      <span style="font-size:12px;font-weight:700;color:${hColor}">Health ${health}/100</span>
+    </div>
+    <div style="display:flex;height:12px;border-radius:6px;overflow:hidden;gap:2px">
+      ${nConc  ? `<div style="flex:${nConc};background:#22c55e;border-radius:3px;transition:flex .6s" title="${nConc} concluídos"></div>` : ''}
+      ${nAtiv  ? `<div style="flex:${nAtiv};background:#3b82f6;border-radius:3px;transition:flex .6s" title="${nAtiv} em andamento"></div>` : ''}
+      ${nOther ? `<div style="flex:${nOther};background:#64748b;border-radius:3px;transition:flex .6s" title="${nOther} outros"></div>` : ''}
+      ${nAtras ? `<div style="flex:${nAtras};background:#f59e0b;border-radius:3px;transition:flex .6s" title="${nAtras} atrasados"></div>` : ''}
+      ${nBloq  ? `<div style="flex:${nBloq};background:#f97316;border-radius:3px;transition:flex .6s" title="${nBloq} bloqueados"></div>` : ''}
+      ${criticos.length ? `<div style="flex:${criticos.length};background:#ef4444;border-radius:3px;transition:flex .6s;animation:pulse-red 2s infinite" title="${criticos.length} críticos"></div>` : ''}
+    </div>
+    <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap">
+      ${nConc  ? `<span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#22c55e;display:inline-block"></span>${nConc} Concluídos</span>` : ''}
+      ${nAtiv  ? `<span style="font-size:10px;color:var(--muted);display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#3b82f6;display:inline-block"></span>${nAtiv} Em andamento</span>` : ''}
+      ${nAtras ? `<span style="font-size:10px;color:#f59e0b;font-weight:700;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#f59e0b;display:inline-block"></span>${nAtras} Atrasados</span>` : ''}
+      ${nBloq  ? `<span style="font-size:10px;color:#f97316;font-weight:700;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#f97316;display:inline-block"></span>${nBloq} Bloqueados</span>` : ''}
+      ${criticos.length ? `<span style="font-size:10px;color:#ef4444;font-weight:700;display:flex;align-items:center;gap:4px"><span style="width:8px;height:8px;border-radius:2px;background:#ef4444;display:inline-block"></span>${criticos.length} Críticos</span>` : ''}
+    </div>
+  </div>`;
+
+  // Sort: críticos primeiro, depois por risco, depois por prazo
+  const sorted = [...PROJETOS].sort((a,b)=>{
+    const order = {alto:0, medio:1, baixo:2};
+    const ra = calcRisco(a), rb = calcRisco(b);
+    if(order[ra]!==order[rb]) return order[ra]-order[rb];
+    const fa = getFimEfetivo(a)||a.fim||'9999';
+    const fb = getFimEfetivo(b)||b.fim||'9999';
+    return fa.localeCompare(fb);
+  });
+
+  const rows = sorted.map(p=>{
+    const st   = calcStatus(p);
+    const sm   = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const r    = calcRisco(p);
+    const rm   = RISCO_MAP[r];
+    const sema = semaforo(p);
+    const prog = calcProgresso(p);
+    const fe   = getFimEfetivo(p)||p.fim;
+    const dias = fe ? Math.round((new Date(fe)-HOJE)/86400000) : null;
+    const dc   = dias===null?'var(--muted)':dias<0?'#ef4444':dias<=30?'#f5c300':'var(--muted2)';
+    const dp   = calcDiasParadoAuto(p);
+    const dpCls= dp>=15?'dp-crit':dp>=7?'dp-warn':'dp-ok';
+    const isCrit  = isCritico(p);
+    const isBloq  = st==='Bloqueado';
+    // Velocidade: % de atividades concluídas
+    const pAtivs = ATIVIDADES.filter(a=>a.projeto===p.nome);
+    const veloc  = pAtivs.length ? Math.round(pAtivs.filter(a=>a.status==='Concluído').length/pAtivs.length*100) : null;
+    const velocColor = veloc===null?'var(--muted)':veloc>=70?'#22c55e':veloc>=35?'#3b82f6':'#f59e0b';
+    // Último update relativo
+    let lastUpd='—';
+    pAtivs.forEach(a=>(a.comentarios||[]).forEach(c=>{if(!lastUpd||c.dataISO>lastUpd)lastUpd=c.dataISO;}));
+    const lastUpdRel = lastUpd==='—'?'—':formatRelativeDate(lastUpd);
+    const isAtras = st==='Atrasado';
+    const rowCls = isBloq?'bloqueado-row':isCrit?'critico-row':isAtras?'atrasado-row':'';
+    return `<tr class="${rowCls}" onclick="location.href='projetos.html?p=${encodeURIComponent(p.nome)}'" title="Abrir ${p.nome}">
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="semaforo ${sema.cls}">${sema.icon}</div>
+          <div>
+            <div style="font-weight:700;font-size:13px">${escHtml(p.nome)}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:1px">${isBloq&&p.bloqueador?`<span style="color:#f97316">🔒 ${escHtml(p.bloqueador.split(';')[0])}</span>`:escHtml(p.local||'—')}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="status-pill" style="background:${sm.bg};color:${sm.color}">${sm.icon} ${sm.label}</span></td>
+      <td>
+        <div class="prog-bar-wrap">
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${prog}%;background:${prog>=70?'var(--green)':prog>=35?'var(--blue)':'var(--amber)'}"></div></div>
+          <span class="prog-pct">${prog}%</span>
+        </div>
+      </td>
+      <td>
+        ${veloc!==null?`<div style="display:flex;align-items:center;gap:5px">
+          <div style="width:40px;height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="height:100%;width:${veloc}%;background:${velocColor};border-radius:2px"></div></div>
+          <span style="font-size:11px;font-weight:700;color:${velocColor}">${veloc}%</span>
+        </div>`:'<span style="color:var(--muted);font-size:11px">—</span>'}
+      </td>
+      <td><span class="risk-dot" style="color:${rm.color}">${rm.dot} ${rm.label}</span></td>
+      <td style="font-size:12px;color:var(--muted2)">${escHtml(p.pmo||'—')}</td>
+      <td style="color:${dc};font-weight:600;font-size:12px">${dias===null?'—':diasLabel(dias)}</td>
+      <td><span class="dias-parado ${dpCls}" title="Sem update">${dp>0?dp+'d':'—'}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${lastUpdRel}</td>
+    </tr>`;
+  }).join('');
+
+  // Build feed
+  const allAtivs = ATIVIDADES.filter(a=>ativos.find(p=>p.nome===a.projeto));
+  const feedItems=[];
+  allAtivs.forEach(a=>{
+    (a.comentarios||[]).forEach(c=>{
+      const sm=STATUS_MAP[c.status]||STATUS_MAP['Em andamento'];
+      feedItems.push({icon:sm.icon,proj:a.projeto,text:a.nome,body:c.texto||a.nome,author:c.autor||'—',
+        time:c.dataISO?formatRelativeDate(c.dataISO):'',ts:c.dataISO||'',statusColor:sm.color});
+    });
+  });
+  PROJETOS.filter(p=>p.bloqueador&&p.bloqueador.trim()&&calcStatus(p)!=='Concluído'&&calcStatus(p)!=='Standby')
+    .forEach(p=>feedItems.push({icon:'🔒',proj:p.nome,text:'Bloqueio: '+p.bloqueador,author:'Sistema',time:'Ativo',ts:'9999'}));
+  feedItems.sort((a,b)=>b.ts.localeCompare(a.ts));
+
+  el.innerHTML = kpiHtml + stripHtml + `
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start">
+    <div class="card">
+      <div class="card-title">
+        <span style="display:flex;align-items:center;gap:8px">🚦 Farol de Projetos
+          <span style="font-size:11px;color:var(--muted);font-weight:400">${sorted.length} projeto${sorted.length!==1?'s':''} · ordenados por criticidade</span>
+        </span>
+        <span class="card-title-badge">executivo</span>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="farol-table">
+          <thead>
+            <tr>
+              <th style="min-width:200px">Projeto</th>
+              <th>Status</th>
+              <th style="min-width:140px">Progresso</th>
+              <th>Velocidade</th>
+              <th>Risco</th>
+              <th>PMO</th>
+              <th>Go Live</th>
+              <th>Sem Update</th>
+              <th>Última Mov.</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;padding:12px 4px 2px;border-top:1px solid var(--border);margin-top:4px">
+        <span style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.5px;align-self:center;margin-right:4px">Legenda:</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><span class="semaforo s-vermelho" style="width:22px;height:22px;font-size:12px;border-radius:6px">🔴</span>Atrasado / Alto Risco</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><span class="semaforo s-vermelho" style="width:22px;height:22px;font-size:12px;border-radius:6px">🔥</span>Crítico</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><span class="semaforo s-laranja" style="width:22px;height:22px;font-size:12px;border-radius:6px">🔒</span>Bloqueado</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><span class="semaforo s-amarelo" style="width:22px;height:22px;font-size:12px;border-radius:6px">🟡</span>Risco Médio</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><span class="semaforo s-amarelo" style="width:22px;height:22px;font-size:12px;border-radius:6px">⏳</span>Aguardando</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><span class="semaforo s-verde" style="width:22px;height:22px;font-size:12px;border-radius:6px">🟢</span>No prazo</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><span class="semaforo s-cinza" style="width:22px;height:22px;font-size:12px;border-radius:6px">✓</span>Concluído / Standby</span>
+      </div>
+    </div>
+    <div class="card" style="height:fit-content">
+      <div class="card-title"><span>Feed de Atividades<span style="display:inline-block;width:7px;height:7px;background:#22c55e;border-radius:50%;margin-left:6px;animation:pulse 2s infinite"></span></span><a href="projetos.html" style="font-size:11px;color:var(--brand);text-transform:none;letter-spacing:0;font-weight:600">ver hub →</a></div>
+      <div style="display:flex;flex-direction:column;gap:6px;max-height:440px;overflow-y:auto">
+        ${feedItems.slice(0,20).map(f=>`
+          <div style="display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;border-radius:6px;padding-left:6px;padding-right:6px" onmouseenter="this.style.background='var(--surface)'" onmouseleave="this.style.background=''" onclick="openProjPopup('${esc(f.proj)}')">
+            <div style="font-size:15px;flex-shrink:0;margin-top:2px">${f.icon}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:11px;font-weight:700;color:var(--brand);margin-bottom:2px">${escHtml(f.proj)}</div>
+              <div style="font-size:12px;color:var(--text);line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(f.text)}</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-top:3px">
+                <span style="font-size:10px;color:var(--muted)">${escHtml(f.author)}</span>
+                <span style="font-size:10px;color:var(--muted);font-weight:500">${f.time}</span>
+              </div>
+            </div>
+          </div>`).join('')||'<div style="text-align:center;padding:28px;color:var(--muted);font-size:12px">Nenhuma atividade registrada</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── Arena PMO ──────────────────────────────────────────────
+function renderArena(el){
+  const wl  = calcWorkload();
+  const pmos = Object.entries(wl).sort((a,b)=>b[1].total-a[1].total);
+
+  if(!pmos.length){
+    el.innerHTML = `<div class="card" style="text-align:center;padding:48px;color:var(--muted)">Nenhum dado disponível</div>`;
+    return;
+  }
+
+  const rows = pmos.map(([nome, v]) => {
+    const anda   = v.projetos.filter(p=>calcStatus(p)==='Em andamento').length;
+    const atras  = v.projetos.filter(p=>calcStatus(p)==='Atrasado').length;
+    const bloq   = v.projetos.filter(p=>calcStatus(p)==='Bloqueado').length;
+    const outros = Math.max(0, v.total - anda - atras - bloq);
+    const pAnda  = v.total ? (anda /v.total*100) : 0;
+    const pAtras = v.total ? (atras/v.total*100) : 0;
+    const pBloq  = v.total ? (bloq /v.total*100) : 0;
+    const pOutros= Math.max(0, 100 - pAnda - pAtras - pBloq);
+    const score  = v.total ? Math.max(0, Math.round(100 - (atras*25 + bloq*15 + v.criticos*10)/v.total)) : 100;
+    const sColor = score>=80?'#22c55e':score>=60?'#f5c300':'#ef4444';
+    return `
+    <div class="arena-row">
+      <div class="arena-header">
+        <div>
+          <div class="arena-name">${nome}</div>
+          <div class="pmo-score">Score <span style="color:${sColor};font-weight:700">${score}</span> · ${v.total} projeto${v.total!==1?'s':''} ativo${v.total!==1?'s':''}</div>
+        </div>
+        <div class="arena-stats">
+          ${v.criticos  ? `<span class="arena-badge-item" style="background:rgba(239,68,68,.1);color:#ef4444">⚠ ${v.criticos} crítico${v.criticos!==1?'s':''}</span>` : ''}
+          ${bloq        ? `<span class="arena-badge-item" style="background:rgba(249,115,22,.1);color:#f97316">🔒 ${bloq} bloqueado${bloq!==1?'s':''}</span>` : ''}
+          ${atras       ? `<span class="arena-badge-item" style="background:rgba(239,68,68,.07);color:#ef4444">⏰ ${atras} atrasado${atras!==1?'s':''}</span>` : ''}
+        </div>
+      </div>
+      <div class="arena-track">
+        ${anda   ? `<div class="arena-seg" style="width:${pAnda.toFixed(1)}%;background:#3b82f6">${anda}</div>` : ''}
+        ${bloq   ? `<div class="arena-seg" style="width:${pBloq.toFixed(1)}%;background:#f97316">${bloq}</div>` : ''}
+        ${atras  ? `<div class="arena-seg" style="width:${pAtras.toFixed(1)}%;background:#ef4444">${atras}</div>` : ''}
+        ${outros > 0 ? `<div class="arena-seg" style="width:${pOutros.toFixed(1)}%;background:#22c55e;color:rgba(255,255,255,.8)">${outros}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title">
+      📊 Carga por Gestor — Comparativo de Projetos
+      <span class="card-title-badge">V16 exclusivo</span>
+    </div>
+    <div class="arena-legend">
+      <div class="arena-legend-item"><div class="arena-legend-dot" style="background:#3b82f6"></div>Em andamento</div>
+      <div class="arena-legend-item"><div class="arena-legend-dot" style="background:#f97316"></div>Bloqueado</div>
+      <div class="arena-legend-item"><div class="arena-legend-dot" style="background:#ef4444"></div>Atrasado</div>
+      <div class="arena-legend-item"><div class="arena-legend-dot" style="background:#22c55e"></div>Outros ativos</div>
+    </div>
+  </div>
+  <div class="card">${rows}</div>`;
+}
+
+// ── Calendário Go Live (Heatmap) ───────────────────────────
+function renderHeatmap(el){
+  const meses  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const ativos = PROJETOS.filter(p=>{ const s=calcStatus(p); return s!=='Concluído'&&s!=='Standby'; });
+  const anos   = [];
+  ativos.forEach(p=>{
+    const fe = getFimEfetivo(p)||p.fim;
+    if(!fe) return;
+    const y = parseInt(fe.split('-')[0]);
+    if(!anos.includes(y)) anos.push(y);
+  });
+  if(!anos.length) anos.push(HOJE.getFullYear());
+  anos.sort();
+
+  const getCellProjects = (y,m) =>
+    ativos.filter(p=>{ const fe=getFimEfetivo(p)||p.fim; return fe&&parseInt(fe.split('-')[0])===y&&parseInt(fe.split('-')[1])-1===m; });
+
+  const maxCount = Math.max(...anos.flatMap(y=>meses.map((_,m)=>getCellProjects(y,m).length)), 1);
+
+  const headerCols = `grid-template-columns:60px repeat(12,1fr)`;
+  const monthsHeader = `
+    <div class="months-header" style="${headerCols}">
+      <div></div>
+      ${meses.map(m=>`<div class="month-lbl">${m}</div>`).join('')}
+    </div>`;
+
+  const heatRows = anos.map(y=>`
+    <div class="heatmap-row" style="${headerCols}">
+      <div class="heatmap-label">${y}</div>
+      ${meses.map((_,m)=>{
+        const ps    = getCellProjects(y,m);
+        const count = ps.length;
+        const alpha = count ? 0.25 + (count/maxCount)*0.7 : 0.04;
+        const color = count>=4?'#ef4444':count>=2?'#f5c300':'#22c55e';
+        const isNow = y===HOJE.getFullYear()&&m===HOJE.getMonth();
+        const tip   = count ? ps.map(p=>p.nome).join(', ') : 'Sem Go Live';
+        return `<div class="heatmap-cell"
+          style="background:${count?color:'var(--border)'};opacity:${count?alpha+0.1:0.25};${isNow?'outline:2px solid var(--brand);outline-offset:1px':''}"
+          data-tip="${count} projeto${count!==1?'s':''}: ${tip}">${count||''}</div>`;
+      }).join('')}
+    </div>`).join('');
+
+  // Próximos Go Live table
+  const upcoming = ativos
+    .filter(p=>getFimEfetivo(p)||p.fim)
+    .sort((a,b)=>new Date(getFimEfetivo(a)||a.fim)-new Date(getFimEfetivo(b)||b.fim))
+    .slice(0,20);
+
+  const tableRows = upcoming.map(p=>{
+    const fe  = getFimEfetivo(p)||p.fim;
+    const dias= Math.round((new Date(fe)-HOJE)/86400000);
+    const dc  = dias<0?'#ef4444':dias<=30?'#f5c300':'var(--muted2)';
+    const r   = calcRisco(p);
+    const rm  = RISCO_MAP[r];
+    const st  = calcStatus(p);
+    const sm  = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    return `<tr onclick="location.href='projetos.html?p=${encodeURIComponent(p.nome)}'">
+      <td style="font-weight:700">${p.nome}</td>
+      <td style="color:var(--muted)">${p.pmo||'—'}</td>
+      <td><span class="status-pill" style="background:${sm.bg};color:${sm.color};font-size:10px">${sm.icon} ${sm.label}</span></td>
+      <td style="font-weight:600">${formatDate(fe)}</td>
+      <td style="color:${dc};font-weight:700">${diasLabel(dias)}</td>
+      <td><span style="color:${rm.color};font-weight:600">${rm.dot} ${rm.label}</span></td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+  <div class="card" style="margin-bottom:20px">
+    <div class="card-title">
+      📅 Mapa de Calor — Go Live por Mês
+      <span class="card-title-badge">V16 exclusivo</span>
+    </div>
+    <div class="heatmap-grid">${monthsHeader}${heatRows}</div>
+    <div class="heatmap-legend">
+      <span style="font-size:11px;color:var(--muted)">Intensidade:</span>
+      ${[1,2,3,4].map(n=>`<div class="hm-swatch" style="background:${n>=4?'#ef4444':n>=2?'#f5c300':'#22c55e'};opacity:${0.25+n/4*0.7}"></div>`).join('')}
+      <span style="font-size:11px;color:var(--muted)">1 → 4+ projetos</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Próximos Go Live <span style="font-size:11px;font-weight:400;color:var(--muted)">${upcoming.length} projetos</span></div>
+    <div style="overflow-x:auto">
+      <table class="gtable">
+        <thead><tr><th>Projeto</th><th>PMO</th><th>Status</th><th>Data Go Live</th><th>Prazo</th><th>Risco</th></tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ── Tabela Completa ────────────────────────────────────────
+function renderTabela(el){
+  const sorted = [...PROJETOS].sort((a,b)=>{
+    const ord = {alto:0, medio:1, baixo:2};
+    return ord[calcRisco(a)]-ord[calcRisco(b)];
+  });
+
+  const rows = sorted.map(p=>{
+    const st   = calcStatus(p);
+    const sm   = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const r    = calcRisco(p);
+    const rm   = RISCO_MAP[r];
+    const prog = calcProgresso(p);
+    const fe   = getFimEfetivo(p)||p.fim;
+    const dias = fe ? Math.round((new Date(fe)-HOJE)/86400000) : null;
+    const dc   = dias===null?'var(--muted)':dias<0?'#ef4444':dias<=30?'#f5c300':'var(--muted2)';
+    const dp   = calcDiasParadoAuto(p);
+    const dpCls= dp>=15?'dp-crit':dp>=7?'dp-warn':'dp-ok';
+    // Velocidade
+    const pAtivs = ATIVIDADES.filter(a=>a.projeto===p.nome);
+    const veloc  = pAtivs.length ? Math.round(pAtivs.filter(a=>a.status==='Concluído').length/pAtivs.length*100) : null;
+    const vColor = veloc===null?'var(--muted)':veloc>=70?'#22c55e':veloc>=35?'#3b82f6':'#f59e0b';
+    // Área
+    const sq = SQUADS.find(s=>s.id===p.squad);
+    const areaTag = sq ? `<span style="font-size:10px;font-weight:700;background:${sq.cor}18;color:${sq.cor};border:1px solid ${sq.cor}30;padding:2px 8px;border-radius:8px">${sq.icone} ${sq.nome}</span>` : '<span style="color:var(--muted);font-size:11px">—</span>';
+    const isBloqT = st==='Bloqueado';
+    return `<tr onclick="location.href='projetos.html?p=${encodeURIComponent(p.nome)}'" style="${isBloqT?'background:rgba(249,115,22,.03)':''}">
+      <td>
+        <div style="font-weight:700;font-size:13px">${escHtml(p.nome)}</div>
+        ${isBloqT&&p.bloqueador?`<div style="font-size:10px;color:#f97316;margin-top:2px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">🔒 ${escHtml(p.bloqueador.split(';')[0])}</div>`:''}
+      </td>
+      <td style="font-size:11px;color:var(--muted)">${escHtml(p.local||'—')}</td>
+      <td>${areaTag}</td>
+      <td><span class="status-pill" style="background:${sm.bg};color:${sm.color}">${sm.icon} ${sm.label}</span></td>
+      <td>
+        <div class="prog-bar-wrap">
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${prog}%;background:${sm.color}"></div></div>
+          <span class="prog-pct">${prog}%</span>
+        </div>
+      </td>
+      <td>
+        ${veloc!==null?`<div style="display:flex;align-items:center;gap:5px">
+          <div style="width:36px;height:4px;background:var(--border);border-radius:2px;overflow:hidden"><div style="height:100%;width:${veloc}%;background:${vColor};border-radius:2px"></div></div>
+          <span style="font-size:11px;font-weight:700;color:${vColor}">${veloc}%</span>
+        </div>`:'<span style="color:var(--muted);font-size:11px">—</span>'}
+      </td>
+      <td><span style="color:${rm.color};font-weight:600">${rm.dot} ${rm.label}</span></td>
+      <td style="color:var(--muted2)">${escHtml(p.pmo||'—')}</td>
+      <td style="color:var(--muted2)">${escHtml(p.resp||'—')}</td>
+      <td style="font-size:11px;color:var(--muted)">${formatDate(p.inicio)||'—'}</td>
+      <td style="color:${dc};font-weight:600">${dias===null?'—':diasLabel(dias)}</td>
+      <td><span class="dias-parado ${dpCls}">${dp>0?dp+'d':'—'}</span></td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML = `
+  <div class="card">
+    <div class="card-title">
+      Portfólio Completo
+      <span style="font-size:11px;font-weight:400;color:var(--muted)">${sorted.length} projeto${sorted.length!==1?'s':''} · ordenado por risco</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="gtable">
+        <thead><tr><th>Projeto</th><th>Local</th><th>Área</th><th>Status</th><th style="min-width:120px">Progresso</th><th>Velocidade</th><th>Risco</th><th>PMO</th><th>Responsável</th><th>Início</th><th>Go Live</th><th>Sem Update</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+// ── Insights V16 ──────────────────────────────────────────
+function renderInsights(el){
+  const ativos     = PROJETOS.filter(p=>{ const s=calcStatus(p); return s!=='Concluído'&&s!=='Não Iniciado'&&s!=='Standby'; });
+  const concluidos = PROJETOS.filter(p=>calcStatus(p)==='Concluído');
+  const criticos   = ativos.filter(p=>isCritico(p));
+  const bloqueados = ativos.filter(p=>calcStatus(p)==='Bloqueado');
+  const atrasados  = ativos.filter(p=>calcStatus(p)==='Atrasado');
+  const health     = calcPortfolioHealth();
+
+  // PMO analysis
+  const wl = calcWorkload();
+  const pmoData = Object.entries(wl).map(([nome, v])=>{
+    const pAtras = v.projetos.filter(p=>calcStatus(p)==='Atrasado').length;
+    const pBloq  = v.projetos.filter(p=>calcStatus(p)==='Bloqueado').length;
+    const pCrit  = v.criticos;
+    const score  = v.total ? Math.max(0, Math.round(100 - (pAtras*25 + pBloq*15 + pCrit*10)/v.total)) : 100;
+    return {nome, total:v.total, atrasados:pAtras, bloqueados:pBloq, criticos:pCrit, score, projetos:v.projetos};
+  }).sort((a,b)=>a.score-b.score);
+
+  // Auto-generated insights
+  const insights = [];
+
+  // Health overall
+  if(health>=75) insights.push({type:'positivo', icon:'✅', titulo:'Portfólio Saudável', msg:`Health Score de <strong>${health}</strong> indica portfólio em boa saúde. Manter monitoramento regular.`});
+  else if(health>=50) insights.push({type:'atencao', icon:'⚠️', titulo:'Portfólio Requer Atenção', msg:`Health Score de <strong>${health}</strong>. Existem pontos de atenção que precisam de acompanhamento próximo.`});
+  else insights.push({type:'critico', icon:'🔥', titulo:'Portfólio em Risco', msg:`Health Score de <strong>${health}</strong> indica situação crítica. Intervenção imediata recomendada nos projetos críticos.`});
+
+  // Atrasados
+  if(atrasados.length>0){
+    const taxa = Math.round(atrasados.length/ativos.length*100);
+    insights.push({type:'critico', icon:'⏰', titulo:`${atrasados.length} Projeto${atrasados.length!==1?'s':''} Atrasado${atrasados.length!==1?'s':''}`,
+      msg:`<strong>${taxa}%</strong> dos projetos ativos está fora do prazo. Projetos: ${atrasados.slice(0,4).map(p=>`<span style="font-weight:700;color:#ef4444">${p.nome}</span>`).join(', ')}${atrasados.length>4?` +${atrasados.length-4} outros`:''}.`});
+  }
+
+  // Bloqueados
+  if(bloqueados.length>0){
+    insights.push({type:'critico', icon:'🔒', titulo:`${bloqueados.length} Bloqueio${bloqueados.length!==1?'s':''} Ativo${bloqueados.length!==1?'s':''}`,
+      msg:`Projetos bloqueados exigem ação imediata: ${bloqueados.map(p=>`<span style="font-weight:700">${p.nome}</span>`).join(', ')}.`});
+  }
+
+  // PMO com pior score
+  if(pmoData.length>0 && pmoData[0].score<70){
+    const worst = pmoData[0];
+    insights.push({type:'atencao', icon:'👤', titulo:`${worst.nome} — PMO em Atenção`,
+      msg:`Score <strong>${worst.score}</strong> com ${worst.total} projetos: ${worst.atrasados} atrasado${worst.atrasados!==1?'s':''}, ${worst.bloqueados} bloqueado${worst.bloqueados!==1?'s':''}, ${worst.criticos} crítico${worst.criticos!==1?'s':''}.`});
+  }
+
+  // PMO com melhor score
+  const best = [...pmoData].sort((a,b)=>b.score-a.score)[0];
+  if(best && best.score>=80 && best.total>=2){
+    insights.push({type:'positivo', icon:'🏆', titulo:`${best.nome} — Melhor Performance`,
+      msg:`Score <strong>${best.score}</strong> com ${best.total} projetos gerenciados. Referência de boas práticas no portfólio.`});
+  }
+
+  // Go Lives próximos
+  const goLivesUrgentes = ativos.filter(p=>{ const fe=getFimEfetivo(p)||p.fim; if(!fe)return false; const d=Math.round((new Date(fe)-HOJE)/86400000); return d>=0&&d<=14; });
+  if(goLivesUrgentes.length>0){
+    insights.push({type:'atencao', icon:'🚀', titulo:`${goLivesUrgentes.length} Go Live${goLivesUrgentes.length!==1?'s':''} em 14 dias`,
+      msg:`Entregas iminentes: ${goLivesUrgentes.map(p=>`<span style="font-weight:700">${p.nome}</span>`).join(', ')}. Verificar prontidão e dependências.`});
+  }
+
+  // Taxa de conclusão
+  const taxaConc = PROJETOS.length>0 ? Math.round(concluidos.length/PROJETOS.length*100) : 0;
+  if(taxaConc>=50) insights.push({type:'positivo', icon:'📊', titulo:`${taxaConc}% do Portfólio Concluído`,
+    msg:`${concluidos.length} de ${PROJETOS.length} projetos entregues. Time demonstra consistência na finalização de projetos.`});
+
+  const insightColors = {
+    positivo:{border:'rgba(34,197,94,.3)',bg:'rgba(34,197,94,.07)',icon:'#22c55e'},
+    atencao: {border:'rgba(245,195,0,.3)', bg:'rgba(245,195,0,.07)', icon:'#f5c300'},
+    critico: {border:'rgba(239,68,68,.3)', bg:'rgba(239,68,68,.07)', icon:'#ef4444'},
+  };
+
+  const insightsHtml = insights.map(ins=>{
+    const c = insightColors[ins.type]||insightColors.atencao;
+    return `<div style="background:${c.bg};border:1px solid ${c.border};border-radius:var(--radius-sm);padding:16px 18px;display:flex;gap:14px;align-items:flex-start;transition:transform .15s" onmouseenter="this.style.transform='translateX(3px)'" onmouseleave="this.style.transform=''">
+      <div style="font-size:22px;flex-shrink:0;margin-top:1px">${ins.icon}</div>
+      <div>
+        <div style="font-size:13px;font-weight:700;margin-bottom:4px;color:var(--text)">${ins.titulo}</div>
+        <div style="font-size:12px;color:var(--muted2);line-height:1.5">${ins.msg}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // PMO Score Cards
+  const pmoCards = pmoData.map(p=>{
+    const sc = p.score;
+    const scColor = sc>=80?'#22c55e':sc>=60?'#f5c300':'#ef4444';
+    const barW = sc;
+    return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="font-weight:700;font-size:13px">${p.nome}</div>
+        <div style="font-size:20px;font-weight:800;color:${scColor}">${sc}</div>
+      </div>
+      <div style="background:var(--border);border-radius:4px;height:6px;margin-bottom:10px;overflow:hidden">
+        <div style="height:100%;width:${barW}%;background:${scColor};border-radius:4px;transition:width 1s ease"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;text-align:center">
+        <div style="font-size:11px;color:var(--muted)">Ativos<div style="font-weight:700;color:var(--text);font-size:14px">${p.total}</div></div>
+        <div style="font-size:11px;color:var(--muted)">Atrasados<div style="font-weight:700;color:${p.atrasados>0?'#ef4444':'var(--text)'};font-size:14px">${p.atrasados}</div></div>
+        <div style="font-size:11px;color:var(--muted)">Bloqueados<div style="font-weight:700;color:${p.bloqueados>0?'#f97316':'var(--text)'};font-size:14px">${p.bloqueados}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Distribution donut-like bar
+  const total = ativos.length || 1;
+  const pAndando = ativos.filter(p=>calcStatus(p)==='Em andamento').length;
+  const pAguard  = ativos.filter(p=>calcStatus(p)==='Aguardando').length;
+  const pAtras2  = atrasados.length;
+  const pBloq2   = bloqueados.length;
+  const pOutros  = Math.max(0, total - pAndando - pAguard - pAtras2 - pBloq2);
+  const segs = [
+    {count:pAndando, color:'#3b82f6', label:'Em andamento'},
+    {count:pAguard,  color:'#f59e0b', label:'Aguardando'},
+    {count:pAtras2,  color:'#ef4444', label:'Atrasado'},
+    {count:pBloq2,   color:'#f97316', label:'Bloqueado'},
+    {count:pOutros,  color:'#22c55e', label:'Outros'},
+  ].filter(s=>s.count>0);
+
+  const distBar = segs.map(s=>`<div style="height:100%;width:${(s.count/total*100).toFixed(1)}%;background:${s.color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:rgba(255,255,255,.9);min-width:${s.count>0?'20px':'0'}">${s.count}</div>`).join('');
+  const distLegend = segs.map(s=>`<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted2)"><div style="width:10px;height:10px;border-radius:3px;background:${s.color}"></div>${s.label} <strong style="color:var(--text)">${s.count}</strong></div>`).join('');
+
+  el.innerHTML = `
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+    <div class="card">
+      <div class="card-title">🎯 Distribuição de Status — Ativos
+        <span class="card-title-badge">V16 insights</span>
+      </div>
+      <div style="background:var(--border);border-radius:8px;height:40px;overflow:hidden;display:flex;margin-bottom:12px">${distBar}</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">${distLegend}</div>
+    </div>
+    <div class="card">
+      <div class="card-title">📊 Saúde por PMO
+        <span style="font-size:11px;font-weight:400;color:var(--muted)">score 0–100</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px">${pmoCards}</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🔍 Insights Automáticos
+      <span style="font-size:11px;font-weight:400;color:var(--muted)">${insights.length} observações geradas automaticamente</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">${insightsHtml||'<div style="text-align:center;padding:32px;color:var(--muted)">Sem insights disponíveis</div>'}</div>
+  </div>`;
+}
+
+// openFeedPopup removido — feed items agora abrem openProjPopup diretamente
+
+// ── Popup rápido de projeto ───────────────────────────────
+function openProjPopup(nome){
+  const p = PROJETOS.find(x=>x.nome===nome); if(!p) return;
+  const st  = calcStatus(p), sm = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+  const r   = calcRisco(p),  rm = RISCO_MAP[r];
+  const sema= semaforo(p);
+  const prog= calcProgresso(p);
+  const fe  = getFimEfetivo(p)||p.fim;
+  const dias= fe?Math.round((new Date(fe)-HOJE)/86400000):null;
+  const dc  = dias===null?'var(--muted)':dias<0?'#ef4444':dias<=30?'#f5c300':'var(--muted2)';
+  const dp  = calcDiasParadoAuto(p);
+  const pmoLabel = p.pmo&&p.pmo.trim()&&p.pmo.trim()!=='PMO'?p.pmo.trim():'—';
+
+  // Última comunicação
+  const hist = getHistoricoForProject ? getHistoricoForProject(p.nome) : [];
+  const lastH = hist.length ? [...hist].sort((a,b)=>(b.dataISO||'').localeCompare(a.dataISO||''))[0] : null;
+  const TIPO_ICON = {urgente:'🚨',interno:'💬',recebido:'📥',enviado:'📤',resolvido:'✅',reuniao:'📅'};
+
+  document.getElementById('pp-nome').textContent = p.nome;
+  document.getElementById('pp-status').innerHTML = `<span class="status-pill" style="background:${sm.bg};color:${sm.color}">${sm.icon} ${sm.label}</span>`;
+  document.getElementById('pp-risco').innerHTML  = `<span style="font-size:11px;font-weight:700;color:${rm.color}">${rm.dot} ${rm.label}</span>`;
+  document.getElementById('pp-local').textContent = p.local||'';
+
+  const body = document.getElementById('pp-body');
+  body.innerHTML = `
+    ${p.bloqueador?`<div style="background:rgba(249,115,22,.1);border:1px solid rgba(249,115,22,.3);border-radius:8px;padding:10px 14px;font-size:12px;color:#f97316;line-height:1.5">🔒 <strong>Bloqueio:</strong> ${escHtml(p.bloqueador)}</div>`:''}
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px">Progresso</span>
+        <span style="font-size:18px;font-weight:900;color:${prog>=70?'#22c55e':prog>=35?'#3b82f6':'#f59e0b'}">${prog}%</span>
+      </div>
+      <div style="background:rgba(255,255,255,.07);border-radius:6px;height:10px;overflow:hidden">
+        <div style="height:100%;width:${prog}%;background:${prog>=70?'linear-gradient(90deg,#22c55e,#16a34a)':prog>=35?'linear-gradient(90deg,#3b82f6,#06b6d4)':'linear-gradient(90deg,#f59e0b,#d97706)'};border-radius:6px;transition:width .6s ease"></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+      <div style="background:var(--surface);border-radius:8px;padding:10px 12px">
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">PMO/Gestor</div>
+        <div style="font-size:13px;font-weight:700">${escHtml(pmoLabel)}</div>
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:10px 12px">
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Go Live</div>
+        <div style="font-size:13px;font-weight:700;color:${dc}">${dias===null?'—':diasLabel(dias)}</div>
+        ${fe?`<div style="font-size:10px;color:var(--muted);margin-top:2px">${formatDate(fe)}</div>`:''}
+      </div>
+      <div style="background:var(--surface);border-radius:8px;padding:10px 12px">
+        <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Sem Update</div>
+        <div style="font-size:13px;font-weight:700;color:${dp>=15?'#ef4444':dp>=7?'#f59e0b':'var(--text)'}">${dp>0?dp+'d':'—'}</div>
+      </div>
+    </div>
+    ${lastH?`
+    <div>
+      <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Última Comunicação</div>
+      <div style="background:var(--surface);border-radius:8px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font-size:16px;flex-shrink:0">${TIPO_ICON[lastH.tipo]||'💬'}</span>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px">${escHtml(lastH.titulo||'')}</div>
+          ${lastH.corpo?`<div style="font-size:11px;color:var(--muted2);line-height:1.5">${escHtml(lastH.corpo.substring(0,120))}${lastH.corpo.length>120?'…':''}</div>`:''}
+          <div style="font-size:10px;color:var(--muted);margin-top:5px">${lastH.dataISO?formatRelativeDate(lastH.dataISO):''}</div>
+        </div>
+      </div>
+    </div>`:''}`;
+
+  const popup = document.getElementById('proj-popup');
+  popup.style.display='flex';
+  document.body.style.overflow='hidden';
+}
+function closeProjPopup(){
+  document.getElementById('proj-popup').style.display='none';
+  document.body.style.overflow='';
+}
+
+// ── ESC handler ───────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  // Proj popup
+  const pp = document.getElementById('proj-popup');
+  if(pp && pp.style.display !== 'none'){ closeProjPopup(); return; }
+  // Command palette
+  const cmd = document.getElementById('cmd-overlay');
+  if(cmd && cmd.classList.contains('open')){ cmd.classList.remove('open'); return; }
+});
+
+// ── Init ───────────────────────────────────────────────────
+// Popula cabeçalho de impressão
+(function(){
+  const d = new Date();
+  const el = document.getElementById('print-ger-date');
+  const ts = document.getElementById('print-ger-ts');
+  if(el) el.textContent = d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  if(ts) ts.textContent = d.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+})();
+updateAlertBadge();
+renderGerencial();
+</script>
+</body>
+</html>

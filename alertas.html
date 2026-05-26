@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alertas — Velox by Invent v16</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23F5C300'/><text x='16' y='23' text-anchor='middle' font-size='18' font-weight='900' font-family='Inter,sans-serif' fill='%230a0e19'>VX</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#F5C300;--brand-dim:rgba(245,195,0,.15);
+  --bg:#030610;--bg2:#100c2a;--surface:rgba(255,255,255,.065);
+  --surface2:rgba(255,255,255,.1);--border:rgba(255,255,255,.12);
+  --text:#f1f5f9;--muted:#64748b;--muted2:#94a3b8;
+  --sidebar-w:240px;--sidebar-collapsed:60px;
+  --radius:14px;--radius-sm:8px;
+  --green:#22c55e;--blue:#3b82f6;--red:#ef4444;--amber:#f59e0b;
+}
+[data-theme="light"]{--bg:#f1f5f9;--bg2:#e2e8f0;--surface:rgba(255,255,255,.9);--surface2:rgba(255,255,255,.7);--border:rgba(0,0,0,.08);--text:#0f172a;--muted:#64748b;--muted2:#475569;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(ellipse 120% 60% at 50% -5%,#1a1060 0%,#0a0520 35%,#030610 70%);color:var(--text);overflow:hidden}
+[data-theme="light"] body{background:#f0f4f8!important}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* Sidebar */
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;z-index:10;overflow:hidden;}
+#sidebar.collapsed{width:var(--sidebar-collapsed);min-width:var(--sidebar-collapsed)}
+.sb-header{padding:20px 16px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sb-logo{width:32px;height:32px;min-width:32px;background:linear-gradient(135deg,var(--brand),#d97706);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#0a0e19;letter-spacing:-0.5px;flex-shrink:0}
+.sb-brand{overflow:hidden;opacity:1;transition:opacity .2s;line-height:1.2}
+.sb-brand-name{font-size:15px;font-weight:900;letter-spacing:-1px;white-space:nowrap;color:var(--text)}
+.sb-brand-name .vy{color:var(--brand)}.sb-brand-name .dot{color:var(--brand)}
+.sb-brand-by{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+#sidebar.collapsed .sb-brand{opacity:0;width:0;overflow:hidden}
+#sidebar-toggle{margin-left:auto;color:var(--muted);font-size:18px;padding:4px;border-radius:6px;flex-shrink:0}
+#sidebar-toggle:hover{color:var(--text)}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius-sm);color:var(--muted2);font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap;overflow:hidden;}
+.nav-item:hover{background:var(--surface2);color:var(--text)}.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.nav-icon{font-size:18px;flex-shrink:0;width:20px;text-align:center}.nav-label{transition:opacity .2s}
+#sidebar.collapsed .nav-label{opacity:0;width:0;overflow:hidden}
+.sb-footer{padding:12px 8px;border-top:1px solid var(--border)}
+#sidebar-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm)}
+.su-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.su-info{overflow:hidden;flex:1}.su-nome{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.su-papel{font-size:10px;color:var(--muted);text-transform:capitalize}
+.su-logout{padding:4px 6px;color:var(--muted);font-size:14px;border-radius:4px;transition:color .2s}.su-logout:hover{color:var(--red)}
+#sidebar.collapsed .su-info{opacity:0;width:0;overflow:hidden}
+
+/* Main */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:16px 28px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:5;}
+.topbar-title{font-size:18px;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.btn-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);color:var(--muted2);font-size:15px;transition:all .2s;}
+.btn-icon:hover{background:var(--surface2);color:var(--text)}
+.btn-outline{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--muted2);transition:all .2s}
+.btn-outline:hover{border-color:var(--brand);color:var(--brand)}
+
+/* Stats strip */
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:16px 28px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(5,11,24,.7);backdrop-filter:blur(16px)}
+.stat-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.065) 0%,rgba(255,255,255,.022) 100%);
+  border:1px solid rgba(255,255,255,.1);border-top:1px solid rgba(255,255,255,.16);
+  border-radius:var(--radius-sm);padding:14px 18px;display:flex;align-items:center;gap:14px;
+  backdrop-filter:blur(8px);box-shadow:0 4px 16px rgba(0,0,0,.14);
+}
+.stat-icon{font-size:28px;filter:drop-shadow(0 0 8px rgba(255,255,255,.1))}
+.stat-info{flex:1}
+.stat-val{font-size:26px;font-weight:900;letter-spacing:-1px;line-height:1}
+.stat-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-top:2px}
+
+/* View container */
+.alerts-content{padding:24px 28px;flex:1}
+
+/* Triage Kanban */
+.triage-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.triage-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.triage-badge{background:var(--brand-dim);color:var(--brand);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px}
+.triage-board{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+.triage-col{
+  background:linear-gradient(180deg,rgba(255,255,255,.048) 0%,rgba(255,255,255,.016) 100%);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--radius);overflow:hidden;
+  backdrop-filter:blur(8px);box-shadow:0 4px 20px rgba(0,0,0,.18);
+}
+.triage-col-header{
+  padding:14px 16px;font-size:11px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.8px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  background:rgba(255,255,255,.02);
+}
+.triage-count{font-size:10px;padding:2px 9px;border-radius:10px;font-weight:700;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1)}
+.triage-cards{padding:10px;display:flex;flex-direction:column;gap:8px;max-height:calc(100vh - 360px);overflow-y:auto}
+
+/* Alert Card */
+.alert-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.055) 0%,rgba(255,255,255,.02) 100%);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;padding:12px 14px;transition:all .2s;
+  cursor:pointer;position:relative;overflow:hidden;
+  backdrop-filter:blur(6px);
+}
+.alert-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+/* Severity-specific card styles */
+.alert-card[data-prio="P0"]{
+  background:linear-gradient(145deg,rgba(239,68,68,.1) 0%,rgba(239,68,68,.04) 100%);
+  border-color:rgba(239,68,68,.28);
+  box-shadow:0 0 0 1px rgba(239,68,68,.08) inset;
+  animation:p0Pulse 3s infinite;
+}
+.alert-card[data-prio="P1"]{
+  background:linear-gradient(145deg,rgba(249,115,22,.08) 0%,rgba(249,115,22,.03) 100%);
+  border-color:rgba(249,115,22,.22);
+}
+.alert-card[data-prio="P2"]{
+  background:linear-gradient(145deg,rgba(245,195,0,.07) 0%,rgba(245,195,0,.02) 100%);
+  border-color:rgba(245,195,0,.18);
+}
+.alert-card-stripe{position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:0}
+.alert-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.alert-card-proj{font-size:12px;font-weight:800}
+.alert-card-type{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px}
+.alert-card-msg{font-size:12px;color:var(--muted2);line-height:1.4;margin-bottom:8px}
+.alert-card-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px}
+.alert-card-meta{font-size:10px;color:var(--muted)}
+.alert-lido-btn{font-size:10px;color:var(--muted);padding:3px 9px;border-radius:6px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);transition:all .2s}
+.alert-lido-btn:hover{border-color:rgba(34,197,94,.4);color:#4ade80;background:rgba(34,197,94,.08)}
+
+/* Project group view */
+.group-section{margin-bottom:20px}
+.group-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-sm);cursor:pointer;transition:all .2s;margin-bottom:8px;
+}
+.group-header:hover{border-color:var(--brand)}
+.group-proj-name{font-size:13px;font-weight:700}
+.group-count{font-size:11px;color:var(--muted)}
+.group-alerts{padding:0 4px}
+
+/* Filter bar */
+.filter-row{display:flex;align-items:center;gap:8px;padding:10px 28px;border-bottom:1px solid rgba(255,255,255,.07);background:rgba(5,11,24,.75);flex-wrap:wrap;backdrop-filter:blur(12px)}
+.filter-chip{
+  padding:5px 13px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;
+  border:1px solid rgba(255,255,255,.09);color:var(--muted2);transition:all .2s;
+  background:rgba(255,255,255,.04);
+}
+.filter-chip:hover{border-color:rgba(245,195,0,.35);color:var(--brand);background:rgba(245,195,0,.06)}
+.filter-chip.active{
+  background:rgba(245,195,0,.14);border-color:rgba(245,195,0,.4);
+  color:var(--brand);font-weight:700;
+  box-shadow:0 0 12px rgba(245,195,0,.12);
+}
+.view-toggle{margin-left:auto;display:flex;gap:4px}
+.view-btn{
+  width:32px;height:32px;border-radius:6px;display:flex;align-items:center;
+  justify-content:center;color:var(--muted);transition:all .2s;font-size:14px;
+  border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);
+}
+.view-btn:hover{color:var(--text);border-color:rgba(255,255,255,.14)}
+.view-btn.active{background:rgba(245,195,0,.12);color:var(--brand);border-color:rgba(245,195,0,.3);box-shadow:0 0 10px rgba(245,195,0,.1)}
+
+/* Viewer */
+.viewer-mode .edit-only{display:none!important}
+#cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:9000;display:none;align-items:flex-start;justify-content:center;padding-top:15vh}
+#cmd-overlay.open{display:flex}
+#cmd-palette{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:520px;max-width:90vw;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+#cmd-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border)}
+#cmd-icon{font-size:18px;color:var(--muted)}
+#cmd-input{flex:1;background:none;border:none;outline:none;font-size:15px;color:var(--text);font-family:'Inter',sans-serif}
+#cmd-list{max-height:360px;overflow-y:auto;padding:8px}
+.cmd-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:var(--muted2);transition:all .15s}
+.cmd-item:hover,.cmd-item.active{background:var(--brand-dim);color:var(--brand)}
+.cmd-empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fade-in{animation:slideIn .3s ease}
+@keyframes p0Pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.0)}50%{box-shadow:0 0 0 4px rgba(239,68,68,.18)}}
+.priority-badge{font-size:9px;font-weight:900;padding:1px 6px;border-radius:4px;letter-spacing:.5px}
+.btn-print{display:flex;align-items:center;gap:7px;padding:8px 16px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);border-radius:var(--radius-sm);font-size:12px;font-weight:700;color:#a78bfa;transition:all .2s}
+.btn-print:hover{background:rgba(139,92,246,.22);border-color:#a78bfa}
+/* ── Print / PDF ──────────────────────────────────────── */
+.print-header-bar{display:none}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  html,body{overflow:visible!important;height:auto!important;min-height:0!important;font-size:11px!important}
+  #sidebar,.topbar,#filter-bar,#cmd-overlay,.no-print{display:none!important}
+  .app{display:block!important;height:auto!important;overflow:visible!important}
+  #main{margin-left:0!important;padding:0!important;height:auto!important;overflow:visible!important}
+  .print-header-bar{
+    display:flex!important;justify-content:space-between;align-items:center;
+    padding:8px 28px 10px;border-bottom:2px solid var(--border);margin-bottom:12px;
+    font-size:10px;color:var(--muted);
+  }
+  .print-header-bar strong{font-size:14px;color:var(--text);font-weight:800}
+  .alerta-card{break-inside:avoid!important}
+  .alerta-card.sev-critico{border-left-color:#ef4444!important}
+  .alerta-card.sev-alto{border-left-color:#f97316!important}
+  .alerta-card.sev-medio{border-left-color:#f5c300!important}
+  .alerta-card.sev-baixo{border-left-color:#22c55e!important}
+  .badge-sev{-webkit-print-color-adjust:exact!important}
+  @page{margin:15mm 14mm;size:A4}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<nav id="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">VX</div>
+    <div class="sb-brand">
+      <div class="sb-brand-name"><span class="vy">v</span>elox<span class="dot">.</span></div>
+      <div class="sb-brand-by">by invent</div>
+    </div>
+    <button id="sidebar-toggle" title="Recolher">☰</button>
+  </div>
+  <div class="sb-nav">
+    <a class="nav-item" href="index.html">           <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
+    <a class="nav-item" href="gerencial.html">        <span class="nav-icon">⊞</span><span class="nav-label">Gerencial</span></a>
+    <a class="nav-item" href="projetos.html">         <span class="nav-icon">📋</span><span class="nav-label">Projetos</span></a>
+    <a class="nav-item" href="squads.html">            <span class="nav-icon">🏢</span><span class="nav-label">Áreas</span></a>
+    <a class="nav-item active" href="alertas.html">   <span class="nav-icon">🔔</span><span class="nav-label" id="nav-alertas-label">Alertas</span></a>
+    <a class="nav-item edit-only" href="admin.html">  <span class="nav-icon">⚙</span><span class="nav-label">Admin</span></a>
+  </div>
+  <div class="sb-footer"><div id="sidebar-user"></div></div>
+</nav>
+
+<div id="main">
+  <div class="topbar">
+    <div><div class="topbar-title">Central de Alertas</div></div>
+    <div class="topbar-actions">
+      <button class="btn-outline no-print" onclick="marcarTodosLidos()">✓ Marcar todos como lidos</button>
+      <button class="btn-print no-print" onclick="openPM()">📄 PDF / Imprimir</button>
+      <button class="btn-icon no-print" title="Ctrl+K" onclick="document.getElementById('cmd-overlay').classList.add('open')">⌘</button>
+      <button class="btn-icon no-print" onclick="toggleTheme()" title="Tema">◑</button>
+    </div>
+  </div>
+  <!-- Cabeçalho visível apenas no print -->
+  <div class="print-header-bar">
+    <div><strong>Velox PMO · Central de Alertas</strong><span style="margin-left:12px;font-size:11px;color:#555" id="print-al-date"></span></div>
+    <div style="font-size:9px;color:#888">velox. by invent</div>
+  </div>
+
+  <div class="stats-strip" id="stats-strip"></div>
+
+  <div class="filter-row">
+    <button class="filter-chip active" onclick="setFiltro('todos',this)">Todos</button>
+    <button class="filter-chip" onclick="setFiltro('critico',this)">🔴 Críticos</button>
+    <button class="filter-chip" onclick="setFiltro('atrasado',this)">⏰ Atrasados</button>
+    <button class="filter-chip" onclick="setFiltro('bloqueado',this)">🔒 Bloqueados</button>
+    <button class="filter-chip" onclick="setFiltro('parado',this)">⏸ Parados</button>
+    <button class="filter-chip" onclick="setFiltro('nao_lido',this)">● Não lidos</button>
+    <button class="filter-chip" id="chip-snoozed" onclick="setFiltro('snoozed',this)" style="display:none">⏰ Adiados</button>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-triage" onclick="setView('triage')" title="Triagem Kanban">⊞</button>
+      <button class="view-btn" id="btn-grupos" onclick="setView('grupos')" title="Por Projeto">📁</button>
+      <button class="view-btn" id="btn-timeline" onclick="setView('timeline')" title="Timeline">▤</button>
+    </div>
+  </div>
+
+  <div class="alerts-content" id="alerts-content"></div>
+</div>
+</div>
+
+<script src="utils.js"></script>
+<script>
+initTheme();
+checkAuth('alertas');
+loadData();
+initSidebar();
+initPrintModal();
+initCommandPalette();
+
+let filtro  = localStorage.getItem('v16_alertasFiltro') || 'todos';
+let view    = localStorage.getItem('v16_alertasView')   || 'triage';
+let lidos   = JSON.parse(localStorage.getItem('v16_alertasLidos') || '{}');
+let snoozed = JSON.parse(localStorage.getItem('v16_alertasSnoozed') || '{}');
+
+function saveLidos(){ localStorage.setItem('v16_alertasLidos', JSON.stringify(lidos)); }
+function saveSnoozed(){ localStorage.setItem('v16_alertasSnoozed', JSON.stringify(snoozed)); }
+function isSnoozed(id){ return snoozed[id] && snoozed[id] > Date.now(); }
+function snoozeAlert(id, days){ snoozed[id] = Date.now() + days*86400000; saveSnoozed(); render(); toast(`Alerta adiado por ${days} dia${days!==1?'s':''}`, 'success', 2200); }
+function unsnooze(id){ delete snoozed[id]; saveSnoozed(); render(); }
+
+// ── Geração de Alertas ────────────────────────────────────
+// ── Classificação de Severidade ───────────────────────────
+// P0 = Crítico máximo (múltiplos problemas simultâneos)
+// P1 = Alto risco (atraso, bloqueio ou parado grave)
+// P2 = Atenção (prazo próximo, risco médio, parado leve)
+function buildAlertas(){
+  const alerts = [];
+  PROJETOS.forEach(p => {
+    const st = calcStatus(p);
+    if(st === 'Concluído' || st === 'Standby' || st === 'Não Iniciado') return;
+
+    const fe     = getFimEfetivo(p);
+    const dias   = fe ? Math.round((new Date(fe)-HOJE)/86400000) : null;
+    const r      = calcRisco(p);
+    const parado = calcDiasParadoAuto(p);
+    const isAtras = st === 'Atrasado';
+    const isBloq  = !!(p.bloqueador && p.bloqueador.trim());
+
+    // P0: atrasado E bloqueado simultaneamente — máxima criticidade
+    let isP0 = false;
+    if(isAtras && isBloq){
+      alerts.push({id:`p0_${p.nome}`, proj:p.nome, pmo:p.pmo, tipo:'P0 · Atrasado + Bloqueio', sev:'p0',
+        msg:`${Math.abs(dias||0)}d de atraso · Bloqueio: ${p.bloqueador}`, icon:'🔥', priority:'P0'});
+      isP0 = true;
+    }
+
+    if(isAtras && !isP0)
+      alerts.push({id:`atras_${p.nome}`, proj:p.nome, pmo:p.pmo, tipo:'P1 · Atrasado', sev:'critico',
+        msg:`Go Live era ${formatDate(fe)} — ${Math.abs(dias||0)} dia${Math.abs(dias||0)!==1?'s':''} de atraso`, icon:'⏰', priority:'P1'});
+
+    if(isBloq && !isP0)
+      alerts.push({id:`bloq_${p.nome}`, proj:p.nome, pmo:p.pmo, tipo:'P1 · Bloqueio Ativo', sev:'critico',
+        msg:p.bloqueador, icon:'🔒', priority:'P1'});
+
+    if(parado >= THRESHOLD_PARADO_CRITICO)
+      alerts.push({id:`parado_${p.nome}`, proj:p.nome, pmo:p.pmo, tipo:'P1 · Sem Update', sev:'critico',
+        msg:`Sem atualização há ${parado} dias — projeto pode estar parado`, icon:'⏸', priority:'P1'});
+
+    if(dias !== null && dias <= THRESHOLD_PRAZO_ALERTA && dias > 0 && !isAtras)
+      alerts.push({id:`prazo_${p.nome}`, proj:p.nome, pmo:p.pmo, tipo:'P2 · Prazo Próximo', sev:'atencao',
+        msg:`Go Live em ${formatRelativeDate(fe)} — ${formatDate(fe)}`, icon:'⚡', priority:'P2'});
+
+    if(r === 'medio' && !isAtras && !isBloq)
+      alerts.push({id:`risco_${p.nome}`, proj:p.nome, pmo:p.pmo, tipo:'P2 · Risco Médio', sev:'atencao',
+        msg:`${dias!==null?diasLabel(dias)+' para Go Live':''} ${p.prioridade==='Alta'?'· Alta prioridade':''}`.trim(), icon:'🟡', priority:'P2'});
+
+    if(parado >= THRESHOLD_PARADO_ATENCAO && parado < THRESHOLD_PARADO_CRITICO)
+      alerts.push({id:`parado7_${p.nome}`, proj:p.nome, pmo:p.pmo, tipo:'P2 · Atenção', sev:'info',
+        msg:`Sem atualização há ${parado} dias`, icon:'📌', priority:'P2'});
+  });
+  // Ordenar: P0 primeiro, depois P1, depois P2; não lidos antes de lidos
+  return alerts.sort((a,b)=>{
+    const po = {P0:0, P1:1, P2:2};
+    if(po[a.priority] !== po[b.priority]) return po[a.priority] - po[b.priority];
+    return isLido(a.id) - isLido(b.id);
+  });
+}
+
+function isLido(id){ return !!lidos[id]; }
+
+function setFiltro(f, el){
+  filtro = f;
+  localStorage.setItem('v16_alertasFiltro', f);
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  render();
+}
+function setView(v){
+  view = v;
+  localStorage.setItem('v16_alertasView', v);
+  document.getElementById('btn-triage').classList.toggle('active', v==='triage');
+  document.getElementById('btn-grupos').classList.toggle('active', v==='grupos');
+  document.getElementById('btn-timeline').classList.toggle('active', v==='timeline');
+  render();
+}
+
+function marcarLido(id){ lidos[id] = true; saveLidos(); render(); toast('Alerta marcado como lido','success',2000); }
+function marcarTodosLidos(){
+  buildAlertas().forEach(a=>{ lidos[a.id] = true; });
+  saveLidos(); render(); toast('Todos os alertas marcados como lidos','success');
+}
+
+function getFiltered(){
+  const all = buildAlertas();
+  return all.filter(a => {
+    if(isSnoozed(a.id) && filtro!=='snoozed') return false; // hide snoozed unless in snoozed view
+    if(filtro === 'todos')    return !isSnoozed(a.id);
+    if(filtro === 'critico')  return a.sev==='critico'||a.sev==='p0';
+    if(filtro === 'atrasado') return a.tipo.includes('Atrasado');
+    if(filtro === 'bloqueado')return a.tipo.includes('Bloqueio');
+    if(filtro === 'parado')   return a.tipo.includes('Update')||a.tipo.includes('Atenção');
+    if(filtro === 'nao_lido') return !isLido(a.id);
+    if(filtro === 'snoozed')  return isSnoozed(a.id);
+    return true;
+  });
+}
+
+function sevColors(sev){
+  const m = {
+    p0:     {bg:'rgba(239,68,68,.12)', border:'rgba(239,68,68,.4)', stripe:'#ef4444', type:'rgba(239,68,68,.2)', typeText:'#ef4444', pulse:true},
+    critico:{bg:'rgba(239,68,68,.08)', border:'rgba(239,68,68,.25)',stripe:'#ef4444', type:'rgba(239,68,68,.15)',typeText:'#ef4444', pulse:false},
+    atencao:{bg:'rgba(245,195,0,.06)', border:'rgba(245,195,0,.2)', stripe:'#f5c300', type:'rgba(245,195,0,.12)',typeText:'#f5c300', pulse:false},
+    info:   {bg:'rgba(59,130,246,.06)',border:'rgba(59,130,246,.2)',stripe:'#3b82f6', type:'rgba(59,130,246,.12)',typeText:'#3b82f6', pulse:false},
+  };
+  return m[sev] || m.info;
+}
+
+function alertCardHtml(a){
+  const c    = sevColors(a.sev);
+  const read = isLido(a.id);
+  const safeId = esc(a.id);
+  const pulseCss = (!read && c.pulse) ? 'animation:p0Pulse 2s ease-in-out infinite;' : '';
+  const priorityBadge = a.priority ? `<span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:4px;background:${c.type};color:${c.typeText};letter-spacing:.5px;margin-right:4px">${a.priority}</span>` : '';
+  return `<div class="alert-card fade-in" data-prio="${read?'':a.priority||''}" style="opacity:${read?.65:1};${pulseCss}"
+    onclick="location.href='projetos.html?p=${encodeURIComponent(a.proj)}'">
+    <div class="alert-card-stripe" style="background:${c.stripe}"></div>
+    <div style="padding-left:8px">
+      <div class="alert-card-header">
+        <div class="alert-card-proj" style="display:flex;align-items:center;gap:4px">${a.icon} ${escHtml(a.proj)}</div>
+        <span class="alert-card-type" style="background:${c.type};color:${c.typeText}">${priorityBadge}${a.tipo.replace(/^P\d · /,'')}</span>
+      </div>
+      <div class="alert-card-msg">${escHtml(a.msg)}</div>
+      <div class="alert-card-footer">
+        <span class="alert-card-meta">PMO: ${escHtml(a.pmo||'—')}</span>
+        <div style="display:flex;gap:4px">
+          ${isSnoozed(a.id)
+            ? `<button class="alert-lido-btn" style="color:#3b82f6;border-color:rgba(59,130,246,.3)" onclick="unsnooze('${safeId}');event.stopPropagation()" title="Remover adiamento">▶ Reativar</button>`
+            : `<div class="edit-only" style="display:flex;gap:3px" onclick="event.stopPropagation()">
+                <button class="alert-lido-btn" title="Adiar 3 dias" onclick="snoozeAlert('${safeId}',3);event.stopPropagation()">⏰ 3d</button>
+                <button class="alert-lido-btn" title="Adiar 7 dias" onclick="snoozeAlert('${safeId}',7);event.stopPropagation()">⏰ 7d</button>
+               </div>`}
+          ${!isViewer()?`<button class="alert-lido-btn edit-only" onclick="marcarLido('${safeId}');event.stopPropagation()">${read?'✓ Lido':'✓'}</button>`:''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function render(){
+  const all    = buildAlertas();
+  const shown  = getFiltered();
+  const p0cnt  = all.filter(a=>a.priority==='P0').length;
+  const p1cnt  = all.filter(a=>a.priority==='P1').length;
+  const p2cnt  = all.filter(a=>a.priority==='P2').length;
+  const naoLidos = all.filter(a=>!isLido(a.id)).length;
+
+  // Stats — agora mostra P0/P1/P2
+  document.getElementById('stats-strip').innerHTML = `
+    <div class="stat-card" style="${p0cnt>0?'border-color:rgba(239,68,68,.3);':''}">
+      <div class="stat-icon" style="${p0cnt>0?'animation:p0Pulse 2s infinite':''}">🔥</div>
+      <div class="stat-info">
+        <div class="stat-val" style="color:${p0cnt>0?'#ef4444':'var(--muted2)'}">${p0cnt}</div>
+        <div class="stat-lbl" style="color:${p0cnt>0?'#ef4444':''}">P0 · Crítico Máx</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🔴</div>
+      <div class="stat-info"><div class="stat-val" style="color:${p1cnt>0?'#ef4444':'var(--muted2)'}">${p1cnt}</div><div class="stat-lbl">P1 · Alto Risco</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🟡</div>
+      <div class="stat-info"><div class="stat-val" style="color:${p2cnt>0?'#f5c300':'var(--muted2)'}">${p2cnt}</div><div class="stat-lbl">P2 · Atenção</div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">🔔</div>
+      <div class="stat-info"><div class="stat-val">${naoLidos}</div><div class="stat-lbl">Não lidos</div></div>
+    </div>`;
+
+  // Show snoozed chip if any snoozed alerts exist
+  const snoozeChip = document.getElementById('chip-snoozed');
+  const snoozeCount = all.filter(a=>isSnoozed(a.id)).length;
+  if(snoozeChip){ snoozeChip.style.display = snoozeCount>0?'':'none'; snoozeChip.textContent=`⏰ Adiados (${snoozeCount})`; }
+
+  const content = document.getElementById('alerts-content');
+
+  if(!shown.length){
+    content.innerHTML = `
+      <div style="text-align:center;padding:80px 40px;color:var(--muted)">
+        <div style="font-size:56px;margin-bottom:16px">${filtro==='snoozed'?'⏰':'✅'}</div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:6px">${filtro==='snoozed'?'Nenhum alerta adiado':'Nenhum alerta'+( filtro!=='todos'?' nesta categoria':'')}</div>
+        <div style="font-size:13px">${filtro==='snoozed'?'Use os botões ⏰ 3d / ⏰ 7d nos cards para adiar alertas':'Portfólio sem ocorrências neste filtro'}</div>
+      </div>`;
+    return;
+  }
+
+  if(view === 'triage'){
+    // Smart Triage kanban com P0/P1/P2
+    const byPrio = {
+      critico: shown.filter(a=>a.priority==='P0'||a.priority==='P1'),
+      atencao: shown.filter(a=>a.priority==='P2'&&a.sev==='atencao'),
+      info:    shown.filter(a=>a.sev==='info'),
+    };
+    const p0Items = shown.filter(a=>a.priority==='P0');
+    const p1Items = shown.filter(a=>a.priority==='P1');
+    content.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div><span style="font-size:13px;font-weight:700">Smart Triage </span><span style="font-size:10px;font-weight:700;background:var(--brand-dim);color:var(--brand);padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px">V16 exclusivo</span></div>
+        <div style="font-size:11px;color:var(--muted)">${shown.length} alerta${shown.length!==1?'s':''} visíveis · ${all.filter(a=>isSnoozed(a.id)).length} adiados</div>
+      </div>
+      <div class="triage-board">
+        <div class="triage-col" style="${byPrio.critico.length>0?'border-color:rgba(239,68,68,.25)':''}">
+          <div class="triage-col-header" style="color:#ef4444">
+            <div style="display:flex;align-items:center;gap:6px">
+              🔴 Crítico
+              ${p0Items.length?`<span style="font-size:9px;background:rgba(239,68,68,.15);color:#ef4444;border-radius:4px;padding:1px 5px;font-weight:900">P0×${p0Items.length}</span>`:''}
+            </div>
+            <span class="triage-count" style="background:rgba(239,68,68,.15);color:#ef4444">${byPrio.critico.length}</span>
+          </div>
+          <div class="triage-cards">${byPrio.critico.map(alertCardHtml).join('')||emptyCol()}</div>
+        </div>
+        <div class="triage-col">
+          <div class="triage-col-header" style="color:#f5c300">
+            🟡 Atenção <span style="font-size:9px;opacity:.6">P2</span>
+            <span class="triage-count" style="background:rgba(245,195,0,.15);color:#f5c300">${byPrio.atencao.length}</span>
+          </div>
+          <div class="triage-cards">${byPrio.atencao.map(alertCardHtml).join('')||emptyCol()}</div>
+        </div>
+        <div class="triage-col">
+          <div class="triage-col-header" style="color:#3b82f6">
+            🔵 Info
+            <span class="triage-count" style="background:rgba(59,130,246,.15);color:#3b82f6">${byPrio.info.length}</span>
+          </div>
+          <div class="triage-cards">${byPrio.info.map(alertCardHtml).join('')||emptyCol()}</div>
+        </div>
+      </div>`;
+  } else if(view === 'grupos'){
+    // Agrupado por projeto
+    const byProj = {};
+    shown.forEach(a=>{ if(!byProj[a.proj]) byProj[a.proj]=[]; byProj[a.proj].push(a); });
+    const projSorted = Object.entries(byProj)
+      .sort(([,a],[,b])=>{const sev={p0:0,critico:0,atencao:1,info:2};return Math.min(...a.map(x=>sev[x.sev]??2))-Math.min(...b.map(x=>sev[x.sev]??2));});
+    content.innerHTML = projSorted.map(([proj, as])=>{
+      const maxSev = as.find(a=>a.sev==='p0'||a.sev==='critico') ? 'critico' : as.find(a=>a.sev==='atencao') ? 'atencao' : 'info';
+      const c = sevColors(maxSev);
+      return `<div class="group-section">
+        <div class="group-header" style="border-color:${c.border}" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'':'none'">
+          <div>
+            <span class="group-proj-name">${proj}</span>
+            <span class="group-count">${as.length} alerta${as.length!==1?'s':''}</span>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${as.filter(a=>!isLido(a.id)).length?`<span style="background:${c.type};color:${c.typeText};font-size:10px;padding:2px 8px;border-radius:10px;font-weight:700">${as.filter(a=>!isLido(a.id)).length} não lido${as.filter(a=>!isLido(a.id)).length!==1?'s':''}</span>`:''}
+            <button class="edit-only" onclick="marcarTodosProjeto('${esc(proj)}');event.stopPropagation()" style="font-size:11px;color:var(--green);padding:3px 8px;border-radius:6px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2)">✓ Marcar todos</button>
+            <span style="color:var(--muted)">▾</span>
+          </div>
+        </div>
+        <div class="group-alerts">${as.map(alertCardHtml).join('')}</div>
+      </div>`;
+    }).join('');
+  } else if(view === 'timeline'){
+    // Timeline view: all alerts sorted by severity, shown in a vertical list with visual severity indicators
+    const sevOrder = {p0:0, critico:1, atencao:2, info:3};
+    const timeline = [...shown].sort((a,b)=>(sevOrder[a.sev]||3)-(sevOrder[b.sev]||3));
+    const sevDotColor = {p0:'#ef4444', critico:'#ef4444', atencao:'#f5c300', info:'#3b82f6'};
+    const pmoGroups = {};
+    timeline.forEach(a=>{ if(!pmoGroups[a.pmo||'—']) pmoGroups[a.pmo||'—']=[]; pmoGroups[a.pmo||'—'].push(a); });
+
+    const tlRows = timeline.map((a,i)=>{
+      const c       = sevColors(a.sev);
+      const read    = isLido(a.id);
+      const safeId  = esc(a.id);
+      const dotClr  = sevDotColor[a.sev]||'#64748b';
+      const snoozed2= isSnoozed(a.id);
+      const priorityBadge = a.priority ? `<span style="font-size:9px;font-weight:800;padding:1px 6px;border-radius:4px;background:${c.type};color:${c.typeText};margin-right:4px">${a.priority}</span>` : '';
+      return `<div style="display:flex;gap:0;position:relative" class="fade-in">
+        <!-- Timeline connector -->
+        <div style="width:48px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:0">
+          <div style="width:12px;height:12px;border-radius:50%;background:${read?'var(--border)':dotClr};border:2px solid ${read?'var(--border)':dotClr};flex-shrink:0;margin-top:16px;box-shadow:${!read&&a.sev==='p0'?'0 0 8px '+dotClr:'none'};transition:all .2s"></div>
+          ${i<timeline.length-1?`<div style="width:2px;flex:1;min-height:12px;background:var(--border);margin:0"></div>`:''}
+        </div>
+        <!-- Card -->
+        <div style="flex:1;padding:0 0 12px 0">
+          <div style="background:${read?'var(--surface)':c.bg};border:1px solid ${read?'var(--border)':c.border};border-radius:var(--radius-sm);padding:12px 14px;cursor:pointer;opacity:${read?.65:1};${snoozed2?'filter:grayscale(0.6)':''};transition:all .2s"
+            onmouseenter="this.style.transform='translateX(2px)'" onmouseleave="this.style.transform=''"
+            onclick="location.href='projetos.html?p=${encodeURIComponent(a.proj)}'">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:5px">
+              <div style="display:flex;align-items:center;gap:6px">
+                <span style="font-size:14px">${a.icon}</span>
+                <span style="font-size:13px;font-weight:700">${escHtml(a.proj)}</span>
+                ${snoozed2?`<span style="font-size:9px;background:rgba(59,130,246,.15);color:#3b82f6;padding:1px 6px;border-radius:4px;font-weight:700">ADIADO</span>`:''}
+              </div>
+              <span style="background:${c.type};color:${c.typeText};font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;white-space:nowrap;flex-shrink:0">${priorityBadge}${a.tipo.replace(/^P\d · /,'')}</span>
+            </div>
+            <div style="font-size:12px;color:var(--muted2);margin-bottom:8px;line-height:1.4">${escHtml(a.msg)}</div>
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <span style="font-size:11px;color:var(--muted)">PMO: ${escHtml(a.pmo||'—')}</span>
+              <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
+                ${snoozed2
+                  ? `<button class="alert-lido-btn" style="color:#3b82f6;border-color:rgba(59,130,246,.3)" onclick="unsnooze('${safeId}')">▶ Reativar</button>`
+                  : `<button class="alert-lido-btn edit-only" onclick="snoozeAlert('${safeId}',3)" title="Adiar 3 dias">⏰ 3d</button>
+                     <button class="alert-lido-btn edit-only" onclick="snoozeAlert('${safeId}',7)" title="Adiar 7 dias">⏰ 7d</button>`}
+                ${!isViewer()?`<button class="alert-lido-btn edit-only" onclick="marcarLido('${safeId}')">${read?'✓ Lido':'✓'}</button>`:''}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+    content.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div><span style="font-size:13px;font-weight:700">Timeline </span><span style="font-size:10px;font-weight:700;background:var(--brand-dim);color:var(--brand);padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.6px">V16 exclusivo</span></div>
+        <div style="font-size:11px;color:var(--muted)">${shown.length} alerta${shown.length!==1?'s':''}  ordenados por criticidade</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start">
+        <div>${tlRows}</div>
+        <div style="position:sticky;top:20px">
+          <div class="card" style="margin-bottom:12px">
+            <div class="card-title" style="margin-bottom:12px">📊 Por PMO</div>
+            ${Object.entries(pmoGroups).sort((a,b)=>b[1].length-a[1].length).map(([pmo,as])=>{
+              const hasCrit = as.some(a=>a.sev==='critico'||a.sev==='p0');
+              return `<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)">
+                <span style="font-size:12px;font-weight:600">${pmo}</span>
+                <span style="font-size:13px;font-weight:800;color:${hasCrit?'#ef4444':'var(--muted2)'}">${as.length}</span>
+              </div>`;
+            }).join('')}
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:8px">💡 Dicas</div>
+            <div style="font-size:11px;color:var(--muted2);line-height:1.6">
+              <div>• <strong>⏰ 3d / 7d</strong> — Adiar alerta por dias</div>
+              <div style="margin-top:4px">• Clique no card para abrir o projeto</div>
+              <div style="margin-top:4px">• Alertas P0 pulsam em vermelho</div>
+              <div style="margin-top:4px">• Lidos aparecem com menos destaque</div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+}
+
+function emptyCol(){ return '<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px">Nenhum alerta</div>'; }
+
+function marcarTodosProjeto(proj){
+  buildAlertas().filter(a=>a.proj===proj).forEach(a=>{ lidos[a.id]=true; });
+  saveLidos(); render();
+  toast(`Alertas de ${proj} marcados como lidos`,'success');
+}
+
+// ── ESC handler ───────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  const cmd = document.getElementById('cmd-overlay');
+  if(cmd && cmd.classList.contains('open')){ cmd.classList.remove('open'); }
+});
+
+// Popula data no print header
+(function(){ const el=document.getElementById('print-al-date'); if(el) el.textContent=HOJE_ISO; })();
+
+// Sincroniza UI dos chips/view com estado persistido
+(function(){
+  document.querySelectorAll('.filter-chip').forEach(c=>{
+    const f = c.getAttribute('onclick')?.match(/setFiltro\('([^']+)'/)?.[1];
+    if(f) c.classList.toggle('active', f===filtro);
+  });
+  document.getElementById('btn-triage')?.classList.toggle('active', view==='triage');
+  document.getElementById('btn-grupos')?.classList.toggle('active', view==='grupos');
+  document.getElementById('btn-timeline')?.classList.toggle('active', view==='timeline');
+})();
+
+render();
+updateAlertBadge();
+
+</script>
+</body>
+</html>

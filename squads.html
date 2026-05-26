@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Áreas Técnicas — Velox by Invent v16</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23F5C300'/><text x='16' y='23' text-anchor='middle' font-size='18' font-weight='900' font-family='Inter,sans-serif' fill='%230a0e19'>VX</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#F5C300;--brand-dim:rgba(245,195,0,.15);
+  --bg:#030610;--bg2:#100c2a;--surface:rgba(255,255,255,.065);
+  --surface2:rgba(255,255,255,.1);--border:rgba(255,255,255,.12);
+  --text:#f1f5f9;--muted:#64748b;--muted2:#94a3b8;
+  --sidebar-w:240px;--sidebar-collapsed:60px;
+  --radius:14px;--radius-sm:8px;
+  --green:#22c55e;--blue:#3b82f6;--red:#ef4444;--amber:#f59e0b;
+}
+[data-theme="light"]{--bg:#f1f5f9;--bg2:#e2e8f0;--surface:rgba(255,255,255,.9);--surface2:rgba(255,255,255,.7);--border:rgba(0,0,0,.08);--text:#0f172a;--muted:#64748b;--muted2:#475569;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(ellipse 120% 60% at 50% -5%,#1a1060 0%,#0a0520 35%,#030610 70%);color:var(--text);overflow:hidden}
+[data-theme="light"] body{background:#f0f4f8!important}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;z-index:10;overflow:hidden}
+#sidebar.collapsed{width:var(--sidebar-collapsed);min-width:var(--sidebar-collapsed)}
+.sb-header{padding:20px 16px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sb-logo{width:32px;height:32px;min-width:32px;background:linear-gradient(135deg,var(--brand),#d97706);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#0a0e19;letter-spacing:-0.5px;flex-shrink:0}
+.sb-brand{overflow:hidden;opacity:1;transition:opacity .2s;line-height:1.2}
+.sb-brand-name{font-size:15px;font-weight:900;letter-spacing:-1px;white-space:nowrap;color:var(--text)}
+.sb-brand-name .vy{color:var(--brand)}.sb-brand-name .dot{color:var(--brand)}
+.sb-brand-by{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+#sidebar.collapsed .sb-brand{opacity:0;width:0;overflow:hidden}
+#sidebar-toggle{margin-left:auto;color:var(--muted);font-size:18px;padding:4px;border-radius:6px;flex-shrink:0;transition:color .2s}
+#sidebar-toggle:hover{color:var(--text)}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius-sm);color:var(--muted2);font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap;overflow:hidden}
+.nav-item:hover{background:var(--surface2);color:var(--text)}.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.nav-icon{font-size:18px;flex-shrink:0;width:20px;text-align:center}.nav-label{transition:opacity .2s}
+#sidebar.collapsed .nav-label{opacity:0;width:0;overflow:hidden}
+.sb-footer{padding:12px 8px;border-top:1px solid var(--border)}
+#sidebar-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm)}
+.su-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.su-info{overflow:hidden;flex:1}.su-nome{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.su-papel{font-size:10px;color:var(--muted);text-transform:capitalize}
+#sidebar.collapsed .su-info{opacity:0;width:0;overflow:hidden}
+
+/* ── Main ────────────────────────────────────────────────── */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:16px 28px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:5}
+.topbar-title{font-size:18px;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.btn-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);color:var(--muted2);font-size:15px;transition:all .2s}
+.btn-icon:hover{background:var(--surface2);color:var(--text)}
+.tab-bar{display:flex;padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg2);overflow-x:auto}
+.tab-btn{padding:13px 20px;font-size:13px;font-weight:500;color:var(--muted2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;flex-shrink:0;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:700}
+.content{padding:24px 28px}
+
+/* ── Cards ───────────────────────────────────────────────── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;border-radius:var(--radius);background:linear-gradient(135deg,rgba(255,255,255,.015),transparent 60%);pointer-events:none}
+.card-title{font-size:13px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;justify-content:space-between}
+.badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;letter-spacing:.5px;text-transform:uppercase}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+
+/* ── Filter bar ──────────────────────────────────────────── */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.filter-chip{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;background:var(--surface);border:1px solid var(--border);color:var(--muted2);cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit}
+.filter-chip:hover{border-color:var(--brand);color:var(--brand)}
+.filter-chip.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+.filter-sep{width:1px;height:24px;background:var(--border)}
+
+/* ── Prioridade View ─────────────────────────────────────── */
+.prio-columns{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.prio-col{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.prio-col-header{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.prio-col-title{font-size:13px;font-weight:700}
+.prio-col-count{font-size:11px;color:var(--muted);font-weight:600}
+.prio-col-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.prio-col-body{padding:12px;display:flex;flex-direction:column;gap:8px;min-height:200px}
+.prio-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.prio-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:3px 0 0 3px}
+.prio-card:hover{border-color:var(--brand-dim);background:var(--surface2);transform:translateY(-1px)}
+.prio-card-name{font-size:13px;font-weight:700;margin-bottom:5px}
+.prio-card-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.prio-card-sub{font-size:11px;color:var(--muted)}
+.prio-prog{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:7px}
+.prio-prog-fill{height:100%;border-radius:2px}
+.prio-card-footer{display:flex;align-items:center;justify-content:space-between}
+.squad-tag{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+.prio-empty{text-align:center;padding:32px 16px;color:var(--muted);font-size:12px}
+
+/* ── Squad View ──────────────────────────────────────────── */
+.squad-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.squad-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;position:relative}
+.squad-card-header{padding:18px 20px 14px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border)}
+.squad-icon-wrap{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.squad-name{font-size:16px;font-weight:800;line-height:1}
+.squad-desc{font-size:11px;color:var(--muted);margin-top:2px}
+.squad-kpis{display:flex;gap:0;border-bottom:1px solid var(--border)}
+.squad-kpi{flex:1;padding:12px 16px;text-align:center;border-right:1px solid var(--border)}
+.squad-kpi:last-child{border-right:none}
+.squad-kpi-v{font-size:22px;font-weight:800;line-height:1;margin-bottom:2px}
+.squad-kpi-l{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;font-weight:600}
+.squad-proj-list{padding:14px 20px;display:flex;flex-direction:column;gap:7px}
+.squad-proj-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg2);border-radius:var(--radius-sm);cursor:pointer;transition:background .15s}
+.squad-proj-row:hover{background:var(--surface2)}
+.squad-proj-name{flex:1;font-size:12px;font-weight:600}
+.squad-no-proj{padding:20px;text-align:center;color:var(--muted);font-size:12px}
+
+/* ── Gantt ───────────────────────────────────────────────── */
+.gantt-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.gantt-mode-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:600;background:var(--surface);border:1px solid var(--border);color:var(--muted2);cursor:pointer;transition:all .2s;font-family:inherit}
+.gantt-mode-btn.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+.gantt-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.gantt-header-row{display:flex;background:var(--bg2);border-bottom:1px solid var(--border);padding:0}
+.gantt-label-col{width:200px;min-width:200px;padding:10px 16px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);border-right:1px solid var(--border);flex-shrink:0}
+.gantt-months{flex:1;display:flex;overflow:hidden;position:relative}
+.gantt-month{font-size:10px;font-weight:600;color:var(--muted);padding:10px 0;text-align:center;border-right:1px solid rgba(255,255,255,.04);flex-shrink:0}
+.gantt-row{display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.04);position:relative;min-height:50px}
+.gantt-row:last-child{border-bottom:none}
+.gantt-row:hover{background:var(--surface2)}
+.gantt-row-label{width:200px;min-width:200px;padding:10px 16px;font-size:12px;font-weight:600;border-right:1px solid var(--border);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.gantt-row-track{flex:1;position:relative;height:50px;overflow:hidden}
+.gantt-bar{position:absolute;top:50%;transform:translateY(-50%);height:26px;border-radius:6px;overflow:hidden;display:flex;align-items:center;transition:all .3s ease;cursor:pointer;min-width:4px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.gantt-bar:hover{filter:brightness(1.2);z-index:2;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.gantt-bar-fill{height:100%;border-radius:6px;opacity:.55}
+.gantt-bar-label{position:absolute;left:8px;right:8px;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+.gantt-today{position:absolute;top:0;bottom:0;width:2px;background:var(--brand);opacity:.9;z-index:3;pointer-events:none;box-shadow:0 0 6px var(--brand)}
+.gantt-today::before{content:'hoje';position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:700;color:var(--brand);white-space:nowrap;letter-spacing:.5px}
+.gantt-tooltip{position:absolute;z-index:10;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:11px;color:var(--text);pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.5);display:none}
+.gantt-phase-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.gantt-legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;align-items:center;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.gantt-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.gantt-legend-bar{width:20px;height:8px;border-radius:3px}
+
+/* ── Squad Scope ─────────────────────────────────────────── */
+.scope-sections{display:flex;flex-direction:column;gap:16px}
+.scope-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.scope-card-header{padding:16px 20px;display:flex;align-items:center;gap:12px;cursor:pointer;user-select:none;transition:background .15s}
+.scope-card-header:hover{background:var(--surface2)}
+.scope-card-chevron{font-size:12px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+.scope-card-header.open .scope-card-chevron{transform:rotate(90deg)}
+.scope-card-body{padding:0 20px 20px;display:none}
+.scope-card-body.open{display:block}
+.scope-item-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.scope-item{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:12px;position:relative;overflow:hidden}
+.scope-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}
+.scope-item-title{font-weight:600;margin-bottom:2px;color:var(--text)}
+.scope-item-phase{font-size:10px;color:var(--muted)}
+.scope-item-status{font-size:10px;font-weight:600;margin-top:4px}
+.scope-proj-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* ── Viewer / Cmd palette ────────────────────────────────── */
+.viewer-mode .edit-only{display:none!important}
+#cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:9000;display:none;align-items:flex-start;justify-content:center;padding-top:15vh}
+#cmd-overlay.open{display:flex}
+#cmd-palette{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:520px;max-width:90vw;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+#cmd-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border)}
+#cmd-icon{font-size:18px;color:var(--muted)}
+#cmd-input{flex:1;background:none;border:none;outline:none;font-size:15px;color:var(--text);font-family:'Inter',sans-serif}
+#cmd-list{max-height:360px;overflow-y:auto;padding:8px}
+.cmd-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:var(--muted2);transition:all .15s}
+.cmd-item:hover,.cmd-item.active{background:var(--brand-dim);color:var(--brand)}
+.cmd-empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+.btn-print{display:flex;align-items:center;gap:7px;padding:8px 16px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);border-radius:var(--radius-sm);font-size:12px;font-weight:700;color:#a78bfa;transition:all .2s}
+.btn-print:hover{background:rgba(139,92,246,.22);border-color:#a78bfa}
+/* ── Print / PDF ──────────────────────────────────────── */
+.print-header-bar{display:none}
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  html,body{overflow:visible!important;height:auto!important;min-height:0!important;font-size:11px!important}
+  #sidebar,.topbar,.tab-bar,#cmd-overlay,.no-print{display:none!important}
+  .app{display:block!important;height:auto!important;overflow:visible!important}
+  #main{margin-left:0!important;padding:0!important;height:auto!important;overflow:visible!important}
+  .print-header-bar{
+    display:flex!important;justify-content:space-between;align-items:center;
+    padding:8px 28px 10px;border-bottom:2px solid var(--border);margin-bottom:12px;
+    font-size:10px;color:var(--muted);
+  }
+  .print-header-bar strong{font-size:14px;color:var(--text);font-weight:800}
+  .gantt-bar,.gantt-bar-fill,.gantt-today{-webkit-print-color-adjust:exact!important}
+  .card,.squad-card,.member-card{break-inside:avoid!important}
+  @page{margin:15mm 14mm;size:A4 landscape}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">VX</div>
+    <div class="sb-brand">
+      <div class="sb-brand-name"><span class="vy">v</span>elox<span class="dot">.</span></div>
+      <div class="sb-brand-by">by invent</div>
+    </div>
+    <button id="sidebar-toggle" title="Recolher">☰</button>
+  </div>
+  <div class="sb-nav">
+    <a class="nav-item" href="index.html">           <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
+    <a class="nav-item" href="gerencial.html">        <span class="nav-icon">⊞</span><span class="nav-label">Gerencial</span></a>
+    <a class="nav-item" href="projetos.html">         <span class="nav-icon">📋</span><span class="nav-label">Projetos</span></a>
+    <a class="nav-item active" href="squads.html">    <span class="nav-icon">🏢</span><span class="nav-label">Áreas</span></a>
+    <a class="nav-item" href="alertas.html">          <span class="nav-icon">🔔</span><span class="nav-label" id="nav-alertas-label">Alertas</span></a>
+    <a class="nav-item edit-only" href="admin.html">  <span class="nav-icon">⚙</span><span class="nav-label">Admin</span></a>
+  </div>
+  <div class="sb-footer"><div id="sidebar-user"></div></div>
+</nav>
+
+<!-- Main -->
+<div id="main">
+  <div class="topbar">
+    <div class="topbar-title" style="flex:1">Áreas Técnicas</div>
+    <div class="topbar-actions">
+      <button class="btn-print no-print" onclick="openPM()">📄 PDF / Imprimir</button>
+      <button class="btn-icon no-print" title="Ctrl+K" onclick="document.getElementById('cmd-overlay').classList.add('open')">⌘</button>
+      <button class="btn-icon no-print" onclick="toggleTheme()" title="Tema">◑</button>
+    </div>
+  </div>
+  <!-- Cabeçalho visível apenas no print -->
+  <div class="print-header-bar">
+    <div><strong>Velox PMO · Áreas Técnicas</strong><span style="margin-left:12px;font-size:11px;color:#555" id="print-sq-date"></span></div>
+    <div style="font-size:9px;color:#888">velox. by invent</div>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('prio',this)">🎯 Priorização</button>
+    <button class="tab-btn" onclick="showTab('squads',this)">🏢 Por Área</button>
+    <button class="tab-btn" onclick="showTab('gantt',this)">📅 Gantt</button>
+    <button class="tab-btn" onclick="showTab('scope',this)">📐 Escopo por Área</button>
+  </div>
+
+  <div class="content" id="tab-content"></div>
+</div>
+</div>
+
+<!-- Command Palette -->
+<div id="cmd-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="cmd-palette">
+    <div id="cmd-header">
+      <span id="cmd-icon">⌘</span>
+      <input id="cmd-input" placeholder="Navegar para…" autocomplete="off">
+    </div>
+    <div id="cmd-list"></div>
+  </div>
+</div>
+
+<!-- Gantt tooltip -->
+<div class="gantt-tooltip" id="gantt-tip"></div>
+
+<script src="utils.js"></script>
+<script>
+initTheme();
+checkAuth('squads');
+loadData();
+initSidebar();
+initPrintModal();
+initCommandPalette();
+
+// ── Helpers ────────────────────────────────────────────────
+function getSquad(p){ return SQUADS.find(s=>s.id===(p.squad||'')) || null; }
+function squadTag(p){
+  const s = getSquad(p);
+  if(!s) return '';
+  return `<span class="squad-tag" style="background:${s.cor}18;color:${s.cor};border:1px solid ${s.cor}30">${s.icone} ${s.nome}</span>`;
+}
+
+// ── Tab controller ─────────────────────────────────────────
+let activeTab        = localStorage.getItem('v16_sqTab')     || 'prio';
+let ganttMode        = localStorage.getItem('v16_sqGanttMode') || 'projeto';
+let ganttSelectedProj= localStorage.getItem('v16_sqGanttProj') || null;
+let ganttAreaFilter  = localStorage.getItem('v16_sqGanttArea') || 'all';
+let prioSquadFilter  = localStorage.getItem('v16_sqPrioFilter') || 'all';
+
+function showTab(tab, el){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  activeTab = tab;
+  localStorage.setItem('v16_sqTab', tab);
+  const c = document.getElementById('tab-content');
+  if(tab==='prio')   renderPrio(c);
+  if(tab==='squads') renderSquads(c);
+  if(tab==='gantt')  renderGantt(c);
+  if(tab==='scope')  renderScope(c);
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 1 — PRIORIZAÇÃO
+// ══════════════════════════════════════════════════════════
+function renderPrio(el){
+  const ativos = PROJETOS.filter(p=>{ const s=calcStatus(p); return s!=='Concluído'&&s!=='Não Iniciado'&&s!=='Standby'; });
+  const todos  = PROJETOS;
+
+  // Squad filter bar
+  const squadBtns = `
+    <button class="filter-chip ${prioSquadFilter==='all'?'active':''}" onclick="prioSquadFilter='all';localStorage.setItem('v16_sqPrioFilter','all');renderPrio(document.getElementById('tab-content'))">Todas as Áreas</button>
+    ${SQUADS.map(s=>`<button class="filter-chip ${prioSquadFilter===s.id?'active':''}"
+      onclick="prioSquadFilter='${s.id}';localStorage.setItem('v16_sqPrioFilter','${s.id}');renderPrio(document.getElementById('tab-content'))"
+      style="${prioSquadFilter===s.id?'background:'+s.cor+'18;border-color:'+s.cor+';color:'+s.cor:''}"
+      >${s.icone} ${s.nome}</button>`).join('')}
+  `;
+
+  // Apply squad filter
+  const filtered = prioSquadFilter==='all' ? todos : todos.filter(p=>p.squad===prioSquadFilter);
+
+  const grupos = {
+    Alta:  filtered.filter(p=>p.prioridade==='Alta'),
+    Média: filtered.filter(p=>p.prioridade==='Média'),
+    Baixa: filtered.filter(p=>p.prioridade==='Baixa'||!p.prioridade),
+  };
+
+  const pColors = { Alta:'#ef4444', Média:'#f59e0b', Baixa:'#22c55e' };
+  const pBg     = { Alta:'rgba(239,68,68,.12)', Média:'rgba(245,158,11,.12)', Baixa:'rgba(34,197,94,.12)' };
+
+  function projCard(p){
+    const st   = calcStatus(p);
+    const sm   = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const r    = calcRisco(p);
+    const rm   = RISCO_MAP[r];
+    const prog = calcProgresso(p);
+    const fe   = getFimEfetivo(p)||p.fim;
+    const dias = fe ? Math.round((new Date(fe)-HOJE)/86400000) : null;
+    const dc   = dias===null?'var(--muted)':dias<0?'#ef4444':dias<=30?'#f59e0b':'var(--muted2)';
+    return `<div class="prio-card" style="border-color:${pColors[p.prioridade]||'#22c55e'}22"
+        onclick="location.href='projetos.html?p=${encodeURIComponent(p.nome)}'"
+      >
+      <div class="prio-card-name">${p.nome}</div>
+      <div class="prio-card-meta">
+        <span class="prio-card-sub">${p.pmo||'—'} · ${p.local||''}</span>
+        <span style="color:${rm.color};font-size:11px;font-weight:600">${rm.dot} ${rm.label}</span>
+      </div>
+      <div class="prio-prog"><div class="prio-prog-fill" style="width:${prog}%;background:${sm.color}"></div></div>
+      <div class="prio-card-footer">
+        <span class="status-pill" style="background:${sm.bg};color:${sm.color};font-size:10px">${sm.icon} ${sm.label}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          ${squadTag(p)}
+          <span style="font-size:11px;color:${dc};font-weight:600">${dias===null?'—':diasLabel(dias)}</span>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const columns = Object.entries(grupos).map(([prio, projs])=>`
+    <div class="prio-col" style="border-top:3px solid ${pColors[prio]}">
+      <div class="prio-col-header">
+        <div class="prio-col-dot" style="background:${pColors[prio]}"></div>
+        <div class="prio-col-title">${prio} Prioridade</div>
+        <div class="prio-col-count" style="color:${pColors[prio]}">${projs.length}</div>
+      </div>
+      <div class="prio-col-body">
+        ${projs.length ? projs.map(projCard).join('') : `<div class="prio-empty">Nenhum projeto</div>`}
+      </div>
+    </div>`).join('');
+
+  // Summary strip
+  const total = filtered.length;
+  const criticos = filtered.filter(p=>isCritico(p)).length;
+  const atrasados = filtered.filter(p=>calcStatus(p)==='Atrasado').length;
+
+  el.innerHTML = `
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <div class="filter-bar" style="margin-bottom:0">${squadBtns}</div>
+    <div style="display:flex;gap:12px;font-size:12px;color:var(--muted)">
+      <span><strong style="color:var(--text)">${total}</strong> projetos</span>
+      <span style="color:${criticos?'#ef4444':'var(--muted)'}"><strong>${criticos}</strong> críticos</span>
+      <span style="color:${atrasados?'#f59e0b':'var(--muted)'}"><strong>${atrasados}</strong> atrasados</span>
+    </div>
+  </div>
+  <div class="prio-columns">${columns}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 2 — POR SQUAD
+// ══════════════════════════════════════════════════════════
+function renderSquads(el){
+  const cards = SQUADS.map(sq=>{
+    const projs    = PROJETOS.filter(p=>p.squad===sq.id);
+    const ativos   = projs.filter(p=>{const s=calcStatus(p);return s!=='Concluído'&&s!=='Não Iniciado'&&s!=='Standby';});
+    const criticos = projs.filter(p=>isCritico(p));
+    const bloq     = projs.filter(p=>p.bloqueador&&p.bloqueador.trim()&&calcStatus(p)!=='Concluído');
+    const health   = projs.length ? Math.max(0,100-(criticos.length*15)-(bloq.length*10)) : 100;
+    const hColor   = health>=70?'#22c55e':health>=45?'#f59e0b':'#ef4444';
+
+    const projRows = projs.length ? projs.map(p=>{
+      const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+      const prog=calcProgresso(p);
+      return `<div class="squad-proj-row" onclick="location.href='projetos.html?p=${encodeURIComponent(p.nome)}'">
+        <span style="font-size:14px">${sm.icon}</span>
+        <span class="squad-proj-name">${p.nome}</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:70px;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+            <div style="width:${prog}%;height:100%;background:${sm.color};border-radius:2px"></div>
+          </div>
+          <span style="font-size:11px;color:${sm.color};font-weight:600;width:32px;text-align:right">${prog}%</span>
+        </div>
+      </div>`;
+    }).join('') : `<div class="squad-no-proj">Nenhum projeto atribuído a este squad</div>`;
+
+    return `
+    <div class="squad-card" style="border-top:3px solid ${sq.cor}">
+      <div class="squad-card-header">
+        <div class="squad-icon-wrap" style="background:${sq.cor}18;border:1px solid ${sq.cor}30">
+          <span>${sq.icone}</span>
+        </div>
+        <div style="flex:1">
+          <div class="squad-name" style="color:${sq.cor}">${sq.nome}</div>
+          <div class="squad-desc">${sq.desc}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:20px;font-weight:800;color:${hColor}">${health}</div>
+          <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px">health</div>
+        </div>
+      </div>
+      <div class="squad-kpis">
+        <div class="squad-kpi">
+          <div class="squad-kpi-v" style="color:#3b82f6">${projs.length}</div>
+          <div class="squad-kpi-l">Projetos</div>
+        </div>
+        <div class="squad-kpi">
+          <div class="squad-kpi-v" style="color:#22c55e">${ativos.length}</div>
+          <div class="squad-kpi-l">Ativos</div>
+        </div>
+        <div class="squad-kpi">
+          <div class="squad-kpi-v" style="color:${criticos.length?'#ef4444':'var(--muted)'}">${criticos.length}</div>
+          <div class="squad-kpi-l">Críticos</div>
+        </div>
+        <div class="squad-kpi">
+          <div class="squad-kpi-v" style="color:${bloq.length?'#f97316':'var(--muted)'}">${bloq.length}</div>
+          <div class="squad-kpi-l">Bloqueios</div>
+        </div>
+      </div>
+      <div class="squad-proj-list">${projRows}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div class="squad-grid">${cards}</div>`;
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 3 — GANTT
+// ══════════════════════════════════════════════════════════
+const FASE_CORES = ['#a855f7','#3b82f6','#06b6d4','#10b981','#f59e0b','#ef4444','#22c55e'];
+
+function renderGantt(el){
+  const ativos = PROJETOS.filter(p=>{const s=calcStatus(p);return s!=='Concluído'&&s!=='Standby'&&s!=='Não Iniciado';});
+
+  // Toolbar
+  const toolbar = `
+  <div class="gantt-toolbar">
+    <button class="gantt-mode-btn ${ganttMode==='projeto'?'active':''}" onclick="ganttMode='projeto';localStorage.setItem('v16_sqGanttMode','projeto');renderGantt(document.getElementById('tab-content'))">Por Projeto</button>
+    <button class="gantt-mode-btn ${ganttMode==='fase'?'active':''}" onclick="ganttMode='fase';localStorage.setItem('v16_sqGanttMode','fase');renderGantt(document.getElementById('tab-content'))">Por Fase</button>
+    ${ganttMode==='fase' ? `
+      <div class="filter-sep"></div>
+      <span style="font-size:12px;color:var(--muted)">Projeto:</span>
+      <select id="gantt-proj-sel" onchange="ganttSelectedProj=this.value;localStorage.setItem('v16_sqGanttProj',this.value);renderGantt(document.getElementById('tab-content'))"
+        style="background:var(--surface);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer">
+        ${ativos.map(p=>`<option value="${escHtml(p.nome)}" ${ganttSelectedProj===p.nome?'selected':''}>${p.nome}</option>`).join('')}
+      </select>` : `
+      <div class="filter-sep"></div>
+      <span style="font-size:12px;color:var(--muted)">Área:</span>
+      <select id="gantt-area-sel" onchange="ganttAreaFilter=this.value;localStorage.setItem('v16_sqGanttArea',this.value);renderGantt(document.getElementById('tab-content'))"
+        style="background:var(--surface);border:1px solid var(--border);color:var(--text);padding:5px 10px;border-radius:8px;font-family:inherit;font-size:12px;cursor:pointer">
+        <option value="all">Todas as Áreas</option>
+        ${SQUADS.map(s=>`<option value="${s.id}" ${ganttAreaFilter===s.id?'selected':''}>${s.icone} ${s.nome}</option>`).join('')}
+      </select>`}
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted)">
+      <span style="display:inline-block;width:12px;height:3px;background:var(--brand);border-radius:2px"></span> Hoje
+      <span style="display:inline-block;width:20px;height:8px;background:rgba(255,255,255,.2);border-radius:3px;margin-left:4px"></span> Planejado
+      <span style="display:inline-block;width:20px;height:8px;background:#3b82f6;border-radius:3px;opacity:.7;margin-left:4px"></span> Progresso
+    </div>
+  </div>`;
+
+  if(!ativos.length){
+    el.innerHTML = toolbar + `<div class="card" style="text-align:center;padding:60px;color:var(--muted)">Nenhum projeto ativo</div>`;
+    return;
+  }
+
+  if(ganttMode==='projeto'){
+    const ganttFiltered = ganttAreaFilter!=='all' ? ativos.filter(p=>p.squad===ganttAreaFilter) : ativos;
+    el.innerHTML = toolbar + (ganttFiltered.length
+      ? buildProjGantt(ganttFiltered)
+      : `<div class="card" style="text-align:center;padding:60px;color:var(--muted)">Nenhum projeto ativo nesta área</div>`);
+  } else {
+    if(!ganttSelectedProj) ganttSelectedProj = ativos[0]?.nome;
+    const proj = ativos.find(p=>p.nome===ganttSelectedProj) || ativos[0];
+    el.innerHTML = toolbar + buildFaseGantt(proj);
+  }
+  setupGanttTooltips();
+}
+
+function buildProjGantt(projs){
+  // Calculate time range
+  const allStarts = projs.map(p=>new Date(p.inicio).getTime()).filter(d=>!isNaN(d));
+  const allEnds   = projs.map(p=>new Date(getFimEfetivo(p)||p.fim).getTime()).filter(d=>!isNaN(d));
+  if(!allStarts.length) return '<div class="card" style="padding:40px;text-align:center;color:var(--muted)">Sem dados de datas</div>';
+
+  const minT  = Math.min(...allStarts);
+  const maxT  = Math.max(...allEnds);
+  const span  = maxT - minT || 1;
+  const todayPct = Math.max(0,Math.min(100,(HOJE.getTime()-minT)/span*100));
+
+  // Build month headers
+  const months = buildMonthHeaders(new Date(minT), new Date(maxT));
+  const monthHeader = `<div class="gantt-header-row">
+    <div class="gantt-label-col">Projeto</div>
+    <div class="gantt-months">${months.html}</div>
+  </div>`;
+
+  const rows = projs.map((p,pi)=>{
+    const ini  = new Date(p.inicio).getTime();
+    const fim  = new Date(getFimEfetivo(p)||p.fim).getTime();
+    const left = Math.max(0,(ini-minT)/span*100);
+    const w    = Math.max(0.5,Math.min(100-left,(fim-ini)/span*100));
+    const prog = calcProgresso(p);
+    const st   = calcStatus(p);
+    const sm   = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const cor  = st==='Atrasado'?'#ef4444':st==='Bloqueado'?'#f97316':st==='Concluído'?'#22c55e':sm.color;
+    const sq   = getSquad(p);
+    const fe   = getFimEfetivo(p)||p.fim;
+    const diasLabel_ = fe ? diasLabel(Math.round((new Date(fe)-HOJE)/86400000)) : '';
+    return `<div class="gantt-row">
+      <div class="gantt-row-label">
+        ${sq?`<span style="width:8px;height:8px;border-radius:2px;background:${sq.cor};flex-shrink:0;display:inline-block"></span>`:''}
+        <span title="${escHtml(p.nome)}">${p.nome}</span>
+      </div>
+      <div class="gantt-row-track">
+        <!-- Background bar (planned) -->
+        <div class="gantt-bar" style="left:${left.toFixed(2)}%;width:${w.toFixed(2)}%;background:${cor}20;border:1px solid ${cor}40"
+          data-tip="${escHtml(p.nome)} · ${formatDate(p.inicio)} → ${formatDate(fe)} · ${prog}% concluído · ${diasLabel_}">
+          <!-- Progress fill -->
+          <div class="gantt-bar-fill" style="width:${prog}%;background:${cor}"></div>
+          <span class="gantt-bar-label">${p.nome} · ${prog}%</span>
+        </div>
+        <!-- Today line -->
+        <div class="gantt-today" style="left:${todayPct.toFixed(2)}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="gantt-wrap" style="width:100%;overflow-x:auto">
+    ${monthHeader}
+    <div style="min-width:600px">${rows}</div>
+  </div>
+  ${buildGanttLegend(projs)}`;
+}
+
+function buildFaseGantt(p){
+  const fases   = calcGanttFases(p);
+  if(!fases || !fases.length) return `<div class="card" style="text-align:center;padding:60px;color:var(--muted)">Sem dados de fase disponíveis</div>`;
+  const minT    = fases[0].start.getTime();
+  const maxT    = fases[fases.length-1].end.getTime();
+  const span    = maxT - minT || 1;
+  const todayPct= Math.max(0,Math.min(100,(HOJE.getTime()-minT)/span*100));
+  const months  = buildMonthHeaders(fases[0].start, fases[fases.length-1].end);
+
+  const header = `<div class="gantt-header-row">
+    <div class="gantt-label-col">Fase</div>
+    <div class="gantt-months">${months.html}</div>
+  </div>`;
+
+  const rows = fases.map((f,i)=>{
+    const left = ((f.start.getTime()-minT)/span*100);
+    const w    = Math.max(0.5,((f.end.getTime()-f.start.getTime())/span*100));
+    const cor  = FASE_CORES[i];
+    const nomeFase = f.fase.split('. ')[1]||f.fase;
+    return `<div class="gantt-row">
+      <div class="gantt-row-label">
+        <span class="gantt-phase-dot" style="background:${cor}"></span>
+        ${nomeFase}
+      </div>
+      <div class="gantt-row-track">
+        <div class="gantt-bar" style="left:${left.toFixed(2)}%;width:${w.toFixed(2)}%;background:${cor}20;border:1px solid ${cor}50"
+          data-tip="${nomeFase} · ${formatDate(f.start.toISOString().split('T')[0])} → ${formatDate(f.end.toISOString().split('T')[0])} · ${f.prog}% concluído">
+          <div class="gantt-bar-fill" style="width:${f.prog}%;background:${cor}"></div>
+          <span class="gantt-bar-label">${nomeFase} · ${f.prog}%</span>
+        </div>
+        <div class="gantt-today" style="left:${todayPct.toFixed(2)}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div class="card" style="margin-bottom:16px">
+    <div class="card-title">
+      <span>📅 Fases — <strong>${p.nome}</strong></span>
+      <span style="font-size:11px;font-weight:400;color:var(--muted)">${formatDate(p.inicio)} → ${formatDate(getFimEfetivo(p)||p.fim)}</span>
+    </div>
+  </div>
+  <div class="gantt-wrap" style="overflow-x:auto">
+    ${header}
+    <div style="min-width:600px">${rows}</div>
+  </div>
+  <div class="gantt-legend" style="margin-top:12px">
+    ${FASES.map((f,i)=>`<div class="gantt-legend-item"><div class="gantt-legend-bar" style="background:${FASE_CORES[i]}"></div>${f.split('. ')[1]||f}</div>`).join('')}
+  </div>`;
+}
+
+function buildMonthHeaders(startDate, endDate){
+  const months=[], meses=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  let cur = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+  const end = new Date(endDate.getFullYear(), endDate.getMonth(), 1);
+  while(cur <= end){ months.push(new Date(cur)); cur.setMonth(cur.getMonth()+1); }
+  const total = months.length || 1;
+  const pct = (100/total).toFixed(2)+'%';
+  return {
+    months,
+    html: months.map(m=>`<div class="gantt-month" style="width:${pct}">${meses[m.getMonth()]} ${m.getFullYear()}</div>`).join('')
+  };
+}
+
+function buildGanttLegend(projs){
+  const squadsUsed = [...new Set(projs.map(p=>p.squad).filter(Boolean))].map(id=>SQUADS.find(s=>s.id===id)).filter(Boolean);
+  if(!squadsUsed.length) return '';
+  return `<div class="gantt-legend">
+    <span style="font-size:11px;font-weight:600;color:var(--muted);margin-right:4px">Área:</span>
+    ${squadsUsed.map(s=>`<div class="gantt-legend-item"><div style="width:10px;height:10px;border-radius:3px;background:${s.cor}"></div>${s.nome}</div>`).join('')}
+  </div>`;
+}
+
+function setupGanttTooltips(){
+  const tip = document.getElementById('gantt-tip');
+  document.querySelectorAll('.gantt-bar[data-tip]').forEach(el=>{
+    el.addEventListener('mouseenter', e=>{ tip.textContent=el.dataset.tip; tip.style.display='block'; });
+    el.addEventListener('mousemove',  e=>{ tip.style.left=(e.pageX+12)+'px'; tip.style.top=(e.pageY-28)+'px'; });
+    el.addEventListener('mouseleave', ()=>{ tip.style.display='none'; });
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB 4 — ESCOPO POR SQUAD
+// ══════════════════════════════════════════════════════════
+function renderScope(el){
+  const sections = SQUADS.map(sq=>{
+    const projs = PROJETOS.filter(p=>p.squad===sq.id&&calcStatus(p)!=='Concluído');
+    const projContent = projs.length ? projs.map(p=>{
+      const capa  = getCapaForProject(p.nome);
+      const st    = calcStatus(p);
+      const sm    = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+      const prog  = calcProgresso(p);
+      // Calculate phase completion to determine scope item status
+      const faseProgMap = {};
+      calcGanttFases(p).forEach(f=>{ faseProgMap[f.fase] = f.prog; });
+      // Phase index of each capa area (escopo areas don't map 1:1 to phases,
+      // so we treat an item as "done" when the project overall progress exceeds
+      // the relative position of that item in the scope list)
+      let scopeItems = [];
+      if(capa && capa.escopo){
+        // Determina "done" pela fase correspondente: item concluído se a fase
+        // do projeto com o mesmo nome de área estiver 100% concluída no Gantt
+        const fasesDone = new Set(
+          calcGanttFases(p)
+            .filter(f => f.prog >= 100)
+            .map(f => f.fase)
+        );
+        Object.entries(capa.escopo).forEach(([area, items]) => {
+          (items||[]).forEach(item => {
+            // Item done se projeto concluído OU se existe fase concluída que contenha o nome da área
+            const isDone = st === 'Concluído' || prog === 100
+              || [...fasesDone].some(f => f.toLowerCase().includes(area.toLowerCase())
+                                      || area.toLowerCase().includes(f.replace(/^\d+\.\s*/,'').toLowerCase()));
+            scopeItems.push({area, item, done: isDone});
+          });
+        });
+      }
+
+      const phaseStatus = calcGanttFases(p).map((f,i)=>{
+        const cor = FASE_CORES[i];
+        const pct = f.prog;
+        const nome = f.fase.split('. ')[1]||f.fase;
+        return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+          <div style="width:8px;height:8px;border-radius:2px;background:${cor};flex-shrink:0"></div>
+          <span style="font-size:11px;color:var(--muted2);flex:1">${nome}</span>
+          <span style="font-size:11px;font-weight:700;color:${pct===100?'#22c55e':pct>0?cor:'var(--muted)'}">${pct}%</span>
+        </div>`;
+      }).join('');
+
+      return `
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-bottom:12px">
+        <div class="scope-proj-header">
+          <div>
+            <div style="font-size:14px;font-weight:800">${p.nome}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">${escHtml(p.local||'')} · PMO: ${escHtml(p.pmo||'—')} · Resp: ${escHtml(p.resp||'—')}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span class="status-pill" style="background:${sm.bg};color:${sm.color}">${sm.icon} ${sm.label}</span>
+            <span style="font-size:20px;font-weight:800;color:${sm.color}">${prog}%</span>
+          </div>
+        </div>
+        ${p.bloqueador&&p.bloqueador.trim()?`
+        <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:8px 12px;margin-bottom:12px;font-size:12px;color:#fca5a5">
+          🔒 <strong>Bloqueador:</strong> ${escHtml(p.bloqueador)}
+        </div>`:''}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px">Progresso por Fase</div>
+            ${phaseStatus}
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);margin-bottom:8px">Itens de Escopo</div>
+            ${scopeItems.length ? `
+              <div style="display:flex;flex-direction:column;gap:4px;max-height:180px;overflow-y:auto">
+                ${scopeItems.slice(0,12).map(s=>`
+                  <div style="display:flex;align-items:flex-start;gap:6px;font-size:11px">
+                    <span style="color:${s.done?'#22c55e':'var(--muted)'};flex-shrink:0;margin-top:1px">${s.done?'✓':'○'}</span>
+                    <span style="color:var(--muted2)">${escHtml(s.item)}</span>
+                  </div>`).join('')}
+                ${scopeItems.length>12?`<div style="font-size:11px;color:var(--muted);padding:4px">+ ${scopeItems.length-12} itens na Capa Técnica</div>`:''}
+              </div>` :
+              `<div style="font-size:12px;color:var(--muted);padding:4px">Capa técnica não cadastrada. <a href="admin.html" style="color:var(--brand)">Cadastrar →</a></div>`}
+          </div>
+        </div>
+      </div>`;
+    }).join('') : `<div style="padding:20px;text-align:center;color:var(--muted);font-size:12px">Nenhum projeto ativo neste squad</div>`;
+
+    const _sqKey = 'v16_squad_open_' + sq.id;
+    const isOpen = localStorage.getItem(_sqKey) !== '0'; // aberto por padrão
+    return `
+    <div class="scope-card" style="border-left:4px solid ${sq.cor}">
+      <div class="scope-card-header ${isOpen?'open':''}" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open');localStorage.setItem('v16_squad_open_${sq.id}',this.classList.contains('open')?'1':'0')">
+        <div class="squad-icon-wrap" style="width:36px;height:36px;background:${sq.cor}18;border-radius:8px;border:1px solid ${sq.cor}30;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0">${sq.icone}</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:${sq.cor}">${sq.nome}</div>
+          <div style="font-size:11px;color:var(--muted)">${projs.length} projeto${projs.length!==1?'s':''} ativo${projs.length!==1?'s':''}</div>
+        </div>
+        <span class="scope-card-chevron">›</span>
+      </div>
+      <div class="scope-card-body ${isOpen?'open':''}">${projContent}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div class="scope-sections">${sections}</div>`;
+}
+
+// ── ESC handler ───────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  const cmd = document.getElementById('cmd-overlay');
+  if(cmd && cmd.classList.contains('open')){ cmd.classList.remove('open'); }
+});
+
+// ── Init ───────────────────────────────────────────────────
+(function(){ const el=document.getElementById('print-sq-date'); if(el) el.textContent=HOJE_ISO; })();
+updateAlertBadge();
+// Abre a tab persistida (ou prio por padrão), sincronizando o botão ativo
+(function(){
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabMap  = {prio:0, squads:1, gantt:2, scope:3};
+  const idx     = tabMap[activeTab] ?? 0;
+  const btn     = tabBtns[idx] || tabBtns[0];
+  showTab(activeTab, btn);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Login — Velox by Invent</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23F5C300'/><text x='16' y='23' text-anchor='middle' font-size='18' font-weight='900' font-family='Inter,sans-serif' fill='%230a0e19'>VX</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--brand:#F5C300;--brand-dim:rgba(245,195,0,.18);--bg:#030810;--surface:rgba(255,255,255,.04);--border:rgba(255,255,255,.08);--text:#f1f5f9;--muted:#64748b}
+html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(ellipse 140% 80% at 50% -10%,#0d1a35 0%,#050b18 45%,#030810 100%);color:var(--text);overflow:hidden}
+
+/* ── Aurora orbs ── */
+.aurora{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);animation:drift 20s infinite alternate ease-in-out}
+.orb-1{width:600px;height:600px;background:radial-gradient(circle,#6d28d9,transparent 65%);top:-180px;left:-140px;opacity:.45;animation-delay:0s}
+.orb-2{width:480px;height:480px;background:radial-gradient(circle,#1e40af,transparent 65%);top:35%;right:-100px;opacity:.4;animation-delay:-7s}
+.orb-3{width:420px;height:420px;background:radial-gradient(circle,#b45309,transparent 65%);bottom:-100px;left:25%;opacity:.3;animation-delay:-14s}
+.orb-4{width:300px;height:300px;background:radial-gradient(circle,#0e7490,transparent 65%);top:60%;left:10%;opacity:.25;animation-delay:-4s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(50px,35px) scale(1.12)}}
+
+/* ── Grid overlay ── */
+.grid-bg{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),
+                   linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:52px 52px;
+  mask-image:radial-gradient(ellipse 65% 75% at 50% 50%,black 0%,transparent 100%)}
+
+/* ── Watermark layer ── */
+.wm-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;opacity:.09}
+#wm-gear-lg{animation:wmGear 18s linear infinite;transform-box:fill-box;transform-origin:center}
+#wm-gear-md{animation:wmGear 11s linear infinite reverse;transform-box:fill-box;transform-origin:center}
+#wm-gear-sm{animation:wmGear 22s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes wmGear{to{transform:rotate(360deg)}}
+.wm-belt{animation:wmBeltAnim 2s linear infinite}
+@keyframes wmBeltAnim{from{stroke-dashoffset:0}to{stroke-dashoffset:-80}}
+.wm-flow{animation:wmFlowAnim 4s linear infinite}
+@keyframes wmFlowAnim{from{stroke-dashoffset:0}to{stroke-dashoffset:-24}}
+
+/* ── Login wrap ── */
+.login-wrap{position:relative;z-index:10;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+
+/* ── Login card ── */
+.login-card{
+  position:relative;
+  background:rgba(6,12,24,.92);
+  border-radius:22px;padding:44px 40px 36px;width:100%;max-width:400px;
+  backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px);
+  box-shadow:0 40px 100px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.07);
+  animation:cardIn .55s cubic-bezier(.4,0,.2,1);
+}
+.login-card::before{
+  content:'';position:absolute;top:0;left:15%;right:15%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,195,0,.6),transparent);
+}
+.login-card::after{
+  content:'';position:absolute;inset:0;border-radius:22px;
+  background:linear-gradient(135deg,rgba(255,255,255,.03) 0%,transparent 50%);
+  pointer-events:none;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px) scale(.98)}to{opacity:1;transform:none}}
+
+.logo-wrap{text-align:center;margin-bottom:36px;position:relative;z-index:1}
+.logo-icon{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(135deg,#F5C300,#d97706);margin-bottom:20px;
+  box-shadow:0 8px 40px rgba(245,195,0,.5),0 0 0 1px rgba(245,195,0,.25);
+  animation:logoGlow 3s ease-in-out infinite alternate;
+}
+@keyframes logoGlow{from{box-shadow:0 8px 40px rgba(245,195,0,.5),0 0 0 1px rgba(245,195,0,.25)}
+                    to  {box-shadow:0 8px 60px rgba(245,195,0,.7),0 0 0 1px rgba(245,195,0,.4)}}
+.logo-icon-v{font-size:32px;font-weight:900;color:#0a0e19;letter-spacing:-1px}
+.logo-name{font-size:36px;font-weight:900;letter-spacing:-2.5px;line-height:1;color:#fff}
+.logo-name .vy{color:#F5C300}.logo-name .dot{color:#F5C300}
+.logo-byline{font-size:10px;font-weight:600;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-top:4px}
+.logo-welcome{font-size:13px;color:var(--muted);margin-top:14px;line-height:1.5}
+
+.form-group{margin-bottom:18px;position:relative;z-index:1}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.form-control{
+  width:100%;padding:13px 16px;
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:12px;color:var(--text);font-size:14px;
+  font-family:'Inter',sans-serif;transition:border-color .2s,box-shadow .2s;outline:none;
+}
+.form-control:focus{border-color:rgba(245,195,0,.55);box-shadow:0 0 0 3px rgba(245,195,0,.1),0 0 20px rgba(245,195,0,.06)}
+.form-control::placeholder{color:var(--muted)}
+.btn-login{
+  width:100%;padding:14px;margin-top:8px;
+  background:linear-gradient(135deg,#F5C300 0%,#d97706 100%);
+  color:#0a0e19;font-size:15px;font-weight:800;border:none;border-radius:12px;
+  cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;
+  box-shadow:0 4px 20px rgba(245,195,0,.3);
+  position:relative;z-index:1;letter-spacing:.2px;
+}
+.btn-login:hover{box-shadow:0 6px 28px rgba(245,195,0,.45);transform:translateY(-1px)}
+.btn-login:active{transform:scale(.98);box-shadow:0 2px 12px rgba(245,195,0,.2)}
+.btn-login:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.login-error{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);border-radius:10px;padding:10px 14px;font-size:13px;color:#fca5a5;margin-bottom:16px;display:none;animation:shake .3s ease}
+.login-error.show{display:block}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.demo-hint{
+  margin-top:24px;padding:14px 16px;
+  background:rgba(245,195,0,.07);
+  border:1px solid rgba(245,195,0,.18);
+  border-radius:12px;font-size:12px;color:rgba(245,195,0,.85);
+  position:relative;z-index:1;
+}
+.demo-hint strong{display:block;margin-bottom:8px;font-size:10px;text-transform:uppercase;letter-spacing:.8px;opacity:.6}
+.demo-row{display:flex;justify-content:space-between;margin-top:5px;cursor:pointer;padding:4px 6px;border-radius:7px;transition:all .15s}
+.demo-row:hover{color:#F5C300;background:rgba(245,195,0,.06)}.demo-key{opacity:.6;font-size:11px}
+.login-footer{text-align:center;margin-top:20px;font-size:11px;color:var(--muted);position:relative;z-index:1}
+
+/* ── Terminal flutuante ── */
+.term-widget{
+  position:fixed;top:28px;right:28px;z-index:5;
+  width:272px;
+  background:rgba(2,6,18,.88);
+  border:1px solid rgba(99,102,241,.32);
+  border-radius:12px;
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  box-shadow:0 12px 40px rgba(0,0,0,.55),0 0 0 1px rgba(99,102,241,.08),
+             inset 0 1px 0 rgba(255,255,255,.04);
+  font-family:'Courier New',Courier,monospace;
+  font-size:11.5px;
+  overflow:hidden;
+  animation:termSlideIn 1s cubic-bezier(.4,0,.2,1) 1.8s both;
+}
+@keyframes termSlideIn{from{opacity:0;transform:translateY(-24px) scale(.97)}to{opacity:1;transform:none}}
+.term-header{
+  display:flex;align-items:center;gap:6px;
+  padding:9px 13px 8px;
+  background:rgba(99,102,241,.07);
+  border-bottom:1px solid rgba(99,102,241,.14);
+}
+.term-dot{width:9px;height:9px;border-radius:50%}
+.td1{background:rgba(239,68,68,.55)}.td2{background:rgba(245,158,11,.55)}.td3{background:rgba(34,197,94,.55)}
+.term-title{font-size:10px;color:rgba(148,163,184,.55);margin-left:4px;letter-spacing:.4px}
+.term-body{padding:11px 14px 13px;min-height:114px}
+.term-row{display:flex;align-items:flex-start;gap:5px;margin-bottom:3.5px;line-height:1.55}
+.term-prompt{color:#818cf8;font-weight:700;flex-shrink:0;user-select:none}
+.term-cmd {color:#e2e8f0}
+.term-ok  {color:#4ade80}
+.term-warn{color:#f59e0b}
+.term-info{color:#94a3b8}
+.term-cursor{
+  display:inline-block;width:6px;height:12px;
+  background:#818cf8;margin-left:1px;vertical-align:middle;border-radius:1px;
+  animation:termBlink .75s step-end infinite;
+}
+@keyframes termBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── Cards flutuantes (esquerda) ── */
+.float-stats{position:fixed;left:28px;top:50%;transform:translateY(-50%);z-index:4;display:flex;flex-direction:column;gap:12px;pointer-events:none}
+.float-stat{
+  width:168px;
+  background:rgba(4,8,26,.8);
+  border:1px solid rgba(99,102,241,.26);
+  border-top:1px solid rgba(99,102,241,.4);
+  border-radius:14px;padding:14px 16px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  box-shadow:0 12px 36px rgba(0,0,0,.45),0 0 0 1px rgba(99,102,241,.05),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.float-stat::before{content:'';position:absolute;inset:0;border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,.03),transparent 55%);pointer-events:none}
+.float-stat{position:relative;overflow:hidden}
+.float-stat:nth-child(1){animation:floatBob 7s ease-in-out infinite alternate,  statSlideIn .8s cubic-bezier(.34,1.2,.64,1) 2.2s both}
+.float-stat:nth-child(2){animation:floatBob 9s ease-in-out -3s infinite alternate, statSlideIn .8s cubic-bezier(.34,1.2,.64,1) 2.5s both}
+.float-stat:nth-child(3){animation:floatBob 8s ease-in-out -1.5s infinite alternate,statSlideIn .8s cubic-bezier(.34,1.2,.64,1) 2.8s both}
+@keyframes floatBob{from{transform:translateY(-7px)}to{transform:translateY(7px)}}
+@keyframes statSlideIn{from{opacity:0;transform:translateX(-22px)}to{opacity:1;transform:none}}
+.fs-icon{font-size:17px;margin-bottom:7px;display:block;opacity:.85}
+.fs-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:#f1f5f9;font-family:'Inter',sans-serif}
+.fs-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#475569;margin-top:4px;font-family:'Inter',sans-serif}
+.fs-sub{font-size:10px;font-weight:600;color:#6366f1;margin-top:5px;font-family:'Inter',sans-serif;opacity:.85}
+.fs-bar{height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:9px;overflow:hidden}
+.fs-bar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#6366f1,#a78bfa);transition:width .8s ease}
+
+/* ── Barra de status inferior ── */
+.sys-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:6;
+  padding:7px 28px;
+  background:rgba(2,4,18,.9);
+  border-top:1px solid rgba(99,102,241,.13);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  display:flex;align-items:center;justify-content:center;gap:20px;
+  animation:sysBarIn .6s ease 3.2s both;
+}
+@keyframes sysBarIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sb-item{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:600;letter-spacing:.35px;color:#374151;font-family:'Inter',sans-serif;white-space:nowrap}
+.sb-live{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,.7);animation:livePulse 2s ease-in-out infinite;flex-shrink:0}
+@keyframes livePulse{0%,100%{box-shadow:0 0 4px rgba(34,197,94,.5)}50%{box-shadow:0 0 12px rgba(34,197,94,.9)}}
+.sb-div{width:1px;height:11px;background:rgba(99,102,241,.18);flex-shrink:0}
+.sb-brand{color:#6366f1;font-weight:700}
+
+/* ── Partículas ── */
+@keyframes ptDrift{from{transform:translateY(0) scale(1);opacity:0}8%{opacity:1}85%{opacity:.55}to{transform:translateY(-102vh) scale(.35);opacity:0}}
+
+@media(max-width:920px){.term-widget{display:none}.float-stats{display:none}}
+</style>
+</head>
+<body>
+
+<!-- Aurora orbs -->
+<div class="aurora">
+  <div class="orb orb-1"></div><div class="orb orb-2"></div>
+  <div class="orb orb-3"></div><div class="orb orb-4"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     WATERMARK: Esteira industrial + elementos Velox/automação
+     ══════════════════════════════════════════════════════════ -->
+<div class="wm-bg">
+<svg viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style="width:100%;height:100%">
+<defs>
+  <marker id="wm-arr" markerWidth="7" markerHeight="6" refX="6" refY="3" orient="auto">
+    <polygon points="0 0,7 3,0 6" fill="#a78bfa"/>
+  </marker>
+</defs>
+
+<!-- ════ ENGRENAGEM GRANDE (canto sup. esq.) ════ -->
+<g id="wm-gear-lg" stroke="#7c83ff" fill="none">
+  <circle cx="158" cy="198" r="72" stroke-width="1.5"/>
+  <circle cx="158" cy="198" r="55" stroke-width=".7"/>
+  <circle cx="158" cy="198" r="13" stroke-width="2"/>
+  <!-- Raios -->
+  <line x1="158" y1="185" x2="158" y2="143" stroke-width="1.2"/>
+  <line x1="158" y1="211" x2="158" y2="253" stroke-width="1.2"/>
+  <line x1="145" y1="198" x2="103" y2="198" stroke-width="1.2"/>
+  <line x1="171" y1="198" x2="213" y2="198" stroke-width="1.2"/>
+  <line x1="149" y1="189" x2="119" y2="159" stroke-width=".9"/>
+  <line x1="167" y1="189" x2="197" y2="159" stroke-width=".9"/>
+  <line x1="149" y1="207" x2="119" y2="237" stroke-width=".9"/>
+  <line x1="167" y1="207" x2="197" y2="237" stroke-width=".9"/>
+  <!-- 12 dentes (30° cada) -->
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(0 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(30 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(60 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(90 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(120 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(150 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(180 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(210 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(240 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(270 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(300 158 198)"/>
+  <rect x="153" y="111" width="10" height="15" rx="1" stroke-width="1.2" transform="rotate(330 158 198)"/>
+</g>
+
+<!-- ════ ENGRENAGEM MÉDIA (engrena c/ grande) ════ -->
+<g id="wm-gear-md" stroke="#7c83ff" fill="none">
+  <circle cx="297" cy="143" r="44" stroke-width="1.5"/>
+  <circle cx="297" cy="143" r="33" stroke-width=".7"/>
+  <circle cx="297" cy="143" r="9"  stroke-width="2"/>
+  <line x1="297" y1="134" x2="297" y2="110" stroke-width="1.2"/>
+  <line x1="297" y1="152" x2="297" y2="176" stroke-width="1.2"/>
+  <line x1="288" y1="143" x2="264" y2="143" stroke-width="1.2"/>
+  <line x1="306" y1="143" x2="330" y2="143" stroke-width="1.2"/>
+  <!-- 8 dentes (45° cada) -->
+  <rect x="293" y="87" width="8" height="12" rx="1" stroke-width="1.2" transform="rotate(0 297 143)"/>
+  <rect x="293" y="87" width="8" height="12" rx="1" stroke-width="1.2" transform="rotate(45 297 143)"/>
+  <rect x="293" y="87" width="8" height="12" rx="1" stroke-width="1.2" transform="rotate(90 297 143)"/>
+  <rect x="293" y="87" width="8" height="12" rx="1" stroke-width="1.2" transform="rotate(135 297 143)"/>
+  <rect x="293" y="87" width="8" height="12" rx="1" stroke-width="1.2" transform="rotate(180 297 143)"/>
+  <rect x="293" y="87" width="8" height="12" rx="1" stroke-width="1.2" transform="rotate(225 297 143)"/>
+  <rect x="293" y="87" width="8" height="12" rx="1" stroke-width="1.2" transform="rotate(270 297 143)"/>
+  <rect x="293" y="87" width="8" height="12" rx="1" stroke-width="1.2" transform="rotate(315 297 143)"/>
+</g>
+
+<!-- ════ ENGRENAGEM PEQUENA (dir. canto médio) ════ -->
+<g id="wm-gear-sm" stroke="#818cf8" fill="none">
+  <circle cx="1312" cy="638" r="38" stroke-width="1.3"/>
+  <circle cx="1312" cy="638" r="28" stroke-width=".7"/>
+  <circle cx="1312" cy="638" r="8"  stroke-width="1.8"/>
+  <line x1="1312" y1="630" x2="1312" y2="610" stroke-width="1"/>
+  <line x1="1312" y1="646" x2="1312" y2="666" stroke-width="1"/>
+  <line x1="1304" y1="638" x2="1284" y2="638" stroke-width="1"/>
+  <line x1="1320" y1="638" x2="1340" y2="638" stroke-width="1"/>
+  <!-- 10 dentes (36° cada) -->
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(0 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(36 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(72 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(108 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(144 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(180 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(216 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(252 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(288 1312 638)"/>
+  <rect x="1309" y="590" width="6" height="10" rx="1" stroke-width="1" transform="rotate(324 1312 638)"/>
+</g>
+
+<!-- ════ BRAÇO ROBÓTICO ESQUERDO ════ -->
+<g stroke="#818cf8" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="68" y="634" width="78" height="15" rx="5" stroke-width="2"/>
+  <rect x="88" y="627" width="38" height="8" rx="2" stroke-width="1.5"/>
+  <line x1="107" y1="627" x2="107" y2="565" stroke-width="4"/>
+  <circle cx="107" cy="561" r="10" stroke-width="2"/>
+  <line x1="107" y1="561" x2="155" y2="509" stroke-width="3.5"/>
+  <circle cx="158" cy="506" r="8" stroke-width="2"/>
+  <line x1="158" y1="506" x2="144" y2="487" stroke-width="2.5"/>
+  <line x1="158" y1="506" x2="172" y2="487" stroke-width="2.5"/>
+  <line x1="144" y1="487" x2="139" y2="476" stroke-width="2"/>
+  <line x1="144" y1="487" x2="150" y2="476" stroke-width="2"/>
+  <line x1="172" y1="487" x2="167" y2="476" stroke-width="2"/>
+  <line x1="172" y1="487" x2="178" y2="476" stroke-width="2"/>
+  <!-- Caixa na garra -->
+  <rect x="145" y="464" width="26" height="18" rx="2" stroke-width="1.5"/>
+  <line x1="145" y1="473" x2="171" y2="473" stroke-width=".8"/>
+</g>
+
+<!-- ════ BRAÇO ROBÓTICO DIREITO (espelhado) ════ -->
+<g stroke="#818cf8" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(1440,0) scale(-1,1)">
+  <rect x="68" y="634" width="78" height="15" rx="5" stroke-width="2"/>
+  <rect x="88" y="627" width="38" height="8" rx="2" stroke-width="1.5"/>
+  <line x1="107" y1="627" x2="107" y2="565" stroke-width="4"/>
+  <circle cx="107" cy="561" r="10" stroke-width="2"/>
+  <line x1="107" y1="561" x2="155" y2="509" stroke-width="3.5"/>
+  <circle cx="158" cy="506" r="8" stroke-width="2"/>
+  <line x1="158" y1="506" x2="144" y2="487" stroke-width="2.5"/>
+  <line x1="158" y1="506" x2="172" y2="487" stroke-width="2.5"/>
+  <line x1="144" y1="487" x2="139" y2="476" stroke-width="2"/>
+  <line x1="144" y1="487" x2="150" y2="476" stroke-width="2"/>
+  <line x1="172" y1="487" x2="167" y2="476" stroke-width="2"/>
+  <line x1="172" y1="487" x2="178" y2="476" stroke-width="2"/>
+  <rect x="145" y="464" width="26" height="18" rx="2" stroke-width="1.5"/>
+  <line x1="145" y1="473" x2="171" y2="473" stroke-width=".8"/>
+</g>
+
+<!-- ════ ESTEIRA TRANSPORTADORA (baixo, largura total) ════ -->
+<g stroke="#a78bfa" fill="none" stroke-linecap="round">
+  <!-- Trilho superior -->
+  <rect x="-20" y="714" width="1480" height="14" rx="7" stroke-width="1.5"/>
+  <!-- Trilho inferior -->
+  <rect x="-20" y="760" width="1480" height="14" rx="7" stroke-width="1.5"/>
+  <!-- Superfície animada da correia (3 linhas de tracejado em movimento) -->
+  <line x1="-20" y1="728" x2="1460" y2="728" stroke-width=".9" stroke-dasharray="28,12" class="wm-belt"/>
+  <line x1="-20" y1="744" x2="1460" y2="744" stroke-width=".9" stroke-dasharray="28,12" class="wm-belt" style="animation-delay:-.66s"/>
+  <line x1="-20" y1="760" x2="1460" y2="760" stroke-width=".9" stroke-dasharray="28,12" class="wm-belt" style="animation-delay:-1.33s"/>
+  <!-- Rolos (a cada 80px) -->
+  <circle cx="40"   cy="787" r="15" stroke-width="1.5"/><circle cx="40"   cy="787" r="3" stroke-width="1"/>
+  <circle cx="120"  cy="787" r="15" stroke-width="1.5"/><circle cx="120"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="200"  cy="787" r="15" stroke-width="1.5"/><circle cx="200"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="280"  cy="787" r="15" stroke-width="1.5"/><circle cx="280"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="360"  cy="787" r="15" stroke-width="1.5"/><circle cx="360"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="440"  cy="787" r="15" stroke-width="1.5"/><circle cx="440"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="520"  cy="787" r="15" stroke-width="1.5"/><circle cx="520"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="600"  cy="787" r="15" stroke-width="1.5"/><circle cx="600"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="680"  cy="787" r="15" stroke-width="1.5"/><circle cx="680"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="760"  cy="787" r="15" stroke-width="1.5"/><circle cx="760"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="840"  cy="787" r="15" stroke-width="1.5"/><circle cx="840"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="920"  cy="787" r="15" stroke-width="1.5"/><circle cx="920"  cy="787" r="3" stroke-width="1"/>
+  <circle cx="1000" cy="787" r="15" stroke-width="1.5"/><circle cx="1000" cy="787" r="3" stroke-width="1"/>
+  <circle cx="1080" cy="787" r="15" stroke-width="1.5"/><circle cx="1080" cy="787" r="3" stroke-width="1"/>
+  <circle cx="1160" cy="787" r="15" stroke-width="1.5"/><circle cx="1160" cy="787" r="3" stroke-width="1"/>
+  <circle cx="1240" cy="787" r="15" stroke-width="1.5"/><circle cx="1240" cy="787" r="3" stroke-width="1"/>
+  <circle cx="1320" cy="787" r="15" stroke-width="1.5"/><circle cx="1320" cy="787" r="3" stroke-width="1"/>
+  <circle cx="1400" cy="787" r="15" stroke-width="1.5"/><circle cx="1400" cy="787" r="3" stroke-width="1"/>
+  <!-- Pés de apoio -->
+  <line x1="120"  y1="774" x2="120"  y2="860" stroke-width="3"/><line x1="112"  y1="860" x2="128"  y2="860" stroke-width="2"/>
+  <line x1="360"  y1="774" x2="360"  y2="860" stroke-width="3"/><line x1="352"  y1="860" x2="368"  y2="860" stroke-width="2"/>
+  <line x1="600"  y1="774" x2="600"  y2="860" stroke-width="3"/><line x1="592"  y1="860" x2="608"  y2="860" stroke-width="2"/>
+  <line x1="840"  y1="774" x2="840"  y2="860" stroke-width="3"/><line x1="832"  y1="860" x2="848"  y2="860" stroke-width="2"/>
+  <line x1="1080" y1="774" x2="1080" y2="860" stroke-width="3"/><line x1="1072" y1="860" x2="1088" y2="860" stroke-width="2"/>
+  <line x1="1320" y1="774" x2="1320" y2="860" stroke-width="3"/><line x1="1312" y1="860" x2="1328" y2="860" stroke-width="2"/>
+  <!-- Piso -->
+  <line x1="0" y1="860" x2="1440" y2="860" stroke-width="1.5"/>
+  <!-- ─── Produtos sobre a esteira ─── -->
+  <!-- Caixa 1 (padrão) -->
+  <rect x="60"  y="682" width="42" height="32" rx="3" stroke-width="1.5"/>
+  <line x1="60"  y1="698" x2="102" y2="698" stroke-width=".8"/>
+  <line x1="81"  y1="682" x2="81"  y2="714" stroke-width=".8"/>
+  <!-- Caixa 2 (alta) -->
+  <rect x="218" y="666" width="32" height="48" rx="3" stroke-width="1.5"/>
+  <line x1="218" y1="682" x2="250" y2="682" stroke-width=".8"/>
+  <!-- Caixa 3 (larga) -->
+  <rect x="370" y="690" width="58" height="24" rx="3" stroke-width="1.5"/>
+  <line x1="399" y1="690" x2="399" y2="714" stroke-width=".8"/>
+  <!-- Caixa 4 -->
+  <rect x="538" y="682" width="40" height="32" rx="3" stroke-width="1.5"/>
+  <line x1="538" y1="698" x2="578" y2="698" stroke-width=".8"/>
+  <line x1="558" y1="682" x2="558" y2="714" stroke-width=".8"/>
+  <!-- Tambor/barril -->
+  <rect x="698" y="679" width="36" height="35" rx="18" stroke-width="1.5"/>
+  <line x1="698" y1="696" x2="734" y2="696" stroke-width=".8"/>
+  <!-- Caixa 6 -->
+  <rect x="858" y="686" width="44" height="28" rx="3" stroke-width="1.5"/>
+  <line x1="880" y1="686" x2="880" y2="714" stroke-width=".8"/>
+  <!-- Engradado (X) -->
+  <rect x="1018" y="681" width="38" height="33" rx="2" stroke-width="1.5"/>
+  <line x1="1018" y1="681" x2="1056" y2="714" stroke-width=".8"/>
+  <line x1="1056" y1="681" x2="1018" y2="714" stroke-width=".8"/>
+  <!-- Caixa 8 -->
+  <rect x="1178" y="684" width="42" height="30" rx="3" stroke-width="1.5"/>
+  <line x1="1178" y1="699" x2="1220" y2="699" stroke-width=".8"/>
+  <!-- Caixa 9 -->
+  <rect x="1358" y="688" width="36" height="26" rx="3" stroke-width="1.5"/>
+  <!-- Setas de direção -->
+  <path d="M 476,742 L 508,742 L 500,735 M 508,742 L 500,749" stroke-width="1.5" fill="none"/>
+  <path d="M 936,742 L 968,742 L 960,735 M 968,742 L 960,749" stroke-width="1.5" fill="none"/>
+</g>
+
+<!-- ════ TRILHAS DE CIRCUITO PCB (topo centro) ════ -->
+<g stroke="#6366f1" fill="none" stroke-linecap="square">
+  <path d="M 548,28 L 548,82 L 618,82 L 618,140" stroke-width="1.5"/>
+  <path d="M 678,28 L 678,62 L 778,62 L 778,132" stroke-width="1.5"/>
+  <path d="M 838,48 L 838,92 L 898,92 L 898,48" stroke-width="1.5"/>
+  <path d="M 758,162 L 758,202 L 818,202 L 818,242" stroke-width="1.5"/>
+  <path d="M 598,152 L 638,152 L 638,192 L 698,192" stroke-width="1.5"/>
+  <path d="M 920,108 L 968,108 L 968,68 L 1018,68" stroke-width="1.5"/>
+  <!-- Vias (nós) -->
+  <circle cx="548" cy="82"  r="4.5" stroke-width="1.5"/>
+  <circle cx="618" cy="82"  r="4.5" stroke-width="1.5"/>
+  <circle cx="778" cy="62"  r="4.5" stroke-width="1.5"/>
+  <circle cx="838" cy="92"  r="4.5" stroke-width="1.5"/>
+  <circle cx="758" cy="202" r="4.5" stroke-width="1.5"/>
+  <circle cx="818" cy="202" r="4.5" stroke-width="1.5"/>
+  <circle cx="638" cy="152" r="4.5" stroke-width="1.5"/>
+  <circle cx="968" cy="108" r="4.5" stroke-width="1.5"/>
+  <!-- CI chip 1 -->
+  <rect x="598" y="58" width="70" height="38" rx="3" stroke-width="1.5"/>
+  <line x1="598" y1="66" x2="584" y2="66" stroke-width="1.5"/>
+  <line x1="598" y1="74" x2="584" y2="74" stroke-width="1.5"/>
+  <line x1="598" y1="82" x2="584" y2="82" stroke-width="1.5"/>
+  <line x1="598" y1="90" x2="584" y2="90" stroke-width="1.5"/>
+  <line x1="668" y1="66" x2="682" y2="66" stroke-width="1.5"/>
+  <line x1="668" y1="74" x2="682" y2="74" stroke-width="1.5"/>
+  <line x1="668" y1="82" x2="682" y2="82" stroke-width="1.5"/>
+  <line x1="668" y1="90" x2="682" y2="90" stroke-width="1.5"/>
+  <line x1="613" y1="78" x2="653" y2="78" stroke-width="1"/>
+  <!-- CI chip 2 (menor) -->
+  <rect x="798" y="98" width="55" height="30" rx="2" stroke-width="1.5"/>
+  <line x1="798" y1="106" x2="786" y2="106" stroke-width="1.5"/>
+  <line x1="798" y1="114" x2="786" y2="114" stroke-width="1.5"/>
+  <line x1="798" y1="122" x2="786" y2="122" stroke-width="1.5"/>
+  <line x1="853" y1="106" x2="865" y2="106" stroke-width="1.5"/>
+  <line x1="853" y1="114" x2="865" y2="114" stroke-width="1.5"/>
+  <line x1="853" y1="122" x2="865" y2="122" stroke-width="1.5"/>
+  <!-- Resistor -->
+  <rect x="718" y="186" width="30" height="12" rx="2" stroke-width="1.5"/>
+  <line x1="698" y1="192" x2="718" y2="192" stroke-width="1.5"/>
+  <line x1="748" y1="192" x2="768" y2="192" stroke-width="1.5"/>
+  <!-- Capacitor -->
+  <line x1="958" y1="148" x2="958" y2="162" stroke-width="1.5"/>
+  <line x1="958" y1="162" x2="958" y2="162" stroke-width="2"/>
+  <line x1="952" y1="162" x2="964" y2="162" stroke-width="2"/>
+  <line x1="952" y1="168" x2="964" y2="168" stroke-width="2"/>
+  <line x1="958" y1="168" x2="958" y2="182" stroke-width="1.5"/>
+</g>
+
+<!-- ════ DASHBOARD WIREFRAME (canto inf. direito) ════ -->
+<g transform="translate(0,530)" stroke="#6366f1" fill="none">
+  <!-- Janela -->
+  <rect x="1056" y="36" width="326" height="232" rx="10" stroke-width="1.5"/>
+  <!-- Barra de título -->
+  <rect x="1056" y="36" width="326" height="28"  rx="10" stroke-width="1"/>
+  <line x1="1056" y1="64" x2="1382" y2="64" stroke-width=".8"/>
+  <!-- Botões Mac-like -->
+  <circle cx="1072" cy="50" r="5" stroke-width="1.2"/>
+  <circle cx="1088" cy="50" r="5" stroke-width="1.2"/>
+  <circle cx="1104" cy="50" r="5" stroke-width="1.2"/>
+  <!-- Título (linhas) -->
+  <line x1="1118" y1="47" x2="1220" y2="47" stroke-width="2"/>
+  <line x1="1118" y1="54" x2="1190" y2="54" stroke-width="1.2"/>
+  <!-- Eixo Y e baseline do gráfico de barras -->
+  <line x1="1070" y1="78"  x2="1070" y2="246" stroke-width="1"/>
+  <line x1="1070" y1="246" x2="1212" y2="246" stroke-width="1"/>
+  <!-- 5 barras de alturas variadas -->
+  <rect x="1080" y="168" width="18" height="78" rx="2" stroke-width="1.2"/>
+  <rect x="1106" y="138" width="18" height="108" rx="2" stroke-width="1.2"/>
+  <rect x="1132" y="188" width="18" height="58" rx="2" stroke-width="1.2"/>
+  <rect x="1158" y="152" width="18" height="94" rx="2" stroke-width="1.2"/>
+  <rect x="1184" y="173" width="18" height="73" rx="2" stroke-width="1.2"/>
+  <!-- Rótulos eixo X (linhas) -->
+  <line x1="1082" y1="250" x2="1096" y2="250" stroke-width="1"/>
+  <line x1="1108" y1="250" x2="1122" y2="250" stroke-width="1"/>
+  <line x1="1134" y1="250" x2="1148" y2="250" stroke-width="1"/>
+  <line x1="1160" y1="250" x2="1174" y2="250" stroke-width="1"/>
+  <line x1="1186" y1="250" x2="1200" y2="250" stroke-width="1"/>
+  <!-- Donut (lado direito do painel) -->
+  <!-- Círculo externo guia -->
+  <circle cx="1308" cy="158" r="50" stroke-width=".8" stroke-dasharray="4,4"/>
+  <!-- Segmentos do donut (circunferência ≈ 226 para r=36) -->
+  <circle cx="1308" cy="158" r="36" fill="none" stroke="#6366f1" stroke-width="13"
+    stroke-dasharray="90 136" stroke-dashoffset="0"
+    style="transform:rotate(-90deg);transform-origin:1308px 158px"/>
+  <circle cx="1308" cy="158" r="36" fill="none" stroke="#a78bfa" stroke-width="13"
+    stroke-dasharray="68 158" stroke-dashoffset="-90"
+    style="transform:rotate(-90deg);transform-origin:1308px 158px"/>
+  <circle cx="1308" cy="158" r="36" fill="none" stroke="#7c83ff" stroke-width="13"
+    stroke-dasharray="68 158" stroke-dashoffset="-158"
+    style="transform:rotate(-90deg);transform-origin:1308px 158px"/>
+  <!-- Buraco central + label -->
+  <circle cx="1308" cy="158" r="22" stroke-width="1"/>
+  <line x1="1296" y1="156" x2="1320" y2="156" stroke-width="2"/>
+  <line x1="1300" y1="163" x2="1316" y2="163" stroke-width="1.2"/>
+  <!-- Legenda -->
+  <circle cx="1225" cy="210" r="4" stroke-width="1.2"/>
+  <line x1="1233" y1="210" x2="1270" y2="210" stroke-width="1.2"/>
+  <circle cx="1225" cy="222" r="4" stroke-width="1.2"/>
+  <line x1="1233" y1="222" x2="1265" y2="222" stroke-width="1.2"/>
+  <circle cx="1225" cy="234" r="4" stroke-width="1.2"/>
+  <line x1="1233" y1="234" x2="1258" y2="234" stroke-width="1.2"/>
+  <!-- KPI boxes -->
+  <rect x="1280" y="208" width="48" height="28" rx="4" stroke-width="1"/>
+  <rect x="1334" y="208" width="42" height="28" rx="4" stroke-width="1"/>
+  <line x1="1285" y1="218" x2="1323" y2="218" stroke-width="1.5"/>
+  <line x1="1339" y1="218" x2="1371" y2="218" stroke-width="1.5"/>
+  <line x1="1285" y1="226" x2="1315" y2="226" stroke-width="1"/>
+  <line x1="1339" y1="226" x2="1365" y2="226" stroke-width="1"/>
+</g>
+
+<!-- ════ NÓS DE FLUXO DE DADOS (centro) ════ -->
+<g stroke="#a78bfa" fill="none">
+  <!-- Nós -->
+  <circle cx="618" cy="378" r="22" stroke-width="1.5"/>
+  <circle cx="618" cy="378" r="12" stroke-width=".8"/>
+  <circle cx="748" cy="338" r="18" stroke-width="1.5"/>
+  <circle cx="748" cy="338" r="10" stroke-width=".8"/>
+  <circle cx="868" cy="398" r="24" stroke-width="1.5"/>
+  <circle cx="868" cy="398" r="14" stroke-width=".8"/>
+  <circle cx="718" cy="448" r="20" stroke-width="1.5"/>
+  <circle cx="718" cy="448" r="11" stroke-width=".8"/>
+  <circle cx="958" cy="348" r="16" stroke-width="1.5"/>
+  <!-- Conexões animadas -->
+  <line x1="640" y1="378" x2="730" y2="345" stroke-width="1" stroke-dasharray="6,5" class="wm-flow" marker-end="url(#wm-arr)"/>
+  <line x1="766" y1="342" x2="844" y2="392" stroke-width="1" stroke-dasharray="6,5" class="wm-flow" marker-end="url(#wm-arr)" style="animation-delay:-1.5s"/>
+  <line x1="738" y1="355" x2="724" y2="428" stroke-width="1" stroke-dasharray="6,5" class="wm-flow" style="animation-delay:-2.5s"/>
+  <line x1="892" y1="408" x2="942" y2="358" stroke-width="1" stroke-dasharray="6,5" class="wm-flow" marker-end="url(#wm-arr)" style="animation-delay:-.8s"/>
+  <line x1="618" y1="400" x2="698" y2="440" stroke-width="1" stroke-dasharray="6,5" class="wm-flow" style="animation-delay:-3s"/>
+  <!-- Rótulos dos nós (linhas) -->
+  <line x1="606" y1="380" x2="630" y2="380" stroke-width="1.5"/>
+  <line x1="738" y1="340" x2="758" y2="340" stroke-width="1.5"/>
+  <line x1="854" y1="400" x2="882" y2="400" stroke-width="1.5"/>
+</g>
+
+<!-- ════ PAINEL DE CONTROLE ESQUERDO ════ -->
+<g stroke="#6366f1" fill="none">
+  <rect x="16" y="398" width="62" height="104" rx="6" stroke-width="1.5"/>
+  <rect x="24" y="407" width="46" height="28" rx="3" stroke-width="1"/>
+  <line x1="24" y1="413" x2="70" y2="413" stroke-width=".6"/>
+  <line x1="24" y1="419" x2="70" y2="419" stroke-width=".6"/>
+  <line x1="24" y1="425" x2="70" y2="425" stroke-width=".6"/>
+  <line x1="24" y1="431" x2="70" y2="431" stroke-width=".6"/>
+  <circle cx="31" cy="448" r="5" stroke-width="1.5"/>
+  <circle cx="47" cy="448" r="5" stroke-width="1.5"/>
+  <circle cx="63" cy="448" r="5" stroke-width="1.5"/>
+  <rect x="24" y="460" width="46" height="11" rx="3" stroke-width="1"/>
+  <rect x="24" y="478" width="46" height="11" rx="3" stroke-width="1"/>
+  <circle cx="28" cy="496" r="3" stroke-width="1.5"/>
+  <circle cx="39" cy="496" r="3" stroke-width="1.5"/>
+  <circle cx="50" cy="496" r="3" stroke-width="1.5"/>
+</g>
+
+<!-- ════ PAINEL DE CONTROLE DIREITO (espelhado) ════ -->
+<g stroke="#6366f1" fill="none" transform="translate(1440,0) scale(-1,1)">
+  <rect x="16" y="448" width="56" height="88" rx="6" stroke-width="1.5"/>
+  <rect x="23" y="457" width="42" height="24" rx="3" stroke-width="1"/>
+  <line x1="23" y1="463" x2="65" y2="463" stroke-width=".6"/>
+  <line x1="23" y1="469" x2="65" y2="469" stroke-width=".6"/>
+  <line x1="23" y1="475" x2="65" y2="475" stroke-width=".6"/>
+  <circle cx="30" cy="494" r="5" stroke-width="1.5"/>
+  <circle cx="44" cy="494" r="5" stroke-width="1.5"/>
+  <circle cx="58" cy="494" r="5" stroke-width="1.5"/>
+  <rect x="23" y="506" width="42" height="10" rx="3" stroke-width="1"/>
+  <rect x="23" y="522" width="42" height="10" rx="3" stroke-width="1"/>
+</g>
+
+<!-- ════ SENSOR / SINAL (dispersos) ════ -->
+<!-- Sensor de proximidade (esq. superior) -->
+<g stroke="#818cf8" fill="none" transform="translate(438,58)">
+  <path d="M -32,0 A 32,32 0 0,1 32,0" stroke-width="1.5"/>
+  <path d="M -21,0 A 21,21 0 0,1 21,0" stroke-width="1.5"/>
+  <path d="M -10,0 A 10,10 0 0,1 10,0" stroke-width="1.5"/>
+  <circle cx="0" cy="0" r="3" stroke-width="1.5"/>
+</g>
+<!-- Símbolo Wi-Fi / sinal (dir. centro) -->
+<g stroke="#7c83ff" fill="none" transform="translate(1050,352)">
+  <path d="M -36,0 A 36,36 0 0,1 36,0" stroke-width="1.5"/>
+  <path d="M -22,0 A 22,22 0 0,1 22,0" stroke-width="1.5"/>
+  <path d="M -9,0 A 9,9 0 0,1 9,0" stroke-width="1.5"/>
+  <circle cx="0" cy="4" r="3.5" stroke-width="1.5"/>
+</g>
+
+<!-- ════ FLUXO DE DADOS BINÁRIOS (área central esquerda) ════ -->
+<g stroke="#5b60ee" fill="#5b60ee" font-family="'Courier New',monospace" font-size="10">
+  <text x="398" y="182" opacity=".7">0110101</text>
+  <text x="478" y="202" opacity=".5">1001011</text>
+  <text x="436" y="222" opacity=".6">0111001</text>
+  <text x="392" y="242" opacity=".4">1010110</text>
+  <text x="462" y="260" opacity=".5">0101001</text>
+  <text x="408" y="278" opacity=".35">1100010</text>
+</g>
+
+<!-- ════ SETAS DE AUTOMAÇÃO (conectando elementos) ════ -->
+<g stroke="#7c83ff" fill="none">
+  <path d="M 1002,128 C 1022,118 1042,100 1058,88" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#wm-arr)"/>
+  <path d="M 982,368 C 1012,360 1032,358 1052,352" stroke-width="1" stroke-dasharray="4,4" marker-end="url(#wm-arr)"/>
+</g>
+
+<!-- ════ TEXTO "VELOX" MARCA D'ÁGUA (fundo central-baixo) ════ -->
+<text x="720" y="846" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="132"
+      fill="none" stroke="#6366f1" stroke-width=".8"
+      letter-spacing="-4" text-anchor="middle">VELOX</text>
+
+<!-- ════ TEXTO "INVENT" menor, canto inferior direito ════ -->
+<text x="1420" y="900" font-family="Inter,Arial,sans-serif" font-weight="900" font-size="72"
+      fill="none" stroke="#818cf8" stroke-width=".6"
+      letter-spacing="2" text-anchor="end" opacity=".5">INVENT</text>
+
+</svg>
+</div><!-- /wm-bg -->
+
+<!-- Grid overlay -->
+<div class="grid-bg"></div>
+
+<!-- Partículas de fundo -->
+<div id="pt-field" style="position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden"></div>
+
+<!-- Cards flutuantes (esquerda) -->
+<div class="float-stats" id="float-stats"></div>
+
+<!-- Barra de status inferior -->
+<div class="sys-bar" id="sys-bar"></div>
+
+<!-- ── Terminal animado ── -->
+<div class="term-widget" id="term-widget" aria-hidden="true">
+  <div class="term-header">
+    <span class="term-dot td1"></span>
+    <span class="term-dot td2"></span>
+    <span class="term-dot td3"></span>
+    <span class="term-title">velox@sistema ~</span>
+  </div>
+  <div class="term-body" id="term-body"></div>
+</div>
+
+<!-- Login card -->
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="logo-wrap">
+      <div class="logo-icon"><div class="logo-icon-v">VX</div></div>
+      <div class="logo-name"><span class="vy">v</span>elox<span class="dot">.</span></div>
+      <div class="logo-byline">by invent</div>
+      <div class="logo-welcome">Bem-vindo! Faça o login para acessar o sistema.</div>
+    </div>
+    <div class="login-error" id="login-error"></div>
+    <form id="login-form" autocomplete="off">
+      <div class="form-group">
+        <label class="form-label" for="email">E-mail</label>
+        <input class="form-control" id="email" type="email" placeholder="seu@email.com" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="senha">Senha</label>
+        <div style="position:relative">
+          <input class="form-control" id="senha" type="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:44px">
+          <button type="button" id="btn-eye"
+            onclick="(function(){const i=document.getElementById('senha');const b=document.getElementById('btn-eye');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'👁':'🙈';})()"
+            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;line-height:1;padding:2px">👁</button>
+        </div>
+      </div>
+      <button class="btn-login" type="submit" id="btn-login">Entrar →</button>
+    </form>
+    <div class="demo-hint">
+      <strong>🔑 Acessos de demonstração</strong>
+      <div class="demo-row" onclick="fillDemo('admin@inventcorp.com','admin123')"><span>admin@inventcorp.com</span><span class="demo-key">admin123</span></div>
+      <div class="demo-row" onclick="fillDemo('editor@inventcorp.com','editor123')"><span>editor@inventcorp.com</span><span class="demo-key">editor123</span></div>
+      <div class="demo-row" onclick="fillDemo('viewer@inventcorp.com','viewer123')"><span>viewer@inventcorp.com</span><span class="demo-key">viewer123</span></div>
+    </div>
+    <div class="login-footer">Velox by Invent Corp © 2026 · v16</div>
+  </div>
+</div>
+
+<script src="utils.js"></script>
+<script>
+initTheme(); loadUsers(); loadDemoData();
+if(getCurrentUser()) location.href='index.html';
+document.getElementById('login-form').addEventListener('submit',function(e){
+  e.preventDefault();
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  const senha=document.getElementById('senha').value;
+  const btn=document.getElementById('btn-login');
+  const errEl=document.getElementById('login-error');
+  btn.disabled=true; btn.innerHTML='<span style="display:inline-block;animation:spin .7s linear infinite">⟳</span> Verificando…'; errEl.classList.remove('show');
+  setTimeout(()=>{
+    const user=USUARIOS.find(u=>u.email.toLowerCase()===email&&u.senha===senha&&u.ativo);
+    if(user){setCurrentUser(user);location.href='index.html';}
+    else{
+      errEl.textContent=USUARIOS.find(u=>u.email.toLowerCase()===email&&!u.ativo)?'Conta desativada. Contate o administrador.':'E-mail ou senha incorretos.';
+      errEl.classList.add('show'); btn.disabled=false; btn.innerHTML='Entrar →';
+    }
+  },400);
+});
+function fillDemo(e,s){document.getElementById('email').value=e;document.getElementById('senha').value=s;}
+</script>
+
+<!-- Cards flutuantes + barra de status + partículas -->
+<script>
+(function(){
+  /* ── Dados reais do portfólio ── */
+  const total  = (typeof PROJETOS!=='undefined') ? PROJETOS.length : 0;
+  const ativos = (typeof PROJETOS!=='undefined' && typeof calcStatus!=='undefined')
+    ? PROJETOS.filter(p=>{ const s=calcStatus(p); return s!=='Concluído'&&s!=='Standby'&&s!=='Não Iniciado'; }).length
+    : 0;
+  const bloq = (typeof PROJETOS!=='undefined' && typeof calcStatus!=='undefined')
+    ? PROJETOS.filter(p=>calcStatus(p)==='Bloqueado').length : 0;
+  const pmos = (typeof PROJETOS!=='undefined')
+    ? [...new Set(PROJETOS.filter(p=>p.pmo&&p.pmo.trim()).map(p=>p.pmo.trim()))].length : 0;
+  const health = (typeof calcPortfolioHealth!=='undefined')
+    ? calcPortfolioHealth()
+    : (ativos>0 ? Math.max(0,Math.round((ativos-bloq*2)/ativos*100)) : 0);
+
+  /* ── Cards flutuantes ── */
+  const statsEl = document.getElementById('float-stats');
+  if(statsEl && total > 0){
+    const cards = [
+      { icon:'📋', val:ativos,    lbl:'Projetos Ativos',   sub:total+' no portfólio total',  pct:Math.round(ativos/total*100) },
+      { icon:'📊', val:health+'%',lbl:'Portfolio Health',  sub:bloq>0?bloq+' bloqueado'+(bloq>1?'s':''):'todos operacionais', pct:health },
+      { icon:'👥', val:pmos,      lbl:'Gestores PMO',      sub:'em monitoramento ativo', pct:100 },
+    ];
+    statsEl.innerHTML = cards.map(c=>`
+      <div class="float-stat">
+        <span class="fs-icon">${c.icon}</span>
+        <div class="fs-val">${c.val}</div>
+        <div class="fs-lbl">${c.lbl}</div>
+        <div class="fs-sub">${c.sub}</div>
+        <div class="fs-bar"><div class="fs-bar-fill" style="width:${c.pct}%"></div></div>
+      </div>`).join('');
+  }
+
+  /* ── Barra de status ── */
+  const sysEl = document.getElementById('sys-bar');
+  if(sysEl){
+    sysEl.innerHTML = `
+      <div class="sb-item"><span class="sb-live"></span>SISTEMA ONLINE</div>
+      <div class="sb-div"></div>
+      <div class="sb-item">${ativos} projetos monitorados</div>
+      <div class="sb-div"></div>
+      <div class="sb-item"><span class="sb-brand">Velox PMO</span> · v16</div>
+      <div class="sb-div"></div>
+      <div class="sb-item">Invent Corp © 2026</div>`;
+  }
+
+  /* ── Campo de partículas ── */
+  const ptEl = document.getElementById('pt-field');
+  if(ptEl){
+    const paleta = ['rgba(99,102,241,','rgba(139,92,246,','rgba(59,130,246,','rgba(167,139,250,'];
+    for(let i=0;i<22;i++){
+      const el = document.createElement('div');
+      const sz  = .8+Math.random()*2.2;
+      const col = paleta[Math.floor(Math.random()*paleta.length)];
+      const op  = .12+Math.random()*.3;
+      const dur = 8+Math.random()*12;
+      const del = Math.random()*14;
+      el.style.cssText =
+        `position:absolute;width:${sz}px;height:${sz}px;border-radius:50%;`+
+        `background:${col+op});left:${Math.random()*100}%;bottom:-8px;`+
+        `animation:ptDrift ${dur}s linear ${del}s infinite`;
+      ptEl.appendChild(el);
+    }
+  }
+})();
+</script>
+
+<!-- Terminal typewriter animation -->
+<script>
+(function(){
+  /* Sequências do terminal — geradas com dados reais */
+  const _pAtivos = (typeof PROJETOS!=='undefined'&&typeof calcStatus!=='undefined')
+    ? PROJETOS.filter(p=>{const s=calcStatus(p);return s!=='Concluído'&&s!=='Standby'&&s!=='Não Iniciado';}).length : 14;
+  const _pBloq   = (typeof PROJETOS!=='undefined'&&typeof calcStatus!=='undefined')
+    ? PROJETOS.filter(p=>calcStatus(p)==='Bloqueado').length : 5;
+  const _pConc   = (typeof PROJETOS!=='undefined'&&typeof calcStatus!=='undefined')
+    ? PROJETOS.filter(p=>calcStatus(p)==='Concluído').length : 16;
+  const _pPmos   = (typeof PROJETOS!=='undefined')
+    ? [...new Set(PROJETOS.filter(p=>p.pmo&&p.pmo.trim()).map(p=>p.pmo.trim()))].length : 5;
+  const _health  = (typeof calcPortfolioHealth!=='undefined') ? calcPortfolioHealth() : 78;
+  const _noPrazo = Math.max(0, _pAtivos - _pBloq);
+
+  const SEQS = [
+    [
+      {t:'cmd', v:'velox status'},
+      {t:'ok',  v:`✓  Projetos ativos: ${_pAtivos}`},
+      {t:'ok',  v:`✓  Concluídos histórico: ${_pConc}`},
+      {t:'warn',v:`⚠  Bloqueados: ${_pBloq}`},
+      {t:'ok',  v:`✓  PMOs conectados: ${_pPmos}`},
+    ],
+    [
+      {t:'cmd', v:'velox health --check'},
+      {t:'ok',  v:'●  API · online'},
+      {t:'ok',  v:'●  DB  · sincronizado'},
+      {t:'ok',  v:'●  Auth· operacional'},
+      {t:'info',v:'■  v16.0 · build 2026.05'},
+    ],
+    [
+      {t:'cmd', v:'velox portfolio --resumo'},
+      {t:'ok',  v:`■  No prazo    · ${_noPrazo} proj`},
+      {t:'warn',v:`■  Bloqueados  · ${_pBloq} proj`},
+      {t:'ok',  v:`■  Concluídos  · ${_pConc} proj`},
+      {t:'info',v:`■  Health: ${_health} %`},
+    ],
+  ];
+
+  const body = document.getElementById('term-body');
+  if(!body) return;
+
+  const CHAR_MS  = 48;   /* velocidade por caractere */
+  const LINE_MS  = 420;  /* pausa entre linhas */
+  const END_MS   = 2600; /* pausa no fim da sequência */
+  const CLEAR_MS = 700;  /* pausa antes de limpar */
+
+  let seqIdx = 0, lineIdx = 0, charIdx = 0;
+  let curEl = null;
+  let cursorEl = null;
+
+  function mkCursor(){
+    if(cursorEl) cursorEl.remove();
+    cursorEl = document.createElement('span');
+    cursorEl.className = 'term-cursor';
+    body.appendChild(cursorEl);
+  }
+
+  function mkRow(type){
+    const row  = document.createElement('div');
+    row.className = 'term-row';
+    if(type === 'cmd'){
+      const pr = document.createElement('span');
+      pr.className = 'term-prompt';
+      pr.textContent = '›';
+      row.appendChild(pr);
+    }
+    const txt = document.createElement('span');
+    txt.className = 'term-' + (type === 'cmd' ? 'cmd' : type);
+    row.appendChild(txt);
+    body.insertBefore(row, cursorEl);
+    return txt;
+  }
+
+  function tick(){
+    const seq  = SEQS[seqIdx];
+    const line = seq[lineIdx];
+
+    if(!curEl){
+      curEl    = mkRow(line.t);
+      charIdx  = 0;
+    }
+
+    if(charIdx < line.v.length){
+      curEl.textContent += line.v[charIdx++];
+      setTimeout(tick, CHAR_MS);
+    } else {
+      curEl = null;
+      lineIdx++;
+      if(lineIdx < seq.length){
+        setTimeout(tick, LINE_MS);
+      } else {
+        /* Fim da sequência */
+        setTimeout(()=>{
+          /* Limpa e passa para próxima sequência */
+          seqIdx = (seqIdx + 1) % SEQS.length;
+          lineIdx = 0;
+          /* Fade out, limpa, fade in */
+          body.style.transition = 'opacity .35s';
+          body.style.opacity = '0';
+          setTimeout(()=>{
+            body.innerHTML = '';
+            mkCursor();
+            body.style.opacity = '1';
+            setTimeout(tick, CLEAR_MS);
+          }, 360);
+        }, END_MS);
+      }
+    }
+  }
+
+  /* Inicia após o terminal aparecer (animação 1.8s + offset) */
+  setTimeout(()=>{ mkCursor(); tick(); }, 2400);
+})();
+</script>
+</body>
+</html>

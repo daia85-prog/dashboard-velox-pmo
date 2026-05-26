@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — Velox by Invent v16</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23F5C300'/><text x='16' y='23' text-anchor='middle' font-size='18' font-weight='900' font-family='Inter,sans-serif' fill='%230a0e19'>VX</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#F5C300;--brand-dim:rgba(245,195,0,.15);
+  --bg:#030610;--bg2:#100c2a;--surface:rgba(255,255,255,.065);
+  --surface2:rgba(255,255,255,.1);--border:rgba(255,255,255,.12);
+  --text:#f1f5f9;--muted:#64748b;--muted2:#94a3b8;
+  --sidebar-w:240px;--sidebar-collapsed:60px;
+  --radius:14px;--radius-sm:8px;
+  --green:#22c55e;--blue:#3b82f6;--red:#ef4444;--amber:#f59e0b;
+}
+[data-theme="light"]{--bg:#f1f5f9;--bg2:#e2e8f0;--surface:rgba(255,255,255,.9);--surface2:rgba(255,255,255,.7);--border:rgba(0,0,0,.08);--text:#0f172a;--muted:#64748b;--muted2:#475569;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(ellipse 120% 60% at 50% -5%,#1a1060 0%,#0a0520 35%,#030610 70%);color:var(--text);overflow:hidden}
+[data-theme="light"] body{background:#f0f4f8!important}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* Sidebar */
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;z-index:10;overflow:hidden;}
+#sidebar.collapsed{width:var(--sidebar-collapsed);min-width:var(--sidebar-collapsed)}
+.sb-header{padding:20px 16px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sb-logo{width:32px;height:32px;min-width:32px;background:linear-gradient(135deg,var(--brand),#d97706);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#0a0e19;letter-spacing:-0.5px;flex-shrink:0}
+.sb-brand{overflow:hidden;opacity:1;transition:opacity .2s;line-height:1.2}
+.sb-brand-name{font-size:15px;font-weight:900;letter-spacing:-1px;white-space:nowrap;color:var(--text)}
+.sb-brand-name .vy{color:var(--brand)}.sb-brand-name .dot{color:var(--brand)}
+.sb-brand-by{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+#sidebar.collapsed .sb-brand{opacity:0;width:0;overflow:hidden}
+#sidebar-toggle{margin-left:auto;color:var(--muted);font-size:18px;padding:4px;border-radius:6px;flex-shrink:0}
+#sidebar-toggle:hover{color:var(--text)}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius-sm);color:var(--muted2);font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap;overflow:hidden;}
+.nav-item:hover{background:var(--surface2);color:var(--text)}.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.nav-icon{font-size:18px;flex-shrink:0;width:20px;text-align:center}.nav-label{transition:opacity .2s}
+#sidebar.collapsed .nav-label{opacity:0;width:0;overflow:hidden}
+.sb-footer{padding:12px 8px;border-top:1px solid var(--border)}
+#sidebar-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm)}
+.su-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.su-info{overflow:hidden;flex:1}.su-nome{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.su-papel{font-size:10px;color:var(--muted);text-transform:capitalize}
+.su-logout{padding:4px 6px;color:var(--muted);font-size:14px;border-radius:4px;transition:color .2s}.su-logout:hover{color:var(--red)}
+#sidebar.collapsed .su-info{opacity:0;width:0;overflow:hidden}
+
+/* Main */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:16px 28px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:5;}
+.topbar-title{font-size:18px;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.btn-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);color:var(--muted2);font-size:15px;transition:all .2s;}
+.btn-icon:hover{background:var(--surface2);color:var(--text)}
+.btn-primary{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--brand);color:#0a0e19;font-size:13px;font-weight:700;border-radius:var(--radius-sm);transition:opacity .2s;}
+.btn-primary:hover{opacity:.88}
+.btn-outline{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--muted2);transition:all .2s}
+.btn-outline:hover{border-color:var(--brand);color:var(--brand)}
+.btn-danger{display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:#ef4444;transition:all .2s}
+.btn-danger:hover{background:rgba(239,68,68,.2)}
+
+/* Tabs */
+.tab-bar{display:flex;gap:0;padding:0 28px;border-bottom:1px solid var(--border);background:var(--bg2);}
+.tab-btn{padding:12px 18px;font-size:13px;font-weight:500;color:var(--muted2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:700}
+.content{padding:24px 28px;flex:1}
+
+/* Table */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--border)}
+tr:hover td{background:var(--surface2)}
+.actions{display:flex;gap:6px}
+.act-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s}
+.act-edit{background:rgba(59,130,246,.1);color:#3b82f6;border:1px solid rgba(59,130,246,.2)}
+.act-edit:hover{background:rgba(59,130,246,.2)}
+.act-del{background:rgba(239,68,68,.1);color:#ef4444;border:1px solid rgba(239,68,68,.2)}
+.act-del:hover{background:rgba(239,68,68,.2)}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-full{grid-column:span 2}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:11px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.7px}
+.form-control{padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;transition:border-color .2s}
+.form-control:focus{border-color:rgba(245,195,0,.5)}
+select.form-control{cursor:pointer}
+.form-control::placeholder{color:var(--muted)}
+
+/* Modal */
+#modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+#modal-overlay.open{display:flex}
+#modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;width:100%;max-width:680px;max-height:88vh;
+  display:flex;flex-direction:column;animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(20px)}to{opacity:1;transform:none}}
+.modal-header{padding:20px 24px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;flex-shrink:0}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{font-size:20px;color:var(--muted);padding:4px 8px;border-radius:6px;transition:color .2s}
+.modal-close:hover{color:var(--text)}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;flex-shrink:0;background:var(--bg2);border-radius:0 0 20px 20px}
+
+/* Data Health */
+.health-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.health-proj-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;transition:border-color .2s;cursor:pointer}
+.health-proj-card:hover{border-color:var(--brand)}
+.health-proj-name{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.health-score-pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+.health-bars{display:flex;flex-direction:column;gap:5px}
+.health-bar-row{display:flex;align-items:center;gap:8px}
+.health-bar-lbl{font-size:10px;color:var(--muted);width:80px;flex-shrink:0}
+.health-bar-wrap{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.health-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.health-bar-pct{font-size:10px;color:var(--muted);width:30px;text-align:right}
+
+/* Import */
+.import-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:40px;text-align:center;transition:all .2s;cursor:pointer}
+.import-zone:hover,.import-zone.drag{border-color:var(--brand);background:var(--brand-dim)}
+.import-zone-icon{font-size:36px;margin-bottom:12px}
+.import-zone-text{font-size:14px;font-weight:500;margin-bottom:6px}
+.import-zone-sub{font-size:12px;color:var(--muted)}
+
+/* User cards */
+.user-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;transition:border-color .2s}
+.user-card:hover{border-color:rgba(255,255,255,.15)}
+.user-card-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.user-avatar{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.user-nome{font-size:14px;font-weight:700}
+.user-email{font-size:11px;color:var(--muted)}
+.user-papel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px}
+.user-pages{font-size:11px;color:var(--muted);margin:8px 0}
+.user-actions{display:flex;gap:6px;margin-top:10px}
+.user-inactive{opacity:.45}
+.chip{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.viewer-mode .edit-only{display:none!important}
+@keyframes slideInRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<nav id="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">VX</div>
+    <div class="sb-brand">
+      <div class="sb-brand-name"><span class="vy">v</span>elox<span class="dot">.</span></div>
+      <div class="sb-brand-by">by invent</div>
+    </div>
+    <button id="sidebar-toggle" title="Recolher">☰</button>
+  </div>
+  <div class="sb-nav">
+    <a class="nav-item" href="index.html">          <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
+    <a class="nav-item" href="gerencial.html">       <span class="nav-icon">⊞</span><span class="nav-label">Gerencial</span></a>
+    <a class="nav-item" href="projetos.html">        <span class="nav-icon">📋</span><span class="nav-label">Projetos</span></a>
+    <a class="nav-item" href="squads.html">          <span class="nav-icon">🏢</span><span class="nav-label">Áreas</span></a>
+    <a class="nav-item" href="alertas.html">         <span class="nav-icon">🔔</span><span class="nav-label" id="nav-alertas-label">Alertas</span></a>
+    <a class="nav-item active" href="admin.html">    <span class="nav-icon">⚙</span><span class="nav-label">Admin</span></a>
+  </div>
+  <div class="sb-footer"><div id="sidebar-user"></div></div>
+</nav>
+
+<div id="main">
+  <div class="topbar">
+    <div><div class="topbar-title">Administração</div></div>
+    <div class="topbar-actions">
+      <button class="btn-icon" onclick="toggleTheme()" title="Tema">◑</button>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('projetos',this)">📋 Projetos</button>
+    <button class="tab-btn" onclick="showTab('atividades',this)">✅ Atividades</button>
+    <button class="tab-btn" onclick="showTab('usuarios',this)" id="tab-usuarios">👤 Usuários</button>
+    <button class="tab-btn" onclick="showTab('importexport',this)">📤 Import/Export</button>
+  </div>
+  <div class="content" id="tab-content"></div>
+</div>
+</div>
+
+<!-- Modal genérico -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Modal</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="utils.js"></script>
+<script>
+initTheme();
+const user = checkAuth('admin');
+loadData(); loadUsers();
+initSidebar();
+initPrintModal();
+initCommandPalette();
+updateAlertBadge();
+
+// Esconder tab usuários para não-admin
+if(user && user.papel !== 'admin'){
+  document.getElementById('tab-usuarios').style.display = 'none';
+}
+
+// ── Modal ─────────────────────────────────────────────────
+function openModal(title, bodyHtml, footerHtml=''){
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML   = bodyHtml;
+  document.getElementById('modal-footer').innerHTML = footerHtml;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+
+// ── Tab: Projetos ─────────────────────────────────────────
+function showTabProjetos(el){
+  const rows = PROJETOS.map(p=>{
+    const st = calcStatus(p);
+    const sm = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const fe = getFimEfetivo(p)||p.fim;
+    return `<tr>
+      <td style="font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${p.nome}">${p.nome}</td>
+      <td style="font-size:11px;color:var(--muted)">${p.local}</td>
+      <td>${p.pmo||'—'}</td>
+      <td><span class="status-pill" style="background:${sm.bg};color:${sm.color};font-size:10px">${sm.icon} ${sm.label}</span></td>
+      <td style="font-size:11px">${formatDate(p.inicio)}</td>
+      <td style="font-size:11px">${formatDate(fe)}</td>
+      <td><div class="actions">
+        <button class="act-btn act-edit" onclick="editProjeto('${esc(p.nome)}')">Editar</button>
+        <button class="act-btn act-del"  onclick="delProjeto('${esc(p.nome)}')">Del</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('tab-content').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:13px;color:var(--muted)">${PROJETOS.length} projetos cadastrados</div>
+      <button class="btn-primary" onclick="novoProjeto()">＋ Novo Projeto</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nome</th><th>Local</th><th>PMO</th><th>Status</th><th>Início</th><th>Go Live</th><th>Ações</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+function projetoFormHtml(p={}){
+  return `<div class="form-grid">
+    <div class="form-group form-full"><div class="form-label">Nome *</div><input class="form-control" id="f-nome" value="${esc(p.nome||'')}" placeholder="Nome do projeto"></div>
+    <div class="form-group"><div class="form-label">Local *</div><input class="form-control" id="f-local" value="${esc(p.local||'')}" placeholder="Cidade - Estado"></div>
+    <div class="form-group"><div class="form-label">PMO *</div><input class="form-control" id="f-pmo" value="${esc(p.pmo||'')}" placeholder="Nome do PMO"></div>
+    <div class="form-group"><div class="form-label">Coordenador</div><input class="form-control" id="f-resp" value="${esc(p.resp||'')}" placeholder="Nome do coordenador"></div>
+    <div class="form-group"><div class="form-label">Colaboradores</div><input class="form-control" id="f-colab" value="${(p.colaboradores||[]).join(', ')}" placeholder="Nome1, Nome2"></div>
+    <div class="form-group"><div class="form-label">Prioridade</div>
+      <select class="form-control" id="f-prio">
+        ${['Alta','Média','Baixa'].map(v=>`<option value="${v}" ${p.prioridade===v?'selected':''}>${v}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><div class="form-label">Squad</div>
+      <select class="form-control" id="f-squad">
+        <option value="">— sem squad —</option>
+        ${SQUADS.map(s=>`<option value="${s.id}" ${p.squad===s.id?'selected':''}>${s.icone} ${s.nome}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><div class="form-label">Início *</div><input class="form-control" id="f-inicio" type="date" value="${p.inicio||''}"></div>
+    <div class="form-group"><div class="form-label">Go Live *</div><input class="form-control" id="f-fim" type="date" value="${p.fim||''}"></div>
+    <div class="form-group"><div class="form-label">Go Live Ajustado</div><input class="form-control" id="f-fimaj" type="date" value="${p.fimAjustado||''}"></div>
+    <div class="form-group form-full"><div class="form-label">Bloqueador</div><input class="form-control" id="f-bloq" value="${esc(p.bloqueador||'')}" placeholder="Descreva o impedimento atual"></div>
+    <div class="form-group form-full"><div class="form-label">Status Manual (opcional — sobrescreve cálculo)</div>
+      <select class="form-control" id="f-status">
+        <option value="">— automático —</option>
+        ${Object.keys(STATUS_MAP).map(s=>`<option value="${s}" ${p.status===s?'selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>
+  </div>`;
+}
+
+function collectProjetoForm(original={}){
+  return {
+    ...original,
+    nome:       document.getElementById('f-nome').value.trim(),
+    local:      document.getElementById('f-local').value.trim(),
+    pmo:        document.getElementById('f-pmo').value.trim(),
+    resp:       document.getElementById('f-resp').value.trim(),
+    colaboradores: document.getElementById('f-colab').value.split(',').map(x=>x.trim()).filter(Boolean),
+    prioridade: document.getElementById('f-prio').value,
+    squad:      document.getElementById('f-squad').value,
+    inicio:     document.getElementById('f-inicio').value,
+    fim:        document.getElementById('f-fim').value,
+    fimAjustado:document.getElementById('f-fimaj').value,
+    bloqueador: document.getElementById('f-bloq').value.trim(),
+    status:     document.getElementById('f-status').value,
+    diasParado: original.diasParado||0,
+  };
+}
+
+function novoProjeto(){
+  openModal('Novo Projeto', projetoFormHtml(),
+    `<button class="btn-outline" onclick="closeModal()">Cancelar</button>
+     <button class="btn-primary" onclick="salvarNovoProjeto()">Criar Projeto</button>`);
+}
+function salvarNovoProjeto(){
+  const p = collectProjetoForm();
+  if(!p.nome||!p.local||!p.pmo||!p.inicio||!p.fim){ toast('Preencha os campos obrigatórios.','warn'); return; }
+  if(p.fim < p.inicio){ toast('⚠ Go Live não pode ser anterior à data de Início.','warn'); return; }
+  if(p.fimAjustado && p.fimAjustado < p.inicio){ toast('⚠ Go Live Ajustado não pode ser anterior ao Início.','warn'); return; }
+  if(PROJETOS.find(x=>x.nome===p.nome)){ toast('Já existe um projeto com este nome.','error'); return; }
+  PROJETOS.push(p);
+  // Criar atividades padrão
+  ATIVIDADES_PADRAO.forEach(a => ATIVIDADES.push({projeto:p.nome,fase:a.fase,nome:a.nome,status:'Não Iniciado',comentarios:[]}));
+  saveData(); closeModal();
+  showTabProjetos(); toast('Projeto criado!','success');
+}
+function editProjeto(nome){
+  const p = PROJETOS.find(x=>x.nome===nome);
+  if(!p) return;
+  openModal(`Editar: ${p.nome}`, projetoFormHtml(p),
+    `<button class="btn-outline" onclick="closeModal()">Cancelar</button>
+     <button class="btn-primary" onclick="salvarEditProjeto('${esc(nome)}')">Salvar</button>`);
+}
+function salvarEditProjeto(nomeOrig){
+  const idx = PROJETOS.findIndex(x=>x.nome===nomeOrig);
+  if(idx<0) return;
+  const p = collectProjetoForm(PROJETOS[idx]);
+  if(!p.nome||!p.local||!p.pmo){ toast('Campos obrigatórios não preenchidos.','warn'); return; }
+  if(p.inicio && p.fim && p.fim < p.inicio){ toast('⚠ Go Live não pode ser anterior à data de Início.','warn'); return; }
+  if(p.inicio && p.fimAjustado && p.fimAjustado < p.inicio){ toast('⚠ Go Live Ajustado não pode ser anterior ao Início.','warn'); return; }
+  // Se nome mudou, atualizar atividades
+  if(p.nome !== nomeOrig){
+    ATIVIDADES.filter(a=>a.projeto===nomeOrig).forEach(a=>a.projeto=p.nome);
+  }
+  PROJETOS[idx] = p;
+  saveData(); closeModal(); showTabProjetos(); toast('Projeto salvo!','success');
+}
+function delProjeto(nome){
+  if(!confirm(`Excluir "${nome}" e todas suas atividades?`)) return;
+  PROJETOS = PROJETOS.filter(p=>p.nome!==nome);
+  ATIVIDADES = ATIVIDADES.filter(a=>a.projeto!==nome);
+  saveData(); showTabProjetos(); toast('Projeto excluído.','warn');
+}
+
+// ── Tab: Atividades ───────────────────────────────────────
+let _ativFiltroProj = '';
+let _ativFiltroStatus = '';
+
+function showTabAtividades(){
+  const projNomes = [...new Set(ATIVIDADES.map(a=>a.projeto))].sort();
+  const totalConcluidas = ATIVIDADES.filter(a=>a.status==='Concluído').length;
+  const totalPend = ATIVIDADES.filter(a=>a.status!=='Concluído').length;
+
+  // filtro
+  const filtProjList = _ativFiltroProj ? [_ativFiltroProj] : projNomes;
+  const statusFiltros = ['','Não Iniciado','Em andamento','Aguardando','Concluído','Bloqueado'];
+
+  let html = '';
+  filtProjList.forEach(proj=>{
+    let ps = ATIVIDADES.filter(a=>a.projeto===proj);
+    if(_ativFiltroStatus) ps = ps.filter(a=>a.status===_ativFiltroStatus);
+    if(!ps.length) return;
+    const done = ATIVIDADES.filter(a=>a.projeto===proj&&a.status==='Concluído').length;
+    const total = ATIVIDADES.filter(a=>a.projeto===proj).length;
+    const pct = total ? Math.round(done/total*100) : 0;
+    const pc = pct>=80?'#22c55e':pct>=40?'#f5c300':'#ef4444';
+    html += `<div style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+        <div style="font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px">
+          ${proj}
+          <div style="display:flex;align-items:center;gap:6px">
+            <div style="width:80px;height:5px;background:var(--border);border-radius:3px;overflow:hidden">
+              <div style="width:${pct}%;height:100%;background:${pc};border-radius:3px"></div>
+            </div>
+            <span style="font-size:11px;color:${pc};font-weight:700">${pct}%</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:11px;color:var(--muted)">${done}/${total} concluídas</span>
+          <a href="projetos.html?p=${encodeURIComponent(proj)}" style="font-size:11px;color:var(--brand);text-decoration:none;opacity:.8">→ Hub</a>
+        </div>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Fase</th><th>Atividade</th><th>Status</th><th>Comentários</th></tr></thead>
+        <tbody>${ps.map(a=>{
+          const sm = STATUS_MAP[a.status]||STATUS_MAP['Em andamento'];
+          const lastComent = (a.comentarios||[]).slice(-1)[0];
+          return `<tr>
+            <td style="font-size:11px;color:var(--muted);white-space:nowrap">${a.fase}</td>
+            <td style="font-size:12px">${a.nome}</td>
+            <td><select style="background:var(--surface);border:1px solid var(--border);border-radius:6px;color:${sm.color};font-size:11px;padding:4px 8px;font-weight:600;cursor:pointer;font-family:Inter"
+              onchange="updateAtivStatus('${esc(proj)}','${esc(a.fase)}','${esc(a.nome)}',this.value)">
+              ${ATIV_STATUS_OPTS.map(s=>`<option value="${s}" ${a.status===s?'selected':''}>${STATUS_MAP[s]?.icon||''} ${s}</option>`).join('')}
+            </select></td>
+            <td style="font-size:11px;color:var(--muted)" title="${lastComent?lastComent.texto:''}">${(a.comentarios||[]).length>0?`${(a.comentarios||[]).length} ·  <span style="color:var(--muted2)">${lastComent?.texto?.slice(0,40)||''}${(lastComent?.texto?.length||0)>40?'…':''}</span>`:'—'}</td>
+          </tr>`;
+        }).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+  });
+
+  document.getElementById('tab-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+      <div style="display:flex;gap:16px;font-size:13px;color:var(--muted);flex:1">
+        <span><strong style="color:var(--text)">${ATIVIDADES.length}</strong> atividades</span>
+        <span><strong style="color:#22c55e">${totalConcluidas}</strong> concluídas</span>
+        <span><strong style="color:var(--text)">${totalPend}</strong> pendentes</span>
+        <span><strong style="color:var(--text)">${projNomes.length}</strong> projetos</span>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select onchange="_ativFiltroProj=this.value;showTabAtividades()"
+          style="padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:12px;cursor:pointer">
+          <option value="">Todos os projetos</option>
+          ${projNomes.map(n=>`<option value="${esc(n)}" ${_ativFiltroProj===n?'selected':''}>${n}</option>`).join('')}
+        </select>
+        <select onchange="_ativFiltroStatus=this.value;showTabAtividades()"
+          style="padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:12px;cursor:pointer">
+          ${statusFiltros.map(s=>`<option value="${s}" ${_ativFiltroStatus===s?'selected':''}>${s||'Todos os status'}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    ${html||'<div style="text-align:center;padding:40px;color:var(--muted)">Nenhuma atividade encontrada.</div>'}`;
+}
+function updateAtivStatus(proj, fase, nome, status){
+  const a = ATIVIDADES.find(x=>x.projeto===proj&&x.fase===fase&&x.nome===nome);
+  if(!a) return;
+  a.status = status;
+  const u = getCurrentUser();
+  if(!a.comentarios) a.comentarios = [];
+  a.comentarios.push({texto:`Status alterado para: ${status}`, autor:u?.nome||'Admin', dataISO:HOJE_ISO, status});
+  saveData(); toast('Status atualizado!','success',1800);
+}
+
+// ── Tab: Usuários ─────────────────────────────────────────
+let _userView = 'list'; // 'cards' | 'list'
+function showTabUsuarios(){
+  if(!isAdmin()){ document.getElementById('tab-content').innerHTML='<div style="text-align:center;padding:40px;color:var(--muted)">Acesso restrito a administradores.</div>'; return; }
+  const roleColors = {admin:'#a855f7',editor:'#3b82f6',viewer:'#64748b'};
+  const roleLbls   = {admin:'Admin',editor:'Editor',viewer:'Viewer'};
+  const rolesOrder = ['admin','editor','viewer'];
+
+  function userCardHtml(u){
+    const ini = u.nome.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const pages = u.paginas?.includes('all')?'Todas as páginas':u.paginas?.join(', ')||'—';
+    const color = roleColors[u.papel]||'#64748b';
+    return `<div class="user-card ${u.ativo?'':'user-inactive'}">
+      <div class="user-card-header">
+        <div class="user-avatar" style="background:${color}">${ini}</div>
+        <div><div class="user-nome">${u.nome}</div><div class="user-email">${u.email}</div></div>
+      </div>
+      ${!u.ativo?'<span class="chip" style="color:var(--red);border-color:rgba(239,68,68,.3);margin-bottom:4px">Inativo</span>':''}
+      <div class="user-pages">${pages}</div>
+      <div class="user-actions">
+        <button class="act-btn act-edit" onclick="editUser('${esc(u.id)}')">Editar</button>
+        <button class="act-btn" onclick="toggleUser('${esc(u.id)}')" style="background:${u.ativo?'rgba(245,195,0,.1)':'rgba(34,197,94,.1)'};color:${u.ativo?'#f5c300':'#22c55e'};border:1px solid ${u.ativo?'rgba(245,195,0,.2)':'rgba(34,197,94,.2)'}">${u.ativo?'Desativar':'Ativar'}</button>
+        ${u.id!==getCurrentUser()?.id?`<button class="act-btn act-del" onclick="delUser('${esc(u.id)}')">Del</button>`:''}
+      </div>
+    </div>`;
+  }
+
+  function userRowHtml(u){
+    const ini = u.nome.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+    const color = roleColors[u.papel]||'#64748b';
+    const pages = u.paginas?.includes('all')?'Todas':u.paginas?.join(', ')||'—';
+    return `<tr style="${u.ativo?'':'opacity:.5'}">
+      <td><div style="display:flex;align-items:center;gap:10px">
+        <div class="user-avatar" style="background:${color};width:30px;height:30px;font-size:11px">${ini}</div>
+        <div><div style="font-weight:600;font-size:13px">${u.nome}</div><div style="font-size:11px;color:var(--muted)">${u.email}</div></div>
+      </div></td>
+      <td><span class="user-papel-badge" style="background:${color}22;color:${color}">${roleLbls[u.papel]||u.papel}</span></td>
+      <td style="font-size:11px;color:var(--muted2)">${pages}</td>
+      <td style="font-size:11px">${u.ativo?'<span style="color:#22c55e">Ativo</span>':'<span style="color:#ef4444">Inativo</span>'}</td>
+      <td><div class="actions">
+        <button class="act-btn act-edit" onclick="editUser('${esc(u.id)}')">Editar</button>
+        <button class="act-btn" onclick="toggleUser('${esc(u.id)}')">${u.ativo?'Desativar':'Ativar'}</button>
+        ${u.id!==getCurrentUser()?.id?`<button class="act-btn act-del" onclick="delUser('${esc(u.id)}')">Del</button>`:''}
+      </div></td>
+    </tr>`;
+  }
+
+  let bodyHtml='';
+  if(_userView==='list'){
+    bodyHtml=`<div class="table-wrap"><table>
+      <thead><tr><th>Usuário</th><th>Papel</th><th>Páginas</th><th>Status</th><th>Ações</th></tr></thead>
+      <tbody>${rolesOrder.map(role=>{
+        const group=USUARIOS.filter(u=>u.papel===role);
+        if(!group.length)return'';
+        return `<tr><td colspan="5" style="padding:8px 12px;background:${roleColors[role]}12;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:${roleColors[role]}">${roleLbls[role]} (${group.length})</td></tr>`
+          +group.map(userRowHtml).join('');
+      }).join('')}
+      </tbody>
+    </table></div>`;
+  } else {
+    bodyHtml = rolesOrder.map(role=>{
+      const group = USUARIOS.filter(u=>u.papel===role);
+      if(!group.length) return '';
+      const color = roleColors[role];
+      return `<div style="margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 0;border-bottom:1px solid ${color}30">
+          <span style="width:10px;height:10px;border-radius:50%;background:${color};display:inline-block"></span>
+          <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:${color}">${roleLbls[role]}</span>
+          <span style="font-size:11px;color:var(--muted)">${group.length} usuário${group.length!==1?'s':''}</span>
+        </div>
+        <div class="user-cards">${group.map(userCardHtml).join('')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('tab-content').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:13px;color:var(--muted)">${USUARIOS.length} usuários</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="display:flex;border:1px solid var(--border);border-radius:8px;overflow:hidden">
+          <button onclick="_userView='cards';showTabUsuarios()" style="padding:6px 12px;font-size:12px;font-family:inherit;background:${_userView==='cards'?'var(--brand)':'transparent'};color:${_userView==='cards'?'#0a0e19':'var(--muted)'};border:none;cursor:pointer" title="Visão Cards">⊞</button>
+          <button onclick="_userView='list';showTabUsuarios()" style="padding:6px 12px;font-size:12px;font-family:inherit;background:${_userView==='list'?'var(--brand)':'transparent'};color:${_userView==='list'?'#0a0e19':'var(--muted)'};border:none;cursor:pointer" title="Visão Lista">☰</button>
+        </div>
+        <button class="btn-primary" onclick="novoUser()">＋ Novo Usuário</button>
+      </div>
+    </div>
+    ${bodyHtml}`;
+}
+const PAGE_OPTS = [{val:'index',lbl:'Dashboard'},{val:'gerencial',lbl:'Gerencial'},{val:'projetos',lbl:'Projetos'},{val:'squads',lbl:'Áreas'},{val:'alertas',lbl:'Alertas'},{val:'admin',lbl:'Admin'}];
+function userFormHtml(u={}){
+  const pagesAll = u.paginas?.includes('all');
+  return `<div class="form-grid">
+    <div class="form-group"><div class="form-label">Nome *</div><input class="form-control" id="uf-nome" value="${esc(u.nome||'')}"></div>
+    <div class="form-group"><div class="form-label">E-mail *</div><input class="form-control" id="uf-email" type="email" value="${esc(u.email||'')}"></div>
+    <div class="form-group">
+      <div class="form-label">Senha ${u.id?'(deixe vazio para manter)':''} *</div>
+      <div style="display:flex;gap:8px">
+        <input class="form-control" id="uf-senha" type="text" placeholder="••••••••" style="flex:1;font-family:monospace;letter-spacing:.5px">
+        <button type="button" onclick="gerarSenha()" title="Gerar senha aleatória"
+          style="padding:0 14px;background:var(--brand-dim);border:1px solid var(--brand);border-radius:var(--radius-sm);color:var(--brand);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit">
+          🎲 Gerar
+        </button>
+      </div>
+    </div>
+    <div class="form-group"><div class="form-label">Papel</div>
+      <select class="form-control" id="uf-papel" onchange="togglePagesVisibility()"
+        style="background:var(--surface);border:1px solid var(--border);color:var(--text)">
+        ${['admin','editor','viewer'].map(r=>`<option value="${r}" ${(u.papel||'editor')===r?'selected':''} style="background:#1e293b;color:#f1f5f9">${r.charAt(0).toUpperCase()+r.slice(1)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group form-full" id="pages-group" style="${pagesAll||!u.id?'opacity:.4':''}" >
+      <div class="form-label">Páginas Permitidas (admin tem acesso total automaticamente)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">
+        ${PAGE_OPTS.map(p=>`<label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer">
+          <input type="checkbox" id="pg-${p.val}" value="${p.val}" ${(u.paginas||[]).includes(p.val)||(u.paginas||[]).includes('all')?'checked':''}>
+          ${p.lbl}</label>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+function togglePagesVisibility(){
+  const papel = document.getElementById('uf-papel')?.value;
+  const pg = document.getElementById('pages-group');
+  if(pg) pg.style.opacity = papel==='admin'?'0.4':'1';
+}
+function collectUserForm(orig={}){
+  const senha = document.getElementById('uf-senha').value;
+  const papel = document.getElementById('uf-papel').value;
+  const pages = papel==='admin'?['all']:PAGE_OPTS.filter(p=>document.getElementById('pg-'+p.val)?.checked).map(p=>p.val);
+  return {
+    id: orig.id || 'u'+Date.now(),
+    nome:   document.getElementById('uf-nome').value.trim(),
+    email:  document.getElementById('uf-email').value.trim().toLowerCase(),
+    senha:  senha || orig.senha || '',
+    papel,
+    paginas:pages,
+    ativo:  orig.ativo !== undefined ? orig.ativo : true,
+  };
+}
+function novoUser(){
+  openModal('Novo Usuário', userFormHtml(),
+    `<button class="btn-outline" onclick="closeModal()">Cancelar</button>
+     <button class="btn-primary" onclick="salvarNovoUser()">Criar</button>`);
+}
+function salvarNovoUser(){
+  const u = collectUserForm();
+  if(!u.nome||!u.email||!u.senha){ toast('Preencha nome, e-mail e senha.','warn'); return; }
+  if(USUARIOS.find(x=>x.email===u.email)){ toast('E-mail já cadastrado.','error'); return; }
+  USUARIOS.push(u); saveUsers(); closeModal(); showTabUsuarios(); toast('Usuário criado!','success');
+}
+function editUser(id){
+  const u = USUARIOS.find(x=>x.id===id);
+  if(!u) return;
+  openModal(`Editar: ${u.nome}`, userFormHtml(u),
+    `<button class="btn-outline" onclick="closeModal()">Cancelar</button>
+     <button class="btn-primary" onclick="salvarEditUser('${esc(id)}')">Salvar</button>`);
+}
+function salvarEditUser(id){
+  const idx = USUARIOS.findIndex(x=>x.id===id);
+  if(idx<0) return;
+  const u = collectUserForm(USUARIOS[idx]);
+  USUARIOS[idx] = u;
+  // Atualizar sessão se editou o próprio usuário
+  if(u.id===getCurrentUser()?.id) setCurrentUser(u);
+  saveUsers(); closeModal(); showTabUsuarios(); toast('Usuário salvo!','success');
+}
+function toggleUser(id){
+  const u = USUARIOS.find(x=>x.id===id);
+  if(!u) return;
+  if(u.id===getCurrentUser()?.id){ toast('Você não pode desativar sua própria conta.','error'); return; }
+  u.ativo = !u.ativo;
+  saveUsers(); showTabUsuarios();
+  toast(u.ativo?'Usuário ativado.':'Usuário desativado.', u.ativo?'success':'warn');
+}
+function delUser(id){
+  if(id===getCurrentUser()?.id){ toast('Você não pode excluir sua própria conta.','error'); return; }
+  if(!confirm('Excluir este usuário?')) return;
+  USUARIOS = USUARIOS.filter(u=>u.id!==id);
+  saveUsers(); showTabUsuarios(); toast('Usuário excluído.','warn');
+}
+
+// ── Tab: Import/Export ────────────────────────────────────
+function showTabImportExport(){
+  document.getElementById('tab-content').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+        <div style="font-size:14px;font-weight:700;margin-bottom:8px">📤 Exportar</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Planilha Excel editável com 3 abas: Projetos, Atividades e Resumo.</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <button class="btn-primary" onclick="exportXLSX()">📊 Exportar Excel (.xlsx)</button>
+          <button class="btn-outline" onclick="exportFullJSON()">⬇ Backup Completo (JSON)</button>
+        </div>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+        <div style="font-size:14px;font-weight:700;margin-bottom:8px">📥 Importar</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Importe projetos de um CSV no formato padrão.</div>
+        <div class="import-zone" id="import-zone" onclick="document.getElementById('file-input').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="handleDrop(event)">
+          <div class="import-zone-icon">📄</div>
+          <div class="import-zone-text">Clique ou arraste o arquivo</div>
+          <div class="import-zone-sub">CSV separado por ponto-e-vírgula · UTF-8</div>
+        </div>
+        <input type="file" id="file-input" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileInput(this)">
+      </div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px">⚠ Reset de Dados</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Restaura todos os dados para os valores padrão. Esta ação não pode ser desfeita.</div>
+      <button class="btn-danger" onclick="resetData()">🗑 Restaurar Dados Padrão</button>
+    </div>
+    <!-- Ferramentas de dev — colapsável -->
+    <div style="margin-top:8px">
+      <button onclick="toggleDevTools()"
+        style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);font-family:inherit;background:none;border:none;cursor:pointer;padding:4px 0">
+        <span id="dev-tools-arrow">▶</span> Ferramentas de desenvolvimento
+      </button>
+      <div id="dev-tools-panel" style="display:none;margin-top:10px;flex-direction:column;gap:10px">
+        <div style="background:var(--surface);border:1px solid rgba(245,195,0,.2);border-radius:var(--radius);padding:16px;border-left:3px solid var(--brand)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:var(--brand)">🎯 Carregar Dados Demo</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Adiciona projetos e atividades de demonstração. Dados existentes são <strong style="color:var(--text)">preservados</strong>.</div>
+          <button class="btn-outline" onclick="loadDemoAndRefresh()">🚀 Carregar Dados Demo</button>
+        </div>
+        <div style="background:var(--surface);border:1px solid rgba(34,197,94,.2);border-radius:var(--radius);padding:16px;border-left:3px solid #22c55e">
+          <div style="font-size:13px;font-weight:700;margin-bottom:6px;color:#22c55e">🔄 Atualizar NAVEPARK</div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:12px">Substitui dados do NAVEPARK pelos dados reais (Navegantes-SC · Vedamotors · I25.4066). Atividades existentes serão <strong style="color:var(--text)">sobrescritas</strong>.</div>
+          <button class="btn-outline" style="border-color:rgba(34,197,94,.3);color:#22c55e" onclick="updateNaveparkAndRefresh()">🔄 Atualizar NAVEPARK com Dados Reais</button>
+        </div>
+      </div>
+    </div>
+    <div id="import-preview" style="margin-top:16px"></div>`;
+}
+function handleDrop(e){
+  e.preventDefault();
+  document.getElementById('import-zone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if(file) handleFile(file);
+}
+function handleFileInput(input){ if(input.files[0]) handleFile(input.files[0]); }
+function handleFile(file){
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const text = e.target.result;
+      const lines = text.split('\n').filter(l=>l.trim());
+      if(!lines.length){ toast('Arquivo vazio.','error'); return; }
+      const header = lines[0].split(';').map(h=>h.replace(/"/g,'').trim());
+      const data = lines.slice(1).map(l=>{
+        const cols = l.split(';').map(c=>c.replace(/^"|"$/g,'').trim());
+        const obj = {};
+        header.forEach((h,i)=>obj[h]=cols[i]||'');
+        return obj;
+      }).filter(r=>r['Nome']);
+      showImportPreview(data, header);
+    } catch(err){ toast('Erro ao ler arquivo: '+err.message,'error'); }
+  };
+  reader.readAsText(file,'UTF-8');
+}
+function showImportPreview(data, header){
+  const rows = data.slice(0,5).map(r=>`<tr>${IE_HEADERS.map(h=>`<td style="font-size:11px">${r[h.label]||'—'}</td>`).join('')}</tr>`).join('');
+  document.getElementById('import-preview').innerHTML = `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px">Preview (${data.length} linhas)</div>
+      <div style="overflow-x:auto"><table><thead><tr>${IE_HEADERS.map(h=>`<th>${h.label}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div>
+      <div style="margin-top:14px;display:flex;gap:10px">
+        <button class="btn-primary" onclick="confirmImport(${JSON.stringify(data).replace(/</g,'\\u003c')})">✓ Importar ${data.length} projetos</button>
+        <button class="btn-outline" onclick="document.getElementById('import-preview').innerHTML=''">Cancelar</button>
+      </div>
+    </div>`;
+  window.__importData = data;
+}
+function confirmImport(data){
+  if(!data) data = window.__importData;
+  let imported = 0;
+  data.forEach(r => {
+    const nome = r['Nome']||r['nome'];
+    if(!nome) return;
+    const p = {
+      nome, local:r['Local']||'', pmo:r['PMO']||'', resp:r['Responsável']||'',
+      colaboradores:[], prioridade:r['Prioridade']||'Média',
+      inicio:r['Início']||'', fim:r['Go Live']||'',
+      fimAjustado:r['Go Live Ajustado']||'', bloqueador:r['Bloqueador']||'',
+      diasParado:parseInt(r['Dias Parado'])||0,
+      status:'',
+    };
+    const idx = PROJETOS.findIndex(x=>x.nome===nome);
+    if(idx>=0){ PROJETOS[idx]={...PROJETOS[idx],...p}; }
+    else { PROJETOS.push(p); ATIVIDADES_PADRAO.forEach(a=>ATIVIDADES.push({projeto:nome,fase:a.fase,nome:a.nome,status:'Não Iniciado',comentarios:[]})); }
+    imported++;
+  });
+  saveData();
+  document.getElementById('import-preview').innerHTML='';
+  showTabImportExport();
+  toast(`${imported} projetos importados com sucesso!`,'success');
+}
+function exportXLSX(){
+  if(!window.XLSX){ toast('Aguarde — carregando biblioteca Excel...','info'); return; }
+  const wb = window.XLSX.utils.book_new();
+
+  // ── Aba: Projetos ──────────────────────────────────────
+  const projHeaders = IE_HEADERS.map(h=>h.label);
+  const projRows = PROJETOS.map(p=>IE_HEADERS.map(h=>{
+    const raw = h.serialize ? h.serialize(p[h.key]) : (p[h.key]??'');
+    return raw;
+  }));
+  const ws1 = window.XLSX.utils.aoa_to_sheet([projHeaders,...projRows]);
+  ws1['!cols'] = IE_HEADERS.map(h=>({wch:h.wch||15}));
+  window.XLSX.utils.book_append_sheet(wb, ws1, 'Projetos');
+
+  // ── Aba: Atividades ────────────────────────────────────
+  const ativHeaders = ['Projeto','Fase','Atividade','Status','Nº Comentários','Último Comentário'];
+  const ativRows = ATIVIDADES.map(a=>{
+    const comments = a.comentarios||[];
+    const last = comments[comments.length-1];
+    return [a.projeto, a.fase, a.nome, a.status, comments.length, last?`${last.autor} (${last.dataISO}): ${last.texto}`:'' ];
+  });
+  const ws2 = window.XLSX.utils.aoa_to_sheet([ativHeaders,...ativRows]);
+  ws2['!cols'] = [{wch:20},{wch:26},{wch:44},{wch:16},{wch:14},{wch:60}];
+  window.XLSX.utils.book_append_sheet(wb, ws2, 'Atividades');
+
+  // ── Aba: Resumo ────────────────────────────────────────
+  const ativos = PROJETOS.filter(p=>{const s=calcStatus(p);return s!=='Concluído'&&s!=='Não Iniciado';});
+  const resumoData = [
+    ['Velox by Invent v16 — Exportação', '', '', formatDate(HOJE_ISO)],
+    ['','','',''],
+    ['Total de projetos',PROJETOS.length,'',''],
+    ['Projetos ativos',ativos.length,'',''],
+    ['Projetos concluídos',PROJETOS.filter(p=>calcStatus(p)==='Concluído').length,'',''],
+    ['Em risco (alto)',PROJETOS.filter(p=>calcRisco(p)==='alto').length,'',''],
+    ['Health Score',calcPortfolioHealth()+'%','',''],
+    ['','','',''],
+    ['Total de atividades',ATIVIDADES.length,'',''],
+    ['Concluídas',ATIVIDADES.filter(a=>a.status==='Concluído').length,'',''],
+    ['Em andamento',ATIVIDADES.filter(a=>a.status==='Em andamento').length,'',''],
+    ['Aguardando',ATIVIDADES.filter(a=>a.status==='Aguardando').length,'',''],
+    ['Não iniciadas',ATIVIDADES.filter(a=>a.status==='Não Iniciado').length,'',''],
+  ];
+  const ws3 = window.XLSX.utils.aoa_to_sheet(resumoData);
+  ws3['!cols'] = [{wch:28},{wch:14},{wch:14},{wch:14}];
+  window.XLSX.utils.book_append_sheet(wb, ws3, 'Resumo');
+
+  window.XLSX.writeFile(wb, `Velox_PMO_${HOJE_ISO}.xlsx`);
+  toast('Excel exportado com 3 abas: Projetos · Atividades · Resumo','success',4000);
+}
+function exportFullJSON(){
+  const data={projetos:PROJETOS,atividades:ATIVIDADES,exportDate:HOJE_ISO,version:'v16'};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`backup_v16_${HOJE_ISO}.json`;link.click();
+  toast('Backup exportado!','success');
+}
+function resetData(){
+  if(!confirm('Restaurar TODOS os dados para o padrão? Esta ação apagará tudo que foi editado.')) return;
+  localStorage.removeItem('v16_projetos'); localStorage.removeItem('v16_atividades');
+  localStorage.removeItem('v16_capas'); localStorage.removeItem('v16_altescopo');
+  localStorage.removeItem('v16_alertasLidos'); localStorage.removeItem('v16_squads');
+  localStorage.removeItem('v16_historico'); localStorage.removeItem('v16_mig_v8_done');
+  loadData(); toast('Dados restaurados para o padrão.','success');
+  showTabImportExport();
+}
+
+// ── Tab: Data Health ──────────────────────────────────────
+function showTabHealth(){
+  const ativos = PROJETOS.filter(p=>{const s=calcStatus(p);return s!=='Concluído'&&s!=='Não Iniciado';});
+  const cards = ativos.map(p=>{
+    const ativs = ATIVIDADES.filter(a=>a.projeto===p.nome);
+    const comAtivs = ativs.length;
+    const ativComComent = ativs.filter(a=>(a.comentarios||[]).length>0).length;
+    const camposBase = ['nome','local','pmo','resp','inicio','fim'].filter(k=>p[k]&&String(p[k]).trim());
+    const camposOpc = ['fimAjustado','bloqueador','colaboradores'].filter(k=>{const v=p[k];return v&&String(v).trim()&&!(Array.isArray(v)&&!v.length);});
+    const hasCapa = !!getCapaForProject(p.nome);
+    const scores = {
+      'Dados Base': Math.round(camposBase.length/6*100),
+      'Dados Opcionais': Math.round(camposOpc.length/4*100),
+      'Atividades': comAtivs > 0 ? 100 : 0,
+      'Comentários': comAtivs > 0 ? Math.round(ativComComent/comAtivs*100) : 0,
+      'Capa Técnica': hasCapa ? 100 : 0,
+    };
+    const total = Math.round(Object.values(scores).reduce((a,b)=>a+b,0)/Object.keys(scores).length);
+    const tc = total>=80?'#22c55e':total>=50?'#f5c300':'#ef4444';
+    return `<div class="health-proj-card" onclick="location.href='projetos.html?p=${encodeURIComponent(p.nome)}'">
+      <div class="health-proj-name">
+        ${p.nome}
+        <span class="health-score-pill" style="background:${tc}20;color:${tc}">${total}%</span>
+      </div>
+      <div class="health-bars">
+        ${Object.entries(scores).map(([l,v])=>`
+          <div class="health-bar-row">
+            <div class="health-bar-lbl">${l}</div>
+            <div class="health-bar-wrap"><div class="health-bar-fill" style="width:${v}%;background:${v>=80?'#22c55e':v>=50?'#f5c300':'#ef4444'}"></div></div>
+            <div class="health-bar-pct">${v}%</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  // Calcular scores individuais para métricas globais
+  const projScores = ativos.map(p=>{
+    const ativs=ATIVIDADES.filter(a=>a.projeto===p.nome);
+    const camposBase=['nome','local','pmo','resp','inicio','fim'].filter(k=>p[k]&&String(p[k]).trim());
+    const camposOpc=['fimAjustado','bloqueador','colaboradores'].filter(k=>{const v=p[k];return v&&String(v).trim()&&!(Array.isArray(v)&&!v.length);});
+    const comComent=ativs.filter(a=>(a.comentarios||[]).length>0).length;
+    const hasCapa=!!getCapaForProject(p.nome);
+    const s={
+      'Dados Base':Math.round(camposBase.length/6*100),
+      'Dados Opcionais':Math.round(camposOpc.length/4*100),
+      'Atividades':ativs.length?100:0,
+      'Comentários':ativs.length?Math.round(comComent/ativs.length*100):0,
+      'Capa Técnica':hasCapa?100:0,
+    };
+    const total=Math.round(Object.values(s).reduce((a,b)=>a+b,0)/Object.keys(s).length);
+    return total;
+  });
+  const avgHealth = projScores.length ? Math.round(projScores.reduce((a,b)=>a+b,0)/projScores.length) : 0;
+  const excellent = projScores.filter(s=>s>=80).length;
+  const needsWork = projScores.filter(s=>s<50).length;
+  const ac = avgHealth>=80?'#22c55e':avgHealth>=50?'#f5c300':'#ef4444';
+  // SVG ring for avg health
+  const r=42,circ=2*Math.PI*r,offset=circ*(1-avgHealth/100);
+  const ringHtml=`<svg width="100" height="100" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="9"/>
+    <circle cx="50" cy="50" r="${r}" fill="none" stroke="${ac}" stroke-width="9"
+      stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${offset.toFixed(1)}"
+      stroke-linecap="round" transform="rotate(-90 50 50)"
+      style="transition:stroke-dasharray .8s ease;filter:drop-shadow(0 0 6px ${ac})"/>
+    <text x="50" y="46" text-anchor="middle" dominant-baseline="middle" fill="${ac}" font-size="18" font-weight="800" font-family="Inter">${avgHealth}%</text>
+    <text x="50" y="61" text-anchor="middle" dominant-baseline="middle" fill="#64748b" font-size="8" font-weight="600" font-family="Inter">GERAL</text>
+  </svg>`;
+
+  document.getElementById('tab-content').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:20px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px">
+          📊 Qualidade dos Dados
+          <span style="font-size:10px;font-weight:700;background:var(--brand-dim);color:var(--brand);padding:2px 8px;border-radius:20px">V16 exclusivo</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">Completude dos dados por projeto ativo</div>
+        <div style="display:flex;gap:12px;margin-top:12px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px">
+            <span style="width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block"></span>
+            <span style="color:var(--muted2)">${excellent} excelente${excellent!==1?'s':''} (≥80%)</span>
+          </div>
+          ${needsWork?`<div style="display:flex;align-items:center;gap:6px;font-size:12px">
+            <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block"></span>
+            <span style="color:var(--muted2)">${needsWork} precisam atenção (<50%)</span>
+          </div>`:''}
+        </div>
+      </div>
+      <div style="flex-shrink:0">${ringHtml}</div>
+    </div>
+    <div class="health-grid">${cards}</div>`;
+}
+
+// ── Capa Técnica ──────────────────────────────────────────
+let _capaSelProj = '';
+
+function showTabCapa(){
+  if(!PROJETOS.length){
+    document.getElementById('tab-content').innerHTML = `<div style="text-align:center;padding:60px;color:var(--muted)">Nenhum projeto cadastrado.</div>`;
+    return;
+  }
+  if(!_capaSelProj || !PROJETOS.find(p=>p.nome===_capaSelProj)){
+    _capaSelProj = PROJETOS[0].nome;
+  }
+  const capa    = getCapaForProject(_capaSelProj) || {};
+  const hasCapa = !!getCapaForProject(_capaSelProj);
+  const sistemas = capa.sistemas || {};
+  const escopo   = capa.escopo   || {};
+
+  document.getElementById('tab-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;flex-wrap:wrap">
+      <div style="font-size:13px;color:var(--muted);font-weight:600">Projeto:</div>
+      <select id="capa-proj-sel" onchange="_capaSelProj=this.value;showTabCapa()"
+        style="padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;cursor:pointer;min-width:200px">
+        ${PROJETOS.map(p=>`<option value="${esc(p.nome)}" ${_capaSelProj===p.nome?'selected':''}>${p.nome}</option>`).join('')}
+      </select>
+      ${hasCapa
+        ?`<span style="font-size:11px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:#22c55e;padding:3px 12px;border-radius:10px;font-weight:600">✓ Capa cadastrada</span>`
+        :`<span style="font-size:11px;background:rgba(245,195,0,.1);border:1px solid rgba(245,195,0,.3);color:var(--brand);padding:3px 12px;border-radius:10px;font-weight:600">Nova capa</span>`}
+    </div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Identificação</div>
+    <div class="form-grid" style="margin-bottom:4px">
+      <div class="form-group">
+        <div class="form-label">Código</div>
+        <input class="form-control" id="cp-codigo" value="${esc(capa.codigo||'')}" placeholder="Ex: NAVEPARK-2026-01">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Cliente</div>
+        <input class="form-control" id="cp-cliente" value="${esc(capa.cliente||'')}" placeholder="Nome do cliente final">
+      </div>
+      <div class="form-group form-full">
+        <div class="form-label">Produtos / Solução</div>
+        <input class="form-control" id="cp-produtos" value="${esc(capa.produtos||'')}" placeholder="Ex: WMS + WCS + Sorter cross-belt 600 saídas">
+      </div>
+      <div class="form-group form-full">
+        <div class="form-label">Projeto de Referência (Semelhança Técnica)</div>
+        <input class="form-control" id="cp-sem" value="${esc(capa.semelhanca||'')}" placeholder="Projeto semelhante usado como referência de escopo">
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Performance</div>
+    <div class="form-grid" style="margin-bottom:4px">
+      <div class="form-group">
+        <div class="form-label">Linha (throughput)</div>
+        <input class="form-control" id="cp-linha" value="${esc((capa.performance||{}).linha||'')}" placeholder="Ex: 3.000 caixas/hora">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Sorter</div>
+        <input class="form-control" id="cp-sorter" value="${esc((capa.performance||{}).sorter||'')}" placeholder="Ex: Cross-belt 1.800 saídas/hora">
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Sistemas</div>
+    <div class="form-grid" style="margin-bottom:4px">
+      <div class="form-group">
+        <div class="form-label">WMS</div>
+        <input class="form-control" id="cp-wms" value="${esc(sistemas.wms||'')}" placeholder="Ex: Infor WMS v12.3">
+      </div>
+      <div class="form-group">
+        <div class="form-label">WCS</div>
+        <input class="form-control" id="cp-wcs" value="${esc(sistemas.wcs||'')}" placeholder="Ex: Invent WCS v5.1">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Supervisório / SCADA</div>
+        <input class="form-control" id="cp-sup" value="${esc(sistemas.supervisorio||'')}" placeholder="Ex: Intouch SCADA v2023">
+      </div>
+      <div class="form-group">
+        <div class="form-label">Outros Sistemas</div>
+        <input class="form-control" id="cp-outros" value="${esc(sistemas.outros||'')}" placeholder="ERP, TMS, etc.">
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Escopo (um item por linha)</div>
+    <div class="form-grid" style="margin-bottom:4px">
+      <div class="form-group">
+        <div class="form-label">Hardware</div>
+        <textarea class="form-control" id="cp-esc-hw" rows="5" placeholder="Rack 42U x2&#10;Servidor Dell PowerEdge R750&#10;Nobreak APC 10kVA">${(escopo['Hardware']||[]).join('\n')}</textarea>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Infraestrutura</div>
+        <textarea class="form-control" id="cp-esc-infra" rows="5" placeholder="Cabeamento estruturado Cat6A&#10;Piso elevado 600mm&#10;Ar-condicionado precisão 20kW">${(escopo['Infraestrutura']||[]).join('\n')}</textarea>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Rede / Telecom</div>
+        <textarea class="form-control" id="cp-esc-rede" rows="5" placeholder="Switch core Cisco Catalyst 9300&#10;Firewall Fortinet 200F&#10;Links redundantes 1Gbps">${(escopo['Rede']||[]).join('\n')}</textarea>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Automação / Mecânica</div>
+        <textarea class="form-control" id="cp-esc-auto" rows="5" placeholder="Sorter cross-belt 120m&#10;Esteiras transportadoras&#10;Scanners de código de barras">${(escopo['Automação']||[]).join('\n')}</textarea>
+      </div>
+    </div>
+
+    <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border)">Documentação e Acompanhamento</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <div class="form-label">Documentos Recebidos (um por linha)</div>
+        <textarea class="form-control" id="cp-receb" rows="4" placeholder="Planta baixa do armazém (Rev.3)&#10;Especificações técnicas do cliente">${(capa.recebidos||[]).join('\n')}</textarea>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Observações Técnicas (uma por linha)</div>
+        <textarea class="form-control" id="cp-obs" rows="4" placeholder="Piso com capacidade para 5t/m²&#10;Fundação reforçada necessária">${(capa.observacoes||[]).join('\n')}</textarea>
+      </div>
+      <div class="form-group form-full">
+        <div class="form-label">Pendências (uma por linha)</div>
+        <textarea class="form-control" id="cp-pend" rows="3" placeholder="Aguardando aprovação do layout final&#10;Definição de fornecedor de racks">${(capa.pendencias||[]).join('\n')}</textarea>
+      </div>
+    </div>
+    <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px;align-items:center">
+      <span style="font-size:12px;color:var(--muted);flex:1">Projeto: <strong style="color:var(--text)">${esc(_capaSelProj)}</strong></span>
+      ${hasCapa?`<button class="btn-danger" onclick="delCapa()">🗑 Remover Capa</button>`:''}
+      <button class="btn-primary" onclick="salvarCapa()">💾 Salvar Capa Técnica</button>
+    </div>
+  `;
+}
+
+function _splitLines(id){ return (document.getElementById(id)?.value||'').split('\n').map(l=>l.trim()).filter(Boolean); }
+
+function salvarCapa(){
+  const capa = {
+    projeto:    _capaSelProj,
+    codigo:     document.getElementById('cp-codigo')?.value.trim()||'',
+    cliente:    document.getElementById('cp-cliente')?.value.trim()||'',
+    produtos:   document.getElementById('cp-produtos')?.value.trim()||'',
+    semelhanca: document.getElementById('cp-sem')?.value.trim()||'',
+    performance:{
+      linha:  document.getElementById('cp-linha')?.value.trim()||'',
+      sorter: document.getElementById('cp-sorter')?.value.trim()||'',
+    },
+    sistemas:{
+      wms:         document.getElementById('cp-wms')?.value.trim()||'',
+      wcs:         document.getElementById('cp-wcs')?.value.trim()||'',
+      supervisorio:document.getElementById('cp-sup')?.value.trim()||'',
+      outros:      document.getElementById('cp-outros')?.value.trim()||'',
+    },
+    escopo:{
+      'Hardware':      _splitLines('cp-esc-hw'),
+      'Infraestrutura':_splitLines('cp-esc-infra'),
+      'Rede':          _splitLines('cp-esc-rede'),
+      'Automação':     _splitLines('cp-esc-auto'),
+    },
+    recebidos:  _splitLines('cp-receb'),
+    observacoes:_splitLines('cp-obs'),
+    pendencias: _splitLines('cp-pend'),
+  };
+  if(!capa.codigo && !capa.cliente){ toast('Preencha ao menos Código ou Cliente.','warn'); return; }
+  const idx = CAPAS.findIndex(c=>c.projeto===_capaSelProj);
+  if(idx>=0) CAPAS[idx] = capa; else CAPAS.push(capa);
+  saveData();
+  showTabCapa();
+  toast('Capa técnica salva!','success');
+}
+function delCapa(){
+  if(!confirm(`Remover capa técnica de "${_capaSelProj}"?`)) return;
+  CAPAS = CAPAS.filter(c=>c.projeto!==_capaSelProj);
+  saveData();
+  showTabCapa();
+  toast('Capa removida.','warn');
+}
+
+// ── Demo Data Loader ──────────────────────────────────────
+function loadDemoAndRefresh(){
+  const changed = loadDemoData();
+  if(changed){
+    toast('✓ Dados demo carregados! Projetos e atividades adicionados ao portfólio.','success',4500);
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelector('.tab-btn').classList.add('active');
+    showTabProjetos();
+  } else {
+    toast('Todos os dados demo já estão presentes. Nenhuma alteração realizada.','info',3500);
+  }
+}
+
+// ── NAVEPARK Real Data Updater ────────────────────────────
+function updateNaveparkAndRefresh(){
+  if(!confirm('Substituir os dados do NAVEPARK pelos dados reais? As atividades existentes serão sobrescritas.')) return;
+  const ok = updateNaveparkData();
+  if(ok){
+    toast('✓ NAVEPARK atualizado com dados reais! (Navegantes-SC · Vedamotors · I25.4066)','success',5000);
+  } else {
+    toast('Erro: projeto NAVEPARK não encontrado nos dados padrão.','warn');
+  }
+}
+
+// ── Dev tools toggle ─────────────────────────────────────
+function toggleDevTools(){
+  const panel = document.getElementById('dev-tools-panel');
+  const arrow = document.getElementById('dev-tools-arrow');
+  if(!panel) return;
+  const open = panel.style.display === 'flex';
+  panel.style.display = open ? 'none' : 'flex';
+  if(arrow) arrow.textContent = open ? '▶' : '▼';
+}
+
+// ── Roteamento de tabs ────────────────────────────────────
+function showTab(tab, el){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  if(tab==='projetos')    showTabProjetos();
+  if(tab==='atividades')  showTabAtividades();
+  if(tab==='usuarios')    showTabUsuarios();
+  if(tab==='capa')        showTabCapa();
+  if(tab==='importexport')showTabImportExport();
+  if(tab==='health')      showTabHealth();
+}
+
+// esc() definido em utils.js
+
+// ── Gerador de Senha Aleatória ────────────────────────────
+function gerarSenha(){
+  const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789!@#$';
+  let senha = '';
+  for(let i=0; i<12; i++) senha += chars[Math.floor(Math.random()*chars.length)];
+  const el = document.getElementById('uf-senha');
+  if(el){ el.value = senha; el.type = 'text'; el.select(); }
+  toast(`Senha gerada: ${senha} (copiada para o campo)`, 'success', 5000);
+}
+
+// ── ESC key to close modal / cmd palette ─────────────────
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Escape') return;
+  const modal = document.getElementById('modal-overlay');
+  if(modal && modal.classList.contains('open')){ closeModal(); return; }
+  const cmd = document.getElementById('cmd-overlay');
+  if(cmd && cmd.classList.contains('open')){ cmd.classList.remove('open'); }
+});
+
+showTabProjetos();
+</script>
+</body>
+</html>

@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Projetos — Velox by Invent v16</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23F5C300'/><text x='16' y='23' text-anchor='middle' font-size='18' font-weight='900' font-family='Inter,sans-serif' fill='%230a0e19'>VX</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#F5C300;--brand-dim:rgba(245,195,0,.15);
+  --bg:#030610;--bg2:#100c2a;--surface:rgba(255,255,255,.065);
+  --surface2:rgba(255,255,255,.1);--border:rgba(255,255,255,.12);
+  --text:#f1f5f9;--muted:#64748b;--muted2:#94a3b8;
+  --sidebar-w:240px;--sidebar-collapsed:60px;
+  --radius:14px;--radius-sm:8px;
+  --green:#22c55e;--blue:#3b82f6;--red:#ef4444;--amber:#f59e0b;
+}
+[data-theme="light"]{--bg:#f1f5f9;--bg2:#e2e8f0;--surface:rgba(255,255,255,.9);--surface2:rgba(255,255,255,.7);--border:rgba(0,0,0,.08);--text:#0f172a;--muted:#64748b;--muted2:#475569;}
+html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(ellipse 120% 60% at 50% -5%,#1a1060 0%,#0a0520 35%,#030610 70%);color:var(--text);overflow:hidden}
+[data-theme="light"] body{background:#f0f4f8!important}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* Sidebar */
+#sidebar{width:var(--sidebar-w);min-width:var(--sidebar-w);background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;transition:all .3s cubic-bezier(.4,0,.2,1);position:relative;z-index:10;overflow:hidden;}
+#sidebar.collapsed{width:var(--sidebar-collapsed);min-width:var(--sidebar-collapsed)}
+.sb-header{padding:20px 16px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.sb-logo{width:32px;height:32px;min-width:32px;background:linear-gradient(135deg,var(--brand),#d97706);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#0a0e19;letter-spacing:-0.5px;flex-shrink:0}
+.sb-brand{overflow:hidden;opacity:1;transition:opacity .2s;line-height:1.2}
+.sb-brand-name{font-size:15px;font-weight:900;letter-spacing:-1px;white-space:nowrap;color:var(--text)}
+.sb-brand-name .vy{color:var(--brand)}.sb-brand-name .dot{color:var(--brand)}
+.sb-brand-by{font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+#sidebar.collapsed .sb-brand{opacity:0;width:0;overflow:hidden}
+#sidebar-toggle{margin-left:auto;color:var(--muted);font-size:18px;padding:4px;border-radius:6px;flex-shrink:0}
+#sidebar-toggle:hover{color:var(--text)}
+.sb-nav{flex:1;padding:12px 8px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:var(--radius-sm);color:var(--muted2);font-size:13px;font-weight:500;transition:all .2s;white-space:nowrap;overflow:hidden;}
+.nav-item:hover{background:var(--surface2);color:var(--text)}.nav-item.active{background:var(--brand-dim);color:var(--brand)}
+.nav-icon{font-size:18px;flex-shrink:0;width:20px;text-align:center}.nav-label{transition:opacity .2s}
+#sidebar.collapsed .nav-label{opacity:0;width:0;overflow:hidden}
+.sb-footer{padding:12px 8px;border-top:1px solid var(--border)}
+#sidebar-user{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--radius-sm)}
+.su-avatar{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0}
+.su-info{overflow:hidden;flex:1}.su-nome{font-size:12px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.su-papel{font-size:10px;color:var(--muted);text-transform:capitalize}
+.su-logout{padding:4px 6px;color:var(--muted);font-size:14px;border-radius:4px;transition:color .2s}.su-logout:hover{color:var(--red)}
+#sidebar.collapsed .su-info{opacity:0;width:0;overflow:hidden}
+
+/* Main */
+#main{flex:1;overflow:auto;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:16px 28px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:0;z-index:5;}
+.topbar-title{font-size:18px;font-weight:700;flex:1}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.btn-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--surface);border:1px solid var(--border);color:var(--muted2);font-size:15px;transition:all .2s;}
+.btn-icon:hover{background:var(--surface2);color:var(--text)}
+.btn-primary{display:flex;align-items:center;gap:6px;padding:8px 16px;background:var(--brand);color:#0a0e19;font-size:13px;font-weight:700;border-radius:var(--radius-sm);transition:opacity .2s;}
+.btn-primary:hover{opacity:.88}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;color:var(--muted2);font-size:13px;}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;width:160px;}
+.search-box input::placeholder{color:var(--muted)}
+
+/* Filter bar */
+.filter-bar{padding:14px 28px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border);background:var(--bg2);flex-wrap:wrap;}
+.filter-chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);color:var(--muted2);transition:all .2s;background:var(--surface);}
+.filter-chip:hover{border-color:var(--brand);color:var(--brand)}.filter-chip.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand);font-weight:700}
+.view-toggle{margin-left:auto;display:flex;gap:4px}
+.view-btn{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--muted);transition:all .2s;font-size:14px;border:1px solid transparent;}
+.view-btn.active{background:var(--brand-dim);color:var(--brand);border-color:rgba(245,195,0,.3)}
+
+/* List view */
+.list-wrap{padding:24px 28px;display:flex;flex-direction:column;gap:8px}
+.list-row{
+  display:grid;grid-template-columns:1.8fr 100px 110px 90px 80px 80px 60px;
+  align-items:center;gap:12px;padding:12px 16px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  transition:all .2s;cursor:pointer;
+}
+.list-row:hover{border-color:var(--brand);background:var(--brand-dim)}
+.list-row-nome{font-size:13px;font-weight:600}.list-row-sub{font-size:11px;color:var(--muted)}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.risco-dot{width:8px;height:8px;border-radius:50%}
+.prog-bar{background:var(--border);border-radius:3px;height:4px;width:100%;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;transition:width .6s ease}
+
+/* Kanban view */
+.kanban-wrap{padding:14px 18px;display:flex;gap:10px;overflow-x:auto;align-items:flex-start;min-height:calc(100vh - 160px)}
+.kanban-col{
+  flex:1 1 155px;min-width:155px;max-width:235px;
+  background:linear-gradient(180deg,rgba(255,255,255,.042) 0%,rgba(255,255,255,.016) 100%);
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:var(--radius);padding:0;overflow:hidden;
+  backdrop-filter:blur(8px);
+  box-shadow:0 4px 24px rgba(0,0,0,.18);
+}
+.kanban-col-header{
+  padding:14px 16px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid rgba(255,255,255,.07);
+  position:relative;overflow:hidden;
+}
+/* Glowing left accent on column header */
+.kanban-col-header::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:3px;
+  background:currentColor;opacity:.9;border-radius:0;
+}
+.kanban-count{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+  padding:2px 9px;border-radius:10px;font-size:11px;font-weight:700;
+}
+.kanban-cards{padding:8px;display:flex;flex-direction:column;gap:6px;max-height:calc(100vh - 260px);overflow-y:auto}
+.kanban-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.06) 0%,rgba(255,255,255,.02) 100%);
+  border:1px solid rgba(255,255,255,.09);
+  border-top:3px solid transparent;
+  border-radius:9px;padding:10px 11px;
+  cursor:pointer;transition:all .22s ease;
+  backdrop-filter:blur(6px);
+}
+.kanban-card:hover{
+  border-color:rgba(245,195,0,.35);
+  background:linear-gradient(145deg,rgba(245,195,0,.08) 0%,rgba(245,195,0,.03) 100%);
+  transform:translateY(-2px);
+  box-shadow:0 8px 24px rgba(0,0,0,.3);
+}
+.kanban-card-nome{font-size:13px;font-weight:700;margin-bottom:4px}
+.kanban-card-sub{font-size:11px;color:var(--muted)}
+.kanban-card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+
+/* ── PROJECT HUB MODAL ── */
+#hub-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;
+}
+#hub-overlay.open{display:flex}
+#hub-modal{
+  background:var(--bg2);border:1px solid var(--border);border-radius:20px;
+  width:100%;max-width:900px;max-height:90vh;display:flex;flex-direction:column;
+  animation:hubIn .3s cubic-bezier(.4,0,.2,1);overflow:hidden;
+}
+@keyframes hubIn{from{opacity:0;transform:scale(.96) translateY(20px)}to{opacity:1;transform:none}}
+
+#hub-header{
+  padding:20px 24px 0;border-bottom:1px solid var(--border);
+  display:flex;flex-direction:column;gap:12px;flex-shrink:0;
+}
+.hub-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hub-title-block{}
+.hub-title{font-size:20px;font-weight:800;letter-spacing:-.5px}
+.hub-subtitle{font-size:12px;color:var(--muted);margin-top:4px}
+.hub-close{font-size:22px;color:var(--muted);padding:4px 8px;border-radius:8px;line-height:1;transition:color .2s}
+.hub-close:hover{color:var(--text)}
+
+.hub-tabs{display:flex;gap:0;margin-bottom:-1px}
+.hub-tab{
+  padding:10px 18px;font-size:13px;font-weight:500;color:var(--muted2);
+  cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;
+}
+.hub-tab:hover{color:var(--text)}.hub-tab.active{color:var(--brand);border-bottom-color:var(--brand);font-weight:700}
+
+#hub-body{flex:1;overflow-y:auto;padding:24px}
+
+/* Tab: Overview */
+.hub-overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.hub-field-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px}
+.hub-field-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:6px}
+.hub-field-value{font-size:14px;font-weight:500}
+.hub-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.hub-kpi{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;text-align:center}
+.hub-kpi-v{font-size:24px;font-weight:800;margin-bottom:2px}
+.hub-kpi-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+
+/* Tab: Timeline */
+.timeline-phases{display:flex;flex-direction:column;gap:12px}
+.phase-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.phase-header{
+  padding:10px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;
+  transition:background .2s;
+}
+.phase-header:hover{background:var(--surface2)}
+.phase-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.phase-name{font-size:13px;font-weight:600;flex:1}
+.phase-prog{font-size:11px;color:var(--muted)}
+.phase-bar-wrap{height:3px;background:var(--border)}
+.phase-bar-fill{height:100%;transition:width .6s ease}
+.phase-ativs{padding:0 16px 12px;display:flex;flex-direction:column;gap:6px}
+.hidden{display:none!important}
+.ativ-row{display:flex;align-items:center;gap:10px;padding:6px 8px;border-radius:6px;background:var(--surface2)}
+.ativ-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.ativ-nome{font-size:12px;flex:1}
+.ativ-edit-btn{font-size:11px;color:var(--brand);opacity:0;transition:opacity .2s;padding:2px 6px;border-radius:4px;background:var(--brand-dim)}
+.ativ-row:hover .ativ-edit-btn{opacity:1}
+
+/* Tab: Capa */
+.capa-section{margin-bottom:20px}
+.capa-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--brand);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.capa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.capa-field{background:var(--surface);border-radius:var(--radius-sm);padding:10px 14px}
+.capa-field-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.capa-field-value{font-size:13px;font-weight:500}
+.capa-list{display:flex;flex-direction:column;gap:6px}
+.capa-list-item{background:var(--surface);border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;display:flex;align-items:flex-start;gap:8px}
+.capa-list-item::before{content:'•';color:var(--brand);font-weight:900;flex-shrink:0}
+.no-capa{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.no-capa-icon{font-size:32px;margin-bottom:10px}
+
+/* Tab: Mudanças de escopo */
+.change-list{display:flex;flex-direction:column;gap:10px}
+.change-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;position:relative}
+.change-item-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.change-date{font-size:11px;color:var(--muted)}
+.change-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+.change-desc{font-size:13px;font-weight:500;margin-bottom:6px}
+.change-meta{font-size:11px;color:var(--muted2)}
+.change-impact{font-size:11px;background:rgba(245,195,0,.1);color:var(--brand);padding:4px 10px;border-radius:6px;margin-top:6px;display:inline-block}
+.btn-add-change{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--brand-dim);color:var(--brand);font-size:12px;font-weight:600;border-radius:var(--radius-sm);border:1px solid rgba(245,195,0,.2);transition:all .2s;margin-top:12px}
+.btn-add-change:hover{background:rgba(245,195,0,.25)}
+
+/* Activity modal */
+#ativ-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+#ativ-overlay.open{display:flex}
+#ativ-modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:520px;animation:hubIn .25s ease;overflow:hidden}
+.ativ-modal-header{padding:20px 20px 0;border-bottom:1px solid var(--border);margin-bottom:0}
+.ativ-modal-title{font-size:15px;font-weight:700;margin-bottom:4px}
+.ativ-modal-sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+.ativ-modal-body{padding:16px 20px}
+
+/* Shared */
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.chip{background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+.viewer-mode .edit-only{display:none!important}
+#cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:9000;display:none;align-items:flex-start;justify-content:center;padding-top:15vh}
+#cmd-overlay.open{display:flex}
+#cmd-palette{background:var(--bg2);border:1px solid var(--border);border-radius:14px;width:520px;max-width:90vw;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+#cmd-header{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border)}
+#cmd-icon{font-size:18px;color:var(--muted)}
+#cmd-input{flex:1;background:none;border:none;outline:none;font-size:15px;color:var(--text);font-family:'Inter',sans-serif}
+#cmd-list{max-height:360px;overflow-y:auto;padding:8px}
+.cmd-item{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;color:var(--muted2);transition:all .15s}
+.cmd-item:hover,.cmd-item.active{background:var(--brand-dim);color:var(--brand)}
+.cmd-empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
+@keyframes slideInRight{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+.btn-print{display:flex;align-items:center;gap:7px;padding:8px 16px;background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);border-radius:var(--radius-sm);font-size:12px;font-weight:700;color:#a78bfa;transition:all .2s}
+.btn-print:hover{background:rgba(139,92,246,.22);border-color:#a78bfa}
+.print-header{display:none}
+/* ── Print / PDF mode ───────────────────────────────────── */
+@media print{
+  /* ① Forçar cores exatas (deve vir primeiro) */
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;box-sizing:border-box!important}
+  /* ② Reset global de layout (mantém tema atual) */
+  html,body{
+    overflow:visible!important;height:auto!important;min-height:0!important;
+    font-size:12px!important;
+  }
+  /* ③ Esconder sidebar + todo o #main (topbar, filter-bar, view-container) */
+  #sidebar,#main,
+  .hub-tabs,.hub-top .btn-icon,.hub-close,#btn-duplicar,
+  .edit-only,#ativ-overlay,#scope-overlay,#cmd-overlay,
+  #hist-add-overlay,#urgency-banner,.btn-share,.btn-add-change{display:none!important}
+  /* ④ Resetar app wrapper — sem flex, sem altura fixa */
+  .app{display:block!important;height:auto!important;min-height:0!important;overflow:visible!important;padding:0!important;margin:0!important}
+  /* ⑤ Hub overlay vira conteúdo de página (só quando aberto) */
+  #hub-overlay:not(.open){display:none!important}
+  #hub-overlay.open{
+    position:static!important;display:block!important;
+    background:none!important;padding:0!important;
+    inset:auto!important;overflow:visible!important;
+    height:auto!important;
+  }
+  #hub-modal{
+    max-height:none!important;height:auto!important;
+    border:1px solid var(--border)!important;border-radius:4px!important;
+    animation:none!important;box-shadow:none!important;
+    width:100%!important;max-width:100%!important;
+    margin:0!important;
+  }
+  #hub-body{overflow:visible!important;max-height:none!important;padding:16px 20px!important}
+  #hub-header{padding:16px 20px 0!important;border-bottom:2px solid var(--border)!important}
+  /* ⑥ Tipografia */
+  .hub-title{font-size:18px!important;font-weight:800!important}
+  .hub-subtitle{font-size:11px!important}
+  /* ⑦ Cards e campos */
+  .hub-overview-grid,.hub-kpis,.phase-block,.change-item,.pendencia-item{break-inside:avoid!important}
+  .hub-field-group{padding:10px 12px!important}
+  .hub-field-label{font-size:10px!important}
+  .hub-field-value{font-size:12px!important}
+  .card,.change-item{break-inside:avoid!important}
+  /* ⑧ Status pills */
+  .status-pill{font-size:10px!important}
+  /* ⑨ Barras coloridas — forçar visibilidade */
+  .prog-fill{-webkit-print-color-adjust:exact!important;min-height:6px!important}
+  .phase-bar-fill,.gantt-bar,.gantt-bar-fill{-webkit-print-color-adjust:exact!important}
+  /* ⑩ Links */
+  a{text-decoration:none!important}
+  /* ⑪ Cabeçalho de impressão */
+  .print-header{
+    display:flex!important;justify-content:space-between;
+    padding:8px 20px 12px;border-bottom:2px solid var(--border);
+    font-size:10px;color:var(--muted);margin-bottom:4px;
+  }
+  /* ⑫ Quebras de página */
+  .phase-block,.hub-kpi,.hub-field-group,.change-item{page-break-inside:avoid}
+  /* ⑬ Margem de página */
+  @page{margin:15mm 14mm;size:A4}
+}
+
+/* ── Histórico Timeline ── */
+.hist-list{display:flex;flex-direction:column;gap:0;position:relative;padding-left:20px}
+.hist-list::before{content:'';position:absolute;left:6px;top:0;bottom:0;width:1px;background:var(--border)}
+.hist-event{position:relative;padding:0 0 20px 20px}
+.hist-dot{position:absolute;left:-14px;top:4px;width:12px;height:12px;border-radius:50%;flex-shrink:0;border:2px solid var(--bg2)}
+.hist-tipo-enviado   {background:#3b82f6}
+.hist-tipo-recebido  {background:#22c55e}
+.hist-tipo-interno   {background:#a855f7}
+.hist-tipo-urgente   {background:#ef4444}
+.hist-tipo-resolvido {background:#22c55e}
+.hist-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;transition:border-color .2s}
+.hist-card:hover{border-color:rgba(255,255,255,.18)}
+.hist-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap}
+.hist-data{font-size:10px;color:var(--muted);font-weight:600}
+.hist-tipo-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:10px}
+.hist-titulo{font-size:13px;font-weight:600;margin-bottom:5px;line-height:1.3}
+.hist-corpo{font-size:12px;color:var(--muted2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hist-de{font-size:10px;color:var(--muted);margin-top:6px}
+.hist-expand{font-size:11px;color:var(--brand);cursor:pointer;margin-top:4px;display:inline-block}
+.hist-expand:hover{text-decoration:underline}
+.hist-empty{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.hist-filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.hist-filter-chip{padding:4px 10px;border-radius:14px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);color:var(--muted2);transition:all .15s;background:var(--surface)}
+.hist-filter-chip:hover{border-color:var(--brand);color:var(--brand)}
+.hist-filter-chip.active{background:var(--brand-dim);border-color:var(--brand);color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- Sidebar -->
+<nav id="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">VX</div>
+    <div class="sb-brand">
+      <div class="sb-brand-name"><span class="vy">v</span>elox<span class="dot">.</span></div>
+      <div class="sb-brand-by">by invent</div>
+    </div>
+    <button id="sidebar-toggle" title="Recolher">☰</button>
+  </div>
+  <div class="sb-nav">
+    <a class="nav-item" href="index.html">          <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
+    <a class="nav-item" href="gerencial.html">       <span class="nav-icon">⊞</span><span class="nav-label">Gerencial</span></a>
+    <a class="nav-item active" href="projetos.html"> <span class="nav-icon">📋</span><span class="nav-label">Projetos</span></a>
+    <a class="nav-item" href="squads.html">          <span class="nav-icon">🏢</span><span class="nav-label">Áreas</span></a>
+    <a class="nav-item" href="alertas.html">         <span class="nav-icon">🔔</span><span class="nav-label" id="nav-alertas-label">Alertas</span></a>
+    <a class="nav-item edit-only" href="admin.html"> <span class="nav-icon">⚙</span><span class="nav-label">Admin</span></a>
+  </div>
+  <div class="sb-footer"><div id="sidebar-user"></div></div>
+</nav>
+
+<!-- Main -->
+<div id="main">
+  <div class="topbar">
+    <div><div class="topbar-title">Projetos</div></div>
+    <div class="topbar-actions">
+      <div class="search-box">🔍 <input type="text" id="search-input" placeholder="Buscar projeto…" oninput="renderList()"></div>
+      <button class="btn-icon" onclick="toggleTheme()" title="Tema">◑</button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-chip active" onclick="setFiltro('todos',this)">Todos</button>
+    <button class="filter-chip" onclick="setFiltro('em_andamento',this)">🔵 Em Andamento</button>
+    <button class="filter-chip" onclick="setFiltro('atrasado',this)">⚠ Atrasados</button>
+    <button class="filter-chip" onclick="setFiltro('critico',this)">🔴 Críticos</button>
+    <button class="filter-chip" onclick="setFiltro('bloqueado',this)">🔒 Bloqueados</button>
+    <button class="filter-chip" onclick="setFiltro('concluido',this)">✓ Concluídos</button>
+    <button class="filter-chip" onclick="setFiltro('nao_iniciado',this)">○ Não Iniciados</button>
+    <button class="filter-chip" onclick="setFiltro('standby',this)">⏸ Standby</button>
+    <div class="view-toggle" style="display:flex;align-items:center;gap:8px">
+      <span id="proj-count" style="font-size:11px;color:var(--muted);white-space:nowrap"></span>
+      <button class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">≡</button>
+      <button class="view-btn active" id="btn-kanban" onclick="setView('kanban')" title="Kanban">⊞</button>
+    </div>
+  </div>
+
+  <div id="view-container"></div>
+</div>
+</div>
+
+<!-- Project Hub Modal -->
+<div id="hub-overlay" onclick="if(event.target===this)closeHub()">
+  <div id="hub-modal">
+    <div id="hub-header">
+      <div class="hub-top">
+        <div class="hub-title-block">
+          <div class="hub-title" id="hub-title">—</div>
+          <div class="hub-subtitle" id="hub-subtitle">—</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="btn-icon" onclick="__copiarLink()" title="Copiar link do projeto" style="font-size:14px;width:32px;height:32px" id="btn-share">🔗</button>
+          <button class="btn-print" onclick="openPM()" style="padding:6px 12px;font-size:11px">📄 PDF</button>
+          <button class="btn-icon edit-only" onclick="__duplicarProj()" title="Duplicar projeto" style="font-size:16px;width:32px;height:32px" id="btn-duplicar">⧉</button>
+          <button class="hub-close" onclick="closeHub()">✕</button>
+        </div>
+      </div>
+      <!-- Cabeçalho visível apenas no print/PDF -->
+      <div class="print-header">
+        <span id="print-proj-name" style="font-weight:700;font-size:12px;color:#333"></span>
+        <span style="color:#888">velox. by invent · Velox PMO v16 · <span id="print-date"></span></span>
+      </div>
+      <div class="hub-tabs">
+        <div class="hub-tab active" data-tab="overview"   onclick="switchTab('overview')">Visão Geral</div>
+        <div class="hub-tab" data-tab="capa"              onclick="switchTab('capa')">Capa Técnica</div>
+        <div class="hub-tab" data-tab="timeline"          onclick="switchTab('timeline')">Fases</div>
+        <div class="hub-tab" data-tab="activities"        onclick="switchTab('activities')">Atividades</div>
+        <div class="hub-tab" data-tab="historico"         onclick="switchTab('historico')">📡 Histórico</div>
+        <div class="hub-tab" data-tab="changes"           onclick="switchTab('changes')">Mudanças de Escopo</div>
+      </div>
+    </div>
+    <div id="hub-body"></div>
+  </div>
+</div>
+
+<!-- Scope Change Modal -->
+<div id="scope-overlay" onclick="if(event.target===this)closeScopeModal()"
+  style="position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:3000;display:none;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;width:100%;max-width:500px;padding:24px">
+    <div style="font-size:16px;font-weight:700;margin-bottom:18px">📝 Nova Mudança de Escopo</div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">DESCRIÇÃO *</div>
+      <textarea id="sc-desc" rows="3" placeholder="Descreva a mudança de escopo..." style="width:100%;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;resize:vertical;outline:none;box-sizing:border-box"></textarea>
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">IMPACTO (prazo / custo)</div>
+      <input id="sc-impacto" placeholder="Ex: Prazo +15 dias · Custo +R$ 50.000" style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none;box-sizing:border-box">
+    </div>
+    <div style="margin-bottom:18px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">STATUS</div>
+      <select id="sc-status" style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;outline:none">
+        <option value="Pendente">Pendente</option>
+        <option value="Aprovado">Aprovado</option>
+        <option value="Recusado">Recusado</option>
+      </select>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:8px">
+      <button onclick="closeScopeModal()" style="padding:8px 18px;border-radius:8px;font-size:13px;background:var(--surface2);border:1px solid var(--border);color:var(--muted2);cursor:pointer">Cancelar</button>
+      <button onclick="salvarNovaAlt()" style="padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;color:#0a0e19;background:var(--brand);border:none;cursor:pointer">Registrar Mudança</button>
+    </div>
+  </div>
+</div>
+
+<!-- Activity Edit Modal -->
+<div id="ativ-overlay" onclick="if(event.target===this)closeAtivModal()">
+  <div id="ativ-modal">
+    <div class="ativ-modal-header">
+      <div class="ativ-modal-title" id="ativ-modal-title">Atividade</div>
+      <div class="ativ-modal-sub" id="ativ-modal-sub"></div>
+    </div>
+    <div class="ativ-modal-body" id="ativ-modal-body"></div>
+  </div>
+</div>
+
+<script src="utils.js"></script>
+<script>
+initTheme();
+const user = checkAuth('projetos');
+loadData();
+initSidebar();
+initPrintModal();
+initCommandPalette();
+
+// Persistir filtro e view entre navegações
+let currentFiltro = localStorage.getItem('v16_projFiltro') || 'todos';
+let currentView   = localStorage.getItem('v16_projView')   || 'kanban';
+let currentProj   = null;
+let currentTab    = 'overview';
+let _kanbanCollapsed = {}; // { col_key: true/false }
+
+function toggleKanbanCol(key){
+  const cards = document.getElementById('kcards-'+key);
+  if(!cards) return;
+  _kanbanCollapsed[key] = !_kanbanCollapsed[key];
+  cards.style.display = _kanbanCollapsed[key] ? 'none' : 'flex';
+  const arrow = document.getElementById('karrow-'+key);
+  if(arrow) arrow.textContent = _kanbanCollapsed[key] ? '▶' : '▼';
+}
+
+// Ler parâmetros da URL (sobrepõe o valor persistido se informado)
+const params = new URLSearchParams(location.search);
+if(params.get('filtro')) setFiltro(params.get('filtro'));
+// Aplicar view persistida visualmente
+document.getElementById('btn-list')?.classList.toggle('active', currentView==='list');
+document.getElementById('btn-kanban')?.classList.toggle('active', currentView==='kanban');
+
+function setFiltro(f, el){
+  currentFiltro = f;
+  localStorage.setItem('v16_projFiltro', f);
+  document.querySelectorAll('.filter-chip').forEach(c => {
+    const matches = c.getAttribute('onclick')?.includes(`'${f}'`) ?? false;
+    c.classList.toggle('active', matches);
+  });
+  renderList();
+}
+function setView(v){
+  currentView = v;
+  localStorage.setItem('v16_projView', v);
+  document.getElementById('btn-list').classList.toggle('active', v==='list');
+  document.getElementById('btn-kanban').classList.toggle('active', v==='kanban');
+  renderList();
+}
+
+function getFiltered(){
+  const q = (document.getElementById('search-input')?.value || '').toLowerCase();
+  return PROJETOS.filter(p => {
+    const st = calcStatus(p);
+    const matchQ = !q || p.nome.toLowerCase().includes(q) || p.local.toLowerCase().includes(q) || (p.pmo||'').toLowerCase().includes(q);
+    if(!matchQ) return false;
+    if(currentFiltro === 'todos')        return true;
+    if(currentFiltro === 'em_andamento') return st === 'Em andamento';
+    if(currentFiltro === 'atrasado')     return st === 'Atrasado';
+    if(currentFiltro === 'critico')      return isCritico(p);
+    if(currentFiltro === 'bloqueado')    return calcStatus(p)==='Bloqueado' || !!(p.bloqueador && p.bloqueador.trim());
+    if(currentFiltro === 'concluido')    return st === 'Concluído';
+    if(currentFiltro === 'nao_iniciado') return st === 'Não Iniciado';
+    if(currentFiltro === 'standby')      return st === 'Standby';
+    return true;
+  });
+}
+
+function renderList(){
+  const container = document.getElementById('view-container');
+  const projects  = getFiltered();
+  // Atualiza contador
+  const cnt = document.getElementById('proj-count');
+  if(cnt){
+    const total = PROJETOS.length;
+    cnt.textContent = projects.length === total ? `${total} projetos` : `${projects.length} de ${total}`;
+  }
+  if(currentView === 'kanban'){
+    renderKanban(container, projects);
+  } else {
+    renderListView(container, projects);
+  }
+}
+
+function renderListView(container, projects){
+  if(!projects.length){
+    container.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted)">Nenhum projeto encontrado</div>';
+    return;
+  }
+  const header = `
+    <div style="display:grid;grid-template-columns:1.8fr 100px 110px 90px 80px 80px 60px;gap:12px;padding:4px 16px 8px;color:var(--muted);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px">
+      ${['Projeto','Status','Progresso','Risco','PMO','Go Live','Dias'].map(x=>`<div>${x}</div>`).join('')}
+    </div>`;
+  const rows = projects.map(p => {
+    const st   = calcStatus(p);
+    const sm   = STATUS_MAP[st] || STATUS_MAP['Em andamento'];
+    const r    = calcRisco(p);
+    const rm   = RISCO_MAP[r];
+    const prog = calcProgresso(p);
+    const fe   = getFimEfetivo(p);
+    const dias = fe ? Math.round((new Date(fe)-HOJE)/86400000) : null;
+    const dc   = dias===null?'var(--muted)':dias<0?'#ef4444':dias<=30?'#f5c300':'var(--muted2)';
+    const parado = calcDiasParadoAuto(p);
+    return `<div class="list-row" onclick="openHub('${escHtml(p.nome)}')">
+      <div><div class="list-row-nome">${p.nome}</div><div class="list-row-sub">${p.local} · ${p.pmo}</div></div>
+      <span class="status-pill" style="background:${sm.bg};color:${sm.color}">${sm.icon} ${sm.label}</span>
+      <div><div class="prog-bar"><div class="prog-fill" style="width:${prog}%;background:${sm.color}"></div></div><div style="font-size:10px;color:var(--muted);margin-top:2px">${prog}%</div></div>
+      <div style="display:flex;align-items:center;gap:5px"><div class="risco-dot" style="background:${rm.color}"></div><span style="font-size:11px;color:${rm.color}">${rm.label}</span></div>
+      <div style="font-size:12px">${p.pmo}</div>
+      <div style="font-size:11px;color:var(--muted)">${formatDate(fe||p.fim)}</div>
+      <div style="font-size:11px;color:${dc}">${dias===null?'—':diasLabel(dias)}</div>
+    </div>`;
+  }).join('');
+  container.innerHTML = `<div class="list-wrap">${header}${rows}</div>`;
+}
+
+function renderKanban(container, projects){
+  // Pré-computa última comunicação por projeto
+  const lastCommMap = {};
+  projects.forEach(p => {
+    const h = getHistoricoForProject(p.nome);
+    if(h.length) lastCommMap[p.nome] = [...h].sort((a,b)=>(b.dataISO||'').localeCompare(a.dataISO||''))[0];
+  });
+  const cols = [
+    {key:'nao_iniciado', label:'Não Iniciado', filter: p => calcStatus(p)==='Não Iniciado', color:'#94a3b8'},
+    {key:'em_andamento', label:'Em Andamento',  filter: p => calcStatus(p)==='Em andamento', color:'#3b82f6'},
+    {key:'bloqueado',    label:'Bloqueado',      filter: p => calcStatus(p)==='Bloqueado',    color:'#f97316'},
+    {key:'atrasado',     label:'Atrasado',       filter: p => calcStatus(p)==='Atrasado',     color:'#ef4444'},
+    {key:'standby',      label:'Standby',        filter: p => calcStatus(p)==='Standby',      color:'#64748b'},
+    {key:'concluido',    label:'Concluído',       filter: p => calcStatus(p)==='Concluído',    color:'#22c55e'},
+  ];
+  const html = cols.map(col => {
+    const ps = projects.filter(col.filter);
+    const cards = ps.map(p => {
+      const r   = calcRisco(p);
+      const rm  = RISCO_MAP[r];
+      const prog = calcProgresso(p);
+      const fe  = getFimEfetivo(p);
+      const dp  = calcDiasParadoAuto(p);
+      // Days-to-deadline
+      const dias = fe ? Math.round((new Date(fe) - HOJE) / 86400000) : null;
+      const diasColor = dias===null ? 'var(--muted)' : dias < 0 ? '#ef4444' : dias <= 14 ? '#f97316' : dias <= 30 ? '#f5c300' : '#22c55e';
+      const diasLabelTxt = dias===null ? '' : dias < 0 ? `${Math.abs(dias)}d atrasado` : dias === 0 ? 'Hoje!' : `${dias}d restantes`;
+      // Progress color
+      const progColor = prog >= 70 ? '#22c55e' : prog >= 35 ? '#3b82f6' : col.color;
+      // Bloqueador snippet
+      const bloqSnippet = p.bloqueador
+        ? `<div style="font-size:10px;color:#f97316;margin-top:6px;padding:4px 8px;background:rgba(249,115,22,.1);border-radius:5px;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">🔒 ${escHtml(p.bloqueador.split(';')[0])}</div>`
+        : '';
+      // Dias parado warning
+      const paradoSnippet = dp >= 7
+        ? `<span style="font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;background:${dp>=15?'rgba(239,68,68,.12)':'rgba(245,158,11,.12)'};color:${dp>=15?'#ef4444':'#f59e0b'}">⏸ ${dp}d parado</span>`
+        : '';
+      // Critical glow
+      const critGlow = isCritico(p) ? 'box-shadow:0 0 0 1px rgba(239,68,68,.35),0 4px 16px rgba(239,68,68,.15);' : '';
+      return `<div class="kanban-card" style="border-top-color:${col.color};${critGlow}" onclick="openHub('${escHtml(p.nome)}')">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:4px;margin-bottom:3px">
+          <div class="kanban-card-nome" style="flex:1;font-size:12px;line-height:1.3">${p.nome}</div>
+          <div style="font-size:16px;font-weight:900;letter-spacing:-1px;color:${progColor};flex-shrink:0;line-height:1">${prog}<span style="font-size:8px;font-weight:600;color:var(--muted)">%</span></div>
+        </div>
+        <div class="prog-bar" style="height:4px;margin-bottom:7px"><div class="prog-fill" style="width:${prog}%;background:${progColor}"></div></div>
+        ${bloqSnippet}
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:3px;margin-top:6px">
+          <span style="font-size:9px;font-weight:700;color:${rm.color};background:${rm.color}1a;padding:1px 6px;border-radius:8px">${rm.dot} ${rm.label}</span>
+          ${paradoSnippet ? `<span style="font-size:9px;padding:1px 5px;border-radius:8px;font-weight:700;background:${dp>=15?'rgba(239,68,68,.12)':'rgba(245,158,11,.12)'};color:${dp>=15?'#ef4444':'#f59e0b'}">⏸${dp}d</span>` : ''}
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding-top:6px;border-top:1px solid rgba(255,255,255,.07)">
+          <span style="font-size:9px;color:var(--muted)">👤 ${(p.pmo||'—').split(' ')[0]}</span>
+          ${diasLabelTxt ? `<span style="font-size:9px;font-weight:700;color:${diasColor}">${diasLabelTxt}</span>` : fe ? `<span style="font-size:9px;color:var(--muted2)">${formatDateShort(fe)}</span>` : ''}
+        </div>
+        ${(()=>{
+          const lc = lastCommMap[p.nome];
+          if(!lc) return '';
+          const rel = formatRelativeDate(lc.dataISO);
+          return `<div style="margin-top:5px;padding-top:5px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:4px" title="${escHtml(lc.titulo||'')}">
+            <span style="font-size:9px;color:#475569">📡</span>
+            <span style="font-size:9px;color:#475569;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(lc.titulo||'—')}</span>
+            <span style="font-size:9px;color:#334155;flex-shrink:0">${rel}</span>
+          </div>`;
+        })()}
+      </div>`;
+    }).join('') || '<div style="text-align:center;padding:20px;color:var(--muted);font-size:11px">—</div>';
+    const collapsed = !!_kanbanCollapsed[col.key];
+    return `<div class="kanban-col">
+      <div class="kanban-col-header" style="color:${col.color};cursor:pointer;user-select:none" onclick="toggleKanbanCol('${col.key}')" title="${collapsed?'Expandir':'Recolher'} coluna">
+        <span>${col.label}</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="kanban-count">${ps.length}</span>
+          <span id="karrow-${col.key}" style="font-size:10px;color:var(--muted);transition:transform .2s">${collapsed?'▶':'▼'}</span>
+        </div>
+      </div>
+      <div id="kcards-${col.key}" class="kanban-cards" style="${collapsed?'display:none':''}">
+        ${cards}
+      </div>
+    </div>`;
+  }).join('');
+  container.innerHTML = `<div class="kanban-wrap">${html}</div>`;
+}
+
+// ── Project Hub ────────────────────────────────────────────
+function openHub(nome){
+  currentProj = PROJETOS.find(p => p.nome === nome);
+  if(!currentProj) return;
+  _histFilter = 'todos';
+  _ativSearch = ''; // limpa filtro ao trocar de projeto
+  document.getElementById('hub-overlay').classList.add('open');
+  document.getElementById('hub-title').textContent = currentProj.nome;
+  document.getElementById('hub-subtitle').textContent = `${currentProj.local} · PMO: ${currentProj.pmo} · Coordenador: ${currentProj.resp||'—'}`;
+  // Preencher cabeçalho de impressão
+  const ph = document.getElementById('print-proj-name');
+  const pd = document.getElementById('print-date');
+  if(ph) ph.textContent = `${currentProj.nome} · ${currentProj.local}`;
+  if(pd) pd.textContent = HOJE.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+  switchTab('overview');
+}
+function closeHub(){ document.getElementById('hub-overlay').classList.remove('open'); }
+
+// URL ?p= → abre hub (tratado no bloco único ao final do script)
+
+function switchTab(tab){
+  currentTab = tab;
+  document.querySelectorAll('.hub-tab').forEach(t => t.classList.toggle('active', t.dataset.tab===tab));
+  const body = document.getElementById('hub-body');
+  if(tab==='overview')   renderHubOverview(body);
+  if(tab==='timeline')   renderHubTimeline(body);
+  if(tab==='activities') renderHubActivities(body);
+  if(tab==='historico')  renderHubHistorico();
+  if(tab==='capa')       renderHubCapa(body);
+  if(tab==='changes')    renderHubChanges(body);
+}
+
+function renderHubOverview(el){
+  const p = currentProj;
+  const st = calcStatus(p);
+  const sm = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+  const r  = calcRisco(p);
+  const rm = RISCO_MAP[r];
+  const prog = calcProgresso(p);
+  const fe = getFimEfetivo(p);
+  const dias = fe ? Math.round((new Date(fe)-HOJE)/86400000) : null;
+  const ativs = ATIVIDADES.filter(a=>a.projeto===p.nome);
+  const done  = ativs.filter(a=>a.status==='Concluído').length;
+  const parado = calcDiasParadoAuto(p);
+  const progColor = prog>=70?'#22c55e':prog>=35?sm.color:'#f59e0b';
+  el.innerHTML = `
+    <!-- ── PROGRESSO em destaque no topo ────────────────── -->
+    <div style="background:linear-gradient(135deg,${progColor}12,${progColor}06);border:1px solid ${progColor}30;border-radius:12px;padding:18px 20px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--muted)">Progresso Geral</span>
+        <span style="font-size:28px;font-weight:900;letter-spacing:-1.5px;color:${progColor}">${prog}%</span>
+      </div>
+      <div style="height:10px;background:var(--border);border-radius:5px;overflow:hidden">
+        <div style="width:${prog}%;height:100%;background:${progColor};border-radius:5px;transition:width .6s ease;box-shadow:0 0 8px ${progColor}66"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--muted)">
+        <span>${done} de ${ativs.length||0} atividades concluídas</span>
+        <span style="color:${sm.color};font-weight:600">${sm.icon} ${sm.label}</span>
+      </div>
+    </div>
+    <!-- ── KPIs ─────────────────────────────────────────── -->
+    <div class="hub-kpis">
+      <div class="hub-kpi">
+        <div class="hub-kpi-v" style="color:${dias!==null&&dias<0?'#ef4444':'inherit'}">${dias===null?'—':diasLabel(dias)}</div>
+        <div class="hub-kpi-l">Para Go Live</div>
+      </div>
+      <div class="hub-kpi">
+        <div class="hub-kpi-v" style="color:${rm.color}">${rm.label}</div>
+        <div class="hub-kpi-l">Risco</div>
+      </div>
+      <div class="hub-kpi">
+        <div class="hub-kpi-v">${done}/${ativs.length||0}</div>
+        <div class="hub-kpi-l">Atividades</div>
+      </div>
+      <div class="hub-kpi">
+        <div class="hub-kpi-v" style="color:${parado>=15?'#ef4444':parado>=7?'#f59e0b':'inherit'}">${parado>0?parado+'d':'—'}</div>
+        <div class="hub-kpi-l">Sem Update</div>
+      </div>
+    </div>
+    <!-- ── Campos ─────────────────────────────────────── -->
+    <div class="hub-overview-grid">
+      <div class="hub-field-group">
+        <div class="hub-field-label">Status</div>
+        <span class="status-pill" style="background:${sm.bg};color:${sm.color}">${sm.icon} ${sm.label}</span>
+      </div>
+      <div class="hub-field-group">
+        <div class="hub-field-label">Prioridade</div>
+        <span style="color:${(PRIORIDADE_MAP[p.prioridade]||{}).color||'var(--text)'};font-weight:600">${p.prioridade||'—'}</span>
+      </div>
+      <div class="hub-field-group">
+        <div class="hub-field-label">Início</div>
+        <div class="hub-field-value">${formatDate(p.inicio)}</div>
+      </div>
+      <div class="hub-field-group">
+        <div class="hub-field-label">Go Live ${p.fimAjustado?'(Ajustado)':'(Original)'}</div>
+        <div class="hub-field-value">${formatDate(fe||p.fim)}</div>
+      </div>
+      <div class="hub-field-group">
+        <div class="hub-field-label">PMO</div>
+        <div class="hub-field-value">${p.pmo||'—'}</div>
+      </div>
+      <div class="hub-field-group">
+        <div class="hub-field-label">Coordenador</div>
+        <div class="hub-field-value">${p.resp||'—'}</div>
+      </div>
+      ${p.local?`
+      <div class="hub-field-group" style="grid-column:span 2">
+        <div class="hub-field-label">Localização</div>
+        <div class="hub-field-value">${p.local}</div>
+      </div>`:''}
+      ${p.colaboradores&&p.colaboradores.length?`
+      <div class="hub-field-group" style="grid-column:span 2">
+        <div class="hub-field-label">Colaboradores</div>
+        <div class="hub-field-value">${p.colaboradores.join(', ')}</div>
+      </div>`:''}
+      ${p.bloqueador&&p.bloqueador.trim()?`
+      <div class="hub-field-group" style="grid-column:span 2;border-color:rgba(249,115,22,.35);background:rgba(249,115,22,.06)">
+        <div class="hub-field-label" style="color:#f97316">🔒 Bloqueador Ativo</div>
+        <div class="hub-field-value" style="color:#fdba74;line-height:1.5">${escHtml(p.bloqueador)}</div>
+      </div>`:''}
+    </div>
+    ${(()=>{
+      // Última comunicação do histórico
+      const hist = getHistoricoForProject(p.nome);
+      const lastH = hist.length ? [...hist].sort((a,b)=>(b.dataISO||'').localeCompare(a.dataISO||''))[0] : null;
+      if(!lastH) return '';
+      const HIST_TIPO_COLORS = {enviado:'#3b82f6',recebido:'#22c55e',interno:'#a855f7',urgente:'#ef4444',resolvido:'#22c55e'};
+      const hCol = HIST_TIPO_COLORS[lastH.tipo]||'#64748b';
+      const hLabel = {enviado:'Enviado',recebido:'Recebido',interno:'Interno',urgente:'Alta Prioridade',resolvido:'Resolvido'}[lastH.tipo]||lastH.tipo;
+      return `
+      <div style="margin-top:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">📡 Última Comunicação</div>
+          <button onclick="switchTab('historico')" style="font-size:11px;color:var(--brand);font-weight:600;background:none;border:none;cursor:pointer;padding:0">Ver histórico →</button>
+        </div>
+        <div style="padding:12px 14px;background:var(--surface);border-radius:10px;border-left:3px solid ${hCol}">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+            <span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:1px 6px;border-radius:8px;background:${hCol}20;color:${hCol}">${hLabel}</span>
+            <span style="font-size:10px;color:var(--muted);margin-left:auto">${formatRelativeDate(lastH.dataISO)}</span>
+            ${lastH._flagSimilar?`<span style="font-size:9px;font-weight:700;color:#fb923c;background:rgba(249,115,22,.15);border-radius:4px;padding:1px 5px">🔄 Repetido</span>`:''}
+          </div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px">${escHtml(lastH.titulo||'—')}</div>
+          ${lastH.corpo?`<div style="font-size:11px;color:var(--muted2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(lastH.corpo)}</div>`:''}
+          ${lastH.de?`<div style="font-size:10px;color:var(--muted);margin-top:5px">De: ${escHtml(lastH.de)}${lastH.para?' → '+escHtml(lastH.para):''}</div>`:''}
+        </div>
+      </div>`;
+    })()}
+    ${(()=>{
+      // Últimas atualizações de atividades
+      const histItems = [];
+      ATIVIDADES.filter(a=>a.projeto===p.nome).forEach(a=>{
+        (a.comentarios||[]).forEach(c=>histItems.push({...c, ativNome:a.nome}));
+      });
+      histItems.sort((a,b)=>(b.dataISO||'').localeCompare(a.dataISO||''));
+      const last5 = histItems.slice(0,5);
+      if(!last5.length) return '';
+      return `
+      <div style="margin-top:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">🕐 Últimas Atualizações</div>
+          <button onclick="switchTab('activities')" style="font-size:11px;color:var(--brand);font-weight:600;background:none;border:none;cursor:pointer;padding:0">Ver atividades →</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${last5.map(c=>{
+            const csm = STATUS_MAP[c.status]||STATUS_MAP['Em andamento'];
+            return `<div style="display:flex;gap:10px;padding:8px 12px;background:var(--surface);border-radius:8px;border-left:3px solid ${csm.color}">
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+                  <span style="font-size:11px;font-weight:700;color:${csm.color}">${csm.icon} ${escHtml(c.ativNome)}</span>
+                  <span style="font-size:10px;color:var(--muted);flex-shrink:0;margin-left:8px">${formatRelativeDate(c.dataISO)}</span>
+                </div>
+                <div style="font-size:11px;color:var(--muted2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(c.texto||'Status alterado')}</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:1px">${escHtml(c.autor||'—')}</div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    })()}`;
+}
+
+function renderHubTimeline(el){
+  const p = currentProj;
+  const ativs = ATIVIDADES.filter(a=>a.projeto===p.nome);
+  const phaseColors = ['#a855f7','#3b82f6','#06b6d4','#10b981','#f59e0b','#ef4444','#22c55e'];
+  const html = FASES.map((fase,fi) => {
+    const fa   = ativs.filter(a=>a.fase===fase);
+    const done = fa.filter(a=>a.status==='Concluído').length;
+    const prog = fa.length ? Math.round(done/fa.length*100) : 0;
+    const color = phaseColors[fi] || '#64748b';
+    const ativRows = fa.map(a => {
+      const asm = STATUS_MAP[a.status]||STATUS_MAP['Em andamento'];
+      return `<div class="ativ-row">
+        <div class="ativ-status-dot" style="background:${asm.color}"></div>
+        <div class="ativ-nome">${escHtml(a.nome)}</div>
+        <span style="font-size:12px;color:${asm.color}">${asm.icon}</span>
+        ${!isViewer()?`<button class="ativ-edit-btn edit-only" onclick="openAtivEdit('${escHtml(p.nome)}','${escHtml(fase)}','${escHtml(a.nome)}');event.stopPropagation()">Editar</button>`:''}
+      </div>`;
+    }).join('')||'<div style="font-size:12px;color:var(--muted);padding:6px">Sem atividades cadastradas</div>';
+    // 100% done phases start collapsed; phases with no activities are hidden
+    const startCollapsed = prog === 100;
+    const isEmpty = !fa.length;
+    return `<div class="phase-block" ${isEmpty?'style="opacity:.45"':''}>
+      <div class="phase-header" onclick="this.nextElementSibling.classList.toggle('hidden');this.nextElementSibling.nextElementSibling.classList.toggle('hidden');this.querySelector('.ph-chevron').style.transform=this.nextElementSibling.classList.contains('hidden')?'rotate(0deg)':'rotate(90deg)'">
+        <div class="phase-icon" style="background:${prog===100?color+'30':color+'20'};color:${prog===100?'#22c55e':color}">${prog===100?'✓':fi+1}</div>
+        <div class="phase-name" style="color:${prog===100?'var(--muted)':'var(--text)'}">${fase.split('. ')[1]||fase}</div>
+        <div class="phase-prog" style="color:${prog===100?'#22c55e':prog>0?color:'var(--muted)'}">${prog}%</div>
+        <span class="ph-chevron" style="font-size:14px;color:var(--muted);transition:transform .2s;transform:rotate(${startCollapsed?0:90}deg)">›</span>
+      </div>
+      <div class="phase-bar-wrap ${startCollapsed?'hidden':''}"><div class="phase-bar-fill" style="width:${prog}%;background:${color}"></div></div>
+      <div class="phase-ativs ${startCollapsed?'hidden':''}">${ativRows}</div>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="timeline-phases">${html}</div>`;
+}
+
+// ── Hub: Histórico de Comunicações ────────────────────────
+const HIST_TIPO = {
+  enviado:  {icon:'📤', label:'Enviado',       color:'#3b82f6', bg:'rgba(59,130,246,.12)'},
+  recebido: {icon:'📥', label:'Recebido',       color:'#22c55e', bg:'rgba(34,197,94,.12)'},
+  interno:  {icon:'🔁', label:'Interno',        color:'#a855f7', bg:'rgba(168,85,247,.12)'},
+  urgente:  {icon:'🚨', label:'Alta Prioridade',color:'#ef4444', bg:'rgba(239,68,68,.12)'},
+  resolvido:{icon:'✅', label:'Resolvido',       color:'#22c55e', bg:'rgba(34,197,94,.12)'},
+};
+
+let _histFilter = 'todos';
+function renderHubHistorico(el) {
+  const pane = el || document.getElementById('hub-body');
+  if (!pane) return;
+  const hist = getHistoricoForProject(currentProj.nome);
+  const canEdit = !isViewer();
+  const TIPO_COLORS = {
+    enviado:   {bg:'rgba(59,130,246,.15)',  color:'#3b82f6',  label:'Enviado'},
+    recebido:  {bg:'rgba(34,197,94,.15)',   color:'#22c55e',  label:'Recebido'},
+    interno:   {bg:'rgba(168,85,247,.15)',  color:'#a855f7',  label:'Interno'},
+    urgente:   {bg:'rgba(239,68,68,.15)',   color:'#ef4444',  label:'Alta Prioridade'},
+    resolvido: {bg:'rgba(34,197,94,.15)',   color:'#22c55e',  label:'Resolvido'},
+  };
+  const tipos = ['todos', ...Object.keys(TIPO_COLORS)];
+  const filtered = (_histFilter === 'todos' ? hist : hist.filter(e => e.tipo === _histFilter))
+    .slice().sort((a,b) => (b.dataISO||'').localeCompare(a.dataISO||''));
+  const filtersHtml = tipos.map(t => {
+    const label = t === 'todos' ? 'Todos' : (TIPO_COLORS[t]?.label || t);
+    const cnt = t === 'todos' ? hist.length : hist.filter(e => e.tipo === t).length;
+    return `<span class="hist-filter-chip ${_histFilter===t?'active':''}" onclick="_histFilter='${t}';renderHubHistorico(document.getElementById('hub-body'))">${label} <span style="opacity:.6">${cnt}</span></span>`;
+  }).join('');
+
+  const addBtn = canEdit ? `<button onclick="__openAddHistorico()" style="font-size:12px;font-weight:600;background:var(--brand);color:#0a0e19;border:none;padding:6px 14px;border-radius:8px;cursor:pointer;margin-left:auto">+ Registrar</button>` : '';
+  const filterRow = `<div class="hist-filter-row" style="align-items:center">${filtersHtml}${addBtn}</div>`;
+
+  if (!hist.length) {
+    pane.innerHTML = filterRow + `<div class="hist-empty"><div style="font-size:32px;margin-bottom:10px">📡</div>Nenhum histórico registrado para este projeto.</div>`;
+    return;
+  }
+
+  const eventsHtml = filtered.map((ev, idx) => {
+    const tc = TIPO_COLORS[ev.tipo] || {bg:'rgba(100,116,139,.15)', color:'#64748b', label: ev.tipo};
+    const simBadge = ev._flagSimilar
+      ? `<span title="Conteúdo similar à entrada anterior${ev._simDias!=null?' (há '+ev._simDias+' dia'+(ev._simDias===1?'':'s')+')':''}" style="background:rgba(249,115,22,.18);color:#fb923c;border:1px solid rgba(249,115,22,.35);border-radius:5px;padding:2px 7px;font-size:10px;font-weight:700;letter-spacing:.04em">🔄 Repetido</span>`
+      : '';
+    return `<div class="hist-event">
+      <div class="hist-dot hist-tipo-${ev.tipo || 'interno'}"></div>
+      <div class="hist-card">
+        <div class="hist-meta" style="flex-wrap:wrap;gap:5px">
+          <span class="hist-data">${escHtml(ev.dataLabel || ev.dataISO || '—')}</span>
+          <span class="hist-tipo-badge" style="background:${tc.bg};color:${tc.color}">${tc.label}</span>
+          ${simBadge}
+        </div>
+        <div class="hist-titulo">${escHtml(ev.titulo || '—')}</div>
+        <div class="hist-corpo" id="hist-corpo-${idx}">${escHtml(ev.corpo || '')}</div>
+        ${ev.corpo && ev.corpo.length > 180 ? `<span class="hist-expand" onclick="document.getElementById('hist-corpo-${idx}').style['-webkit-line-clamp']='unset';this.style.display='none'">Ler mais</span>` : ''}
+        ${ev.de ? `<div class="hist-de">De: ${escHtml(ev.de)}${ev.para?' → '+escHtml(ev.para):''}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  // Banner de similaridade — aparece enquanto a entrada mais recente for repetida
+  const latestEntry = [...hist].sort((a,b)=>(b.dataISO||'').localeCompare(a.dataISO||''))[0];
+  const simBanner = latestEntry?._flagSimilar ? `
+    <div style="display:flex;align-items:flex-start;gap:10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.35);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+      <span style="font-size:18px;flex-shrink:0">🔄</span>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#fbbf24;margin-bottom:2px">Conteúdo similar detectado</div>
+        <div style="font-size:12px;color:#94a3b8">A última entrada é similar à anterior${latestEntry._simDias!=null?' (há '+latestEntry._simDias+' dia'+(latestEntry._simDias===1?'':'s')+')':''} — sem evolução registrada no projeto.</div>
+      </div>
+    </div>` : '';
+
+  pane.innerHTML = simBanner + filterRow +
+    (filtered.length === 0
+      ? `<div class="hist-empty">Nenhum evento do tipo "${escHtml(_histFilter)}".</div>`
+      : `<div class="hist-list">${eventsHtml}</div>`);
+}
+
+// ── Add Histórico Entry Modal ─────────────────────────────
+function __openAddHistorico(){
+  const p = currentProj;
+  const modal = document.createElement('div');
+  modal.id = 'hist-add-overlay';
+  modal.onclick = e => { if(e.target===modal) modal.remove(); };
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:4000;display:flex;align-items:center;justify-content:center;padding:20px';
+  modal.innerHTML = `
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);width:520px;max-width:95vw;padding:24px;max-height:90vh;overflow-y:auto">
+      <div style="font-size:15px;font-weight:700;margin-bottom:18px">📋 Novo Registro — ${escHtml(p.nome)}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">DATA</div>
+          <input id="ha-data" type="date" value="${HOJE_ISO}"
+            style="width:100%;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;outline:none">
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">TIPO</div>
+          <select id="ha-tipo" style="width:100%;padding:8px 10px;background:#1e2740;border:1px solid var(--border);border-radius:8px;color:#e2e8f0;font-family:inherit;font-size:13px;outline:none">
+            <option value="enviado"   style="background:#1e2740;color:#e2e8f0">📤 Enviado</option>
+            <option value="recebido"  style="background:#1e2740;color:#e2e8f0">📥 Recebido</option>
+            <option value="interno"   style="background:#1e2740;color:#e2e8f0">🔁 Interno</option>
+            <option value="urgente"   style="background:#1e2740;color:#e2e8f0">🚨 Alta Prioridade</option>
+            <option value="resolvido" style="background:#1e2740;color:#e2e8f0">✅ Resolvido</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">DE</div>
+        <input id="ha-de" placeholder="Ex: Daiana Costa (Invent)" style="width:100%;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;outline:none">
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">PARA</div>
+        <input id="ha-para" placeholder="Ex: Leonardo Rengel (Vedamotors)" style="width:100%;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;outline:none">
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">TÍTULO *</div>
+        <input id="ha-titulo" placeholder="Assunto da comunicação" style="width:100%;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;outline:none">
+      </div>
+      <div style="margin-bottom:18px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px">DESCRIÇÃO</div>
+        <textarea id="ha-corpo" rows="4" placeholder="Detalhes da comunicação, decisões tomadas, itens solicitados..."
+          style="width:100%;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:13px;outline:none;resize:vertical;box-sizing:border-box"></textarea>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px">
+        <button onclick="document.getElementById('hist-add-overlay').remove()"
+          style="padding:8px 18px;border-radius:8px;font-size:13px;background:var(--surface2);border:1px solid var(--border);color:var(--muted2);cursor:pointer">Cancelar</button>
+        <button onclick="__salvarHistoricoEntry()"
+          style="padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;color:#0a0e19;background:var(--brand);border:none;cursor:pointer">Salvar Registro</button>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.addEventListener('keydown', function escHist(e){ if(e.key==='Escape'){modal.remove();document.removeEventListener('keydown',escHist);} });
+}
+// _calcSimilarity e _diasEntre definidos em utils.js
+
+function __salvarHistoricoEntry(){
+  const titulo = document.getElementById('ha-titulo')?.value.trim();
+  if(!titulo){ toast('⚠ Título é obrigatório.','warn'); return; }
+  const dataVal = document.getElementById('ha-data')?.value || HOJE_ISO;
+  const corpo = document.getElementById('ha-corpo')?.value.trim() || '';
+  const evento = {
+    dataISO:   dataVal,
+    dataLabel: dataVal.split('-').reverse().join('/'),
+    tipo:      document.getElementById('ha-tipo')?.value || 'enviado',
+    de:        document.getElementById('ha-de')?.value.trim() || '',
+    para:      document.getElementById('ha-para')?.value.trim() || '',
+    titulo,
+    corpo,
+  };
+
+  // ── Similarity check against previous entry ──
+  const prevHist = getHistoricoForProject(currentProj.nome);
+  const prevSorted = [...prevHist].sort((a,b)=>(b.dataISO||'').localeCompare(a.dataISO||''));
+  const prevEntry = prevSorted[0];
+  if(prevEntry){
+    const newText  = titulo + ' ' + corpo;
+    const prevText = (prevEntry.titulo||'') + ' ' + (prevEntry.corpo||'');
+    const sim = _calcSimilarity(newText, prevText);
+    if(sim >= 0.38){
+      const dias = _diasEntre(prevEntry.dataISO, dataVal);
+      const diasTxt = dias !== null ? `há ${dias} dia${dias===1?'':'s'}` : 'recentemente';
+      evento._flagSimilar = true;
+      evento._simDias = dias;
+    }
+  }
+
+  saveHistoricoEvent(currentProj.nome, evento);
+  document.getElementById('hist-add-overlay')?.remove();
+  renderHubHistorico();
+  if(evento._flagSimilar){
+    const dias = evento._simDias;
+    const diasTxt = dias !== null ? `há ${dias} dia${dias===1?'':'s'}` : 'recentemente';
+    // Toast com z-index alto
+    const tt = document.createElement('div');
+    tt.style.cssText = `position:fixed;bottom:24px;right:24px;z-index:99999;
+      background:#1e293b;border-left:4px solid #f5c300;color:#f1f5f9;
+      padding:13px 18px;border-radius:8px;font-size:13px;font-weight:500;
+      box-shadow:0 8px 28px rgba(0,0,0,.6);max-width:340px;animation:slideInRight .25s ease`;
+    tt.textContent = `🔄 Conteúdo similar à anterior (${diasTxt}) — sem evolução detectada`;
+    document.body.appendChild(tt);
+    setTimeout(()=>tt.remove(), 8000);
+  } else {
+    toast('✓ Registro salvo no histórico.','success');
+  }
+}
+
+// Track which activity groups are open (persists across re-renders)
+const _ativGroupOpen = {};
+let _ativSearch = '';  // filtro de busca de atividades
+
+function renderHubActivities(el){
+  const p = currentProj;
+  let ativs = ATIVIDADES.filter(a=>a.projeto===p.nome);
+  const total = ativs.length;
+
+  // Apply search filter
+  if(_ativSearch.trim()){
+    const q = _ativSearch.toLowerCase();
+    ativs = ativs.filter(a=>a.nome.toLowerCase().includes(q)||a.fase.toLowerCase().includes(q));
+  }
+
+  const statuses = ['Em andamento','Aguardando','Não Iniciado','Concluído'];
+  let html = '';
+
+  // Filter bar header
+  const searchBar = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:150px;display:flex;align-items:center;gap:7px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:7px 12px;transition:border-color .2s" id="ativ-search-wrap">
+        <span style="font-size:13px;color:var(--muted)">🔍</span>
+        <input id="ativ-search-input" value="${escHtml(_ativSearch)}" placeholder="Buscar atividade…"
+          style="flex:1;background:none;border:none;outline:none;font-size:12px;color:var(--text);font-family:inherit"
+          oninput="__ativSearchChange(this.value)"
+          onfocus="document.getElementById('ativ-search-wrap').style.borderColor='var(--brand)'"
+          onblur="document.getElementById('ativ-search-wrap').style.borderColor='var(--border)'">
+        ${_ativSearch?`<button onclick="__ativSearchChange('')" style="font-size:12px;color:var(--muted);line-height:1;padding:0 2px" title="Limpar">✕</button>`:''}
+      </div>
+      <div style="font-size:11px;color:var(--muted)">
+        ${_ativSearch?`${ativs.length}/${total} resultado${ativs.length!==1?'s':''}`:total+' atividade'+( total!==1?'s':'')}
+      </div>
+    </div>`;
+
+  // No results
+  if(!ativs.length){
+    el.innerHTML = searchBar + `
+      <div style="text-align:center;padding:32px;color:var(--muted);font-size:13px">
+        ${_ativSearch?`Nenhuma atividade encontrada para "${escHtml(_ativSearch)}"`:
+          `Nenhuma atividade registrada.<br><span style="font-size:11px">Adicione no botão + acima.</span>`}
+      </div>`;
+    // re-attach input
+    setTimeout(()=>{ const i=document.getElementById('ativ-search-input'); if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);} },0);
+    return;
+  }
+
+  statuses.forEach(st => {
+    const group = ativs.filter(a=>a.status===st);
+    if(!group.length) return;
+    const gsm = STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    if(_ativGroupOpen[st] === undefined) _ativGroupOpen[st] = (st !== 'Concluído');
+    const isOpen = _ativGroupOpen[st];
+    const safeKey = st.replace(/ /g,'_');
+    html += `
+    <div style="margin-bottom:10px;border:1px solid ${isOpen?gsm.color+'30':'var(--border)'};border-radius:10px;overflow:hidden;transition:border-color .2s">
+      <div onclick="__toggleAtivGroup('${safeKey}')"
+        style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;
+          background:${isOpen?gsm.color+'0d':'var(--surface2)'};transition:background .2s;user-select:none">
+        <span style="font-size:14px">${gsm.icon}</span>
+        <span style="flex:1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:${gsm.color}">${st} (${group.length})</span>
+        <span style="font-size:14px;color:${gsm.color};transition:transform .2s;display:inline-block;transform:rotate(${isOpen?90:0}deg)">›</span>
+      </div>
+      ${isOpen ? `<div style="padding:8px 14px 12px">
+        ${group.map(a=>{
+          // "Alterado hoje" badge
+          const lastComm = (a.comentarios||[]).slice(-1)[0];
+          const isHoje = lastComm && lastComm.dataISO === HOJE_ISO;
+          const hasComments = (a.comentarios||[]).length > 0;
+          return `
+          <div class="ativ-row" style="margin-bottom:5px;cursor:pointer;padding:7px 8px;border-radius:7px;transition:background .15s"
+            onclick="openAtivEdit('${esc(p.nome)}','${esc(a.fase)}','${esc(a.nome)}')"
+            onmouseover="this.style.background='var(--surface2)'" onmouseout="this.style.background='transparent'">
+            <div class="ativ-status-dot" style="background:${gsm.color}"></div>
+            <div style="flex:1;min-width:0">
+              <div class="ativ-nome" style="display:flex;align-items:center;gap:5px">
+                ${escHtml(a.nome)}
+                ${isHoje?`<span style="font-size:9px;background:rgba(34,197,94,.15);color:#22c55e;border-radius:4px;padding:0 5px;font-weight:700;flex-shrink:0">hoje</span>`:''}
+              </div>
+              <div style="font-size:10px;color:var(--muted)">${escHtml(a.fase)}</div>
+            </div>
+            ${hasComments?`<span style="font-size:10px;color:var(--muted);flex-shrink:0">💬 ${a.comentarios.length}</span>`:''}
+          </div>`;
+        }).join('')}
+      </div>` : ''}
+    </div>`;
+  });
+
+  el.innerHTML = searchBar + (html || '<div style="text-align:center;padding:40px;color:var(--muted)">Nenhuma atividade encontrada</div>');
+  // Keep focus if was typing
+  if(_ativSearch){
+    setTimeout(()=>{ const i=document.getElementById('ativ-search-input'); if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length);} },0);
+  }
+}
+
+function __ativSearchChange(val){
+  _ativSearch = val;
+  switchTab('activities');
+}
+function __toggleAtivGroup(safeKey){
+  const key = safeKey.replace(/_/g,' ');
+  _ativGroupOpen[key] = !_ativGroupOpen[key];
+  switchTab('activities');
+}
+
+function renderHubCapa(el){
+  const capa = getCapaForProject(currentProj.nome);
+  if(!capa){
+    el.innerHTML = `<div class="no-capa"><div class="no-capa-icon">📄</div>Nenhuma capa técnica cadastrada para este projeto.<br><span style="font-size:12px;color:var(--muted)">A capa pode ser criada na página Admin.</span></div>`;
+    return;
+  }
+  const listHtml = (arr) => arr&&arr.length ? arr.map(x=>`<div class="capa-list-item">${x}</div>`).join('') : '<div style="color:var(--muted);font-size:12px;padding:4px">—</div>';
+  el.innerHTML = `
+    <div class="capa-section">
+      <div class="capa-section-title">Identificação</div>
+      <div class="capa-grid">
+        <div class="capa-field"><div class="capa-field-label">Código</div><div class="capa-field-value">${capa.codigo||'—'}</div></div>
+        <div class="capa-field"><div class="capa-field-label">Cliente</div><div class="capa-field-value">${capa.cliente||'—'}</div></div>
+        <div class="capa-field" style="grid-column:span 2"><div class="capa-field-label">Produtos</div><div class="capa-field-value">${capa.produtos||'—'}</div></div>
+        <div class="capa-field"><div class="capa-field-label">Projeto de Referência</div><div class="capa-field-value">${capa.semelhanca||'—'}</div></div>
+      </div>
+    </div>
+    ${capa.performance?`
+    <div class="capa-section">
+      <div class="capa-section-title">Performance</div>
+      <div class="capa-grid">
+        <div class="capa-field"><div class="capa-field-label">Linha</div><div class="capa-field-value">${capa.performance.linha||'—'}</div></div>
+        <div class="capa-field"><div class="capa-field-label">Sorter</div><div class="capa-field-value">${capa.performance.sorter||'—'}</div></div>
+      </div>
+    </div>`:''}
+    ${capa.sistemas?`
+    <div class="capa-section">
+      <div class="capa-section-title">Sistemas</div>
+      <div class="capa-grid">
+        ${Object.entries(capa.sistemas).map(([k,v])=>`<div class="capa-field"><div class="capa-field-label">${k.toUpperCase()}</div><div class="capa-field-value">${v||'—'}</div></div>`).join('')}
+      </div>
+    </div>`:''}
+    ${capa.escopo?`
+    <div class="capa-section">
+      <div class="capa-section-title">Escopo</div>
+      ${Object.entries(capa.escopo).map(([k,v])=>`
+        <div style="margin-bottom:12px">
+          <div style="font-size:11px;font-weight:600;color:var(--muted2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">${k}</div>
+          <div class="capa-list">${listHtml(v)}</div>
+        </div>`).join('')}
+    </div>`:''}
+    ${capa.recebidos&&capa.recebidos.length?`
+    <div class="capa-section">
+      <div class="capa-section-title">Documentos Recebidos</div>
+      <div class="capa-list">${listHtml(capa.recebidos)}</div>
+    </div>`:''}
+    ${capa.observacoes&&capa.observacoes.length?`
+    <div class="capa-section">
+      <div class="capa-section-title">Observações Técnicas</div>
+      <div class="capa-list">${listHtml(capa.observacoes)}</div>
+    </div>`:''}
+    ${capa.pendencias&&capa.pendencias.length?`
+    <div class="capa-section">
+      <div class="capa-section-title">Pendências</div>
+      <div class="capa-list">${listHtml(capa.pendencias)}</div>
+    </div>`:''}`;
+}
+
+function renderHubChanges(el){
+  const p   = currentProj;
+  const alt = getMergedAlteracoes(p);
+  const statusColor   = {Aprovado:'#22c55e', Pendente:'#f5c300', Recusado:'#ef4444', Rejeitado:'#ef4444'};
+  const statusProximo = {Pendente:'Aprovado', Aprovado:'Recusado', Recusado:'Pendente', Rejeitado:'Pendente'};
+  const statusLabel   = {Pendente:'⏳ Pendente', Aprovado:'✅ Aprovado', Recusado:'❌ Recusado', Rejeitado:'❌ Recusado'};
+  const viewer = isViewer();
+  const pendentes = alt.filter(a => !a.status || a.status === 'Pendente').length;
+  const aviso = pendentes > 0
+    ? `<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(245,195,0,.08);border:1px solid rgba(245,195,0,.25);border-radius:8px;font-size:12px;color:var(--brand);margin-bottom:12px">
+        ⚠️ <strong>${pendentes} mudança${pendentes>1?'s':''} de escopo pendente${pendentes>1?'s':''}</strong> — aguardando aprovação. O status do projeto pode precisar ser atualizado.
+      </div>` : '';
+  const items = alt.map((a,i)=>{
+    const st   = a.status || 'Pendente';
+    const cor  = statusColor[st] || '#64748b';
+    const prox = statusProximo[st];
+    const editBtn = !viewer
+      ? `<button onclick="__altEscopoStatus(${i},'${prox}')" title="Avançar para: ${prox}"
+           style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;border:1px solid ${cor}55;
+                  background:${cor}15;color:${cor};cursor:pointer;font-family:inherit;transition:all .15s"
+           onmouseover="this.style.background='${cor}30'" onmouseout="this.style.background='${cor}15'">
+           ${statusLabel[st]||st} ›
+         </button>`
+      : `<span class="change-status" style="background:${cor}22;color:${cor}">${statusLabel[st]||st}</span>`;
+    return `
+    <div class="change-item">
+      <div class="change-item-header">
+        <span class="change-date">📅 ${formatDate(a.data)}</span>
+        ${editBtn}
+      </div>
+      <div class="change-desc">${escHtml(a.descricao)}</div>
+      <div class="change-meta">Solicitante: ${escHtml(a.solicitante||'—')}</div>
+      ${a.impacto?`<div class="change-impact">⚡ ${escHtml(a.impacto)}</div>`:''}
+    </div>`;
+  }).join('')||'<div style="text-align:center;padding:40px;color:var(--muted)">Nenhuma mudança de escopo registrada.</div>';
+  const addBtn = !viewer ? `<button class="btn-add-change edit-only" onclick="openNovaAlt()">＋ Nova Mudança de Escopo</button>` : '';
+  el.innerHTML = aviso + `<div class="change-list">${items}</div>${addBtn}`;
+}
+
+// ── Atualizar status de uma mudança de escopo ─────────────
+function __altEscopoStatus(idx, novoStatus){
+  if(!currentProj) return;
+  const alt = getMergedAlteracoes(currentProj);
+  if(!alt[idx]) return;
+  alt[idx].status = novoStatus;
+  saveAltEscopoOverrides(currentProj.nome, alt);
+  const hubBody = document.getElementById('hub-body');
+  if(hubBody) renderHubChanges(hubBody);
+  toast(`Mudança de escopo: ${novoStatus}`, novoStatus==='Aprovado'?'success':novoStatus==='Recusado'?'warn':'info');
+}
+
+// ── Edição de Atividade ───────────────────────────────────
+let currentAtiv = null;
+function openAtivEdit(projNome, fase, ativNome){
+  const ativ = ATIVIDADES.find(a=>a.projeto===projNome&&a.fase===fase&&a.nome===ativNome);
+  if(!ativ) return;
+  currentAtiv = ativ;
+  document.getElementById('ativ-modal-title').textContent = ativ.nome;
+  document.getElementById('ativ-modal-sub').textContent   = fase;
+  const comentariosHtml = (ativ.comentarios||[]).map(c=>{
+    const csm = STATUS_MAP[c.status]||STATUS_MAP['Em andamento'];
+    return `<div style="background:var(--surface2);border-radius:6px;padding:8px 10px;margin-bottom:6px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:3px">${escHtml(c.autor||'—')} · ${formatDate(c.dataISO)} <span style="color:${csm.color}">${csm.icon} ${c.status}</span></div>
+      <div style="font-size:12px">${escHtml(c.texto)}</div>
+    </div>`;
+  }).join('')||'<div style="font-size:12px;color:var(--muted);padding:4px">Nenhum comentário.</div>';
+  document.getElementById('ativ-modal-body').innerHTML = `
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Status</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${ATIV_STATUS_OPTS.map(s=>{
+          const sm = STATUS_MAP[s]||STATUS_MAP['Em andamento'];
+          const active = ativ.status===s;
+          return `<button onclick="setAtivStatus('${s.replace(/'/g,"\\'")}',true)"
+            style="padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;
+            background:${active?sm.color+'22':'var(--surface2)'};
+            color:${active?sm.color:'var(--muted2)'};
+            border:2px solid ${active?sm.color:'var(--border)'};cursor:pointer;transition:all .2s;
+            display:flex;align-items:center;gap:5px">
+            <span>${sm.icon}</span><span>${s}</span></button>`;
+        }).join('')}
+      </div>
+      ${!isViewer()?'<div style="font-size:11px;color:var(--muted);margin-top:6px">Clique para alterar · salvo automaticamente</div>':''}
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Responsável pela Atividade</div>
+      ${!isViewer()?`
+        <input id="ativ-resp-input" value="${escHtml(ativ.resp||'')}" placeholder="Nome do responsável…"
+          list="ativ-resp-list"
+          style="width:100%;padding:8px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:12px;outline:none;transition:border-color .2s"
+          onfocus="this.style.borderColor='rgba(245,195,0,.5)'" onblur="this.style.borderColor='var(--border)'">
+        <datalist id="ativ-resp-list">
+          ${[currentProj?.pmo, currentProj?.resp,...(currentProj?.colaboradores||[])].filter(Boolean).map(n=>`<option value="${escHtml(n)}">`).join('')}
+        </datalist>
+      `:`<div style="font-size:13px;color:var(--muted2);padding:4px 0">${escHtml(ativ.resp||'—')}</div>`}
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Histórico de Comentários</div>
+      ${comentariosHtml}
+    </div>
+    <div class="edit-only" style="margin-top:12px">
+      <textarea id="new-comment" placeholder="Adicionar comentário…" style="width:100%;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Inter',sans-serif;font-size:13px;resize:vertical;min-height:70px;outline:none"></textarea>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px">
+        <button onclick="closeAtivModal()" style="padding:7px 16px;border-radius:8px;font-size:13px;color:var(--muted2);background:var(--surface);border:1px solid var(--border);cursor:pointer">Fechar</button>
+        <button onclick="saveAtiv()" style="padding:7px 16px;border-radius:8px;font-size:13px;font-weight:700;color:#0a0e19;background:var(--brand);border:none;cursor:pointer">Salvar</button>
+      </div>
+    </div>`;
+  document.getElementById('ativ-overlay').classList.add('open');
+}
+function setAtivStatus(s, autoSave=false){
+  if(!currentAtiv || isViewer()) return;
+  currentAtiv.status = s;
+  if(autoSave){ saveData(); if(currentProj) switchTab(currentTab); renderList(); }
+  openAtivEdit(currentAtiv.projeto, currentAtiv.fase, currentAtiv.nome);
+}
+function closeAtivModal(){ document.getElementById('ativ-overlay').classList.remove('open'); }
+function saveAtiv(){
+  if(!currentAtiv) return;
+  // Salvar responsável
+  const respInput = document.getElementById('ativ-resp-input');
+  if(respInput) currentAtiv.resp = respInput.value.trim();
+  // Salvar comentário
+  const txt = document.getElementById('new-comment')?.value.trim();
+  if(txt){
+    if(!currentAtiv.comentarios) currentAtiv.comentarios = [];
+    const u = getCurrentUser();
+    currentAtiv.comentarios.push({texto:txt, autor:u?.nome||'Anônimo', dataISO:HOJE_ISO, status:currentAtiv.status});
+  }
+  saveData(); closeAtivModal();
+  if(currentProj) switchTab(currentTab);
+  renderList();
+  toast('Atividade salva!','success');
+}
+
+// ── Nova Mudança de Escopo ────────────────────────────────
+function openNovaAlt(){
+  const el = document.getElementById('scope-overlay');
+  if(!el) return;
+  document.getElementById('sc-desc').value = '';
+  document.getElementById('sc-impacto').value = '';
+  document.getElementById('sc-status').value = 'Pendente';
+  el.style.display = 'flex';
+  setTimeout(()=>document.getElementById('sc-desc').focus(),50);
+}
+function closeScopeModal(){
+  const el = document.getElementById('scope-overlay');
+  if(el) el.style.display = 'none';
+}
+function salvarNovaAlt(){
+  const descricao = document.getElementById('sc-desc').value.trim();
+  if(!descricao){ toast('Descrição obrigatória.','warn'); return; }
+  const impacto = document.getElementById('sc-impacto').value.trim();
+  const status  = document.getElementById('sc-status').value;
+  const u = getCurrentUser();
+  const alt = getMergedAlteracoes(currentProj);
+  alt.push({ data:HOJE_ISO, descricao, solicitante:u?.nome||'Usuário', impacto, status });
+  saveAltEscopoOverrides(currentProj.nome, alt);
+  closeScopeModal();
+  renderHubChanges(document.getElementById('hub-body'));
+  toast('Mudança de escopo registrada!','success');
+}
+
+// ── Compartilhar Link ─────────────────────────────────────
+function __copiarLink(){
+  if(!currentProj) return;
+  const url = `${location.origin}${location.pathname}?p=${encodeURIComponent(currentProj.nome)}`;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>toast('🔗 Link copiado para a área de transferência!','success',3000));
+  } else {
+    // fallback
+    const el = document.createElement('textarea');
+    el.value = url; el.style.position='fixed'; el.style.opacity='0';
+    document.body.appendChild(el); el.select(); document.execCommand('copy');
+    document.body.removeChild(el);
+    toast('🔗 Link copiado!','success',3000);
+  }
+}
+
+// ── Duplicar Projeto ──────────────────────────────────────
+function __duplicarProj(){
+  if(!currentProj) return;
+  if(!confirm(`Duplicar "${currentProj.nome}"?\n\nUma cópia com todas as atividades zeradas (Não Iniciado) será criada.`)) return;
+  const copia = duplicarProjeto(currentProj.nome);
+  if(copia){
+    closeHub();
+    renderList();
+    toast(`✓ Projeto duplicado: ${copia.nome}`, 'success', 3500);
+    setTimeout(()=>openHub(copia.nome), 250);
+  }
+}
+
+// escHtml defined in utils.js — available globally (XSS-safe escaping)
+
+// ── ESC key to close overlays ─────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    // Fechar modal de novo registro histórico
+    const histAdd = document.getElementById('hist-add-overlay');
+    if(histAdd){ histAdd.remove(); return; }
+    const scopeEl = document.getElementById('scope-overlay');
+    if(scopeEl && scopeEl.style.display==='flex'){ closeScopeModal(); return; }
+    if(document.getElementById('ativ-overlay')?.classList.contains('open')){ closeAtivModal(); return; }
+    if(document.getElementById('hub-overlay')?.classList.contains('open')){ closeHub(); return; }
+  }
+});
+
+renderList();
+updateAlertBadge();
+
+// Abrir projeto via URL
+if(params.get('p')){ setTimeout(()=>openHub(decodeURIComponent(params.get('p'))),50); }
+</script>
+</body>
+</html>
