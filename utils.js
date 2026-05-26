@@ -959,13 +959,26 @@ function saveHistoricoEvent(projNome, evento){
 }
 
 // ── Usuários Padrão ───────────────────────────────────────
+const DEPARTAMENTOS = [
+  {val:'infra',       lbl:'Infraestrutura'},
+  {val:'eletrica',    lbl:'Elétrica'},
+  {val:'mecanica',    lbl:'Mecânica'},
+  {val:'dev',         lbl:'Dev'},
+  {val:'pmo',         lbl:'PMO'},
+  {val:'doc',         lbl:'Documentação'},
+  {val:'posvendas',   lbl:'Pós-vendas'},
+  {val:'implantacao', lbl:'Implantação'},
+];
+
 const USUARIOS_PADRAO = [
-  {id:'u1', nome:'Administrador', email:'admin@inventcorp.com', senha:'admin123',
+  {id:'u1', nome:'Administrador', email:'admin@pmo', senha:'admin123',
    papel:'admin', paginas:['all'], ativo:true},
-  {id:'u2', nome:'Editor Padrão', email:'editor@inventcorp.com', senha:'editor123',
+  {id:'u2', nome:'Editor Padrão', email:'editor@pmo', senha:'editor123',
    papel:'editor', paginas:['index','gerencial','projetos','squads','alertas'], ativo:true},
-  {id:'u3', nome:'Visualizador', email:'viewer@inventcorp.com', senha:'viewer123',
+  {id:'u3', nome:'Visualizador', email:'viewer@pmo', senha:'viewer123',
    papel:'viewer', paginas:['index','gerencial','squads'], ativo:true},
+  {id:'u4', nome:'Ivan Duarte', email:'ivan.duarte@infra', senha:'ivan123',
+   papel:'viewer', paginas:['index','gerencial','projetos','squads','alertas'], ativo:true},
 ];
 
 // ── Estado Global ─────────────────────────────────────────

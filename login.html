@@ -648,8 +648,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
     <div class="login-error" id="login-error"></div>
     <form id="login-form" autocomplete="off">
       <div class="form-group">
-        <label class="form-label" for="email">E-mail</label>
-        <input class="form-control" id="email" type="email" placeholder="seu@email.com" required autocomplete="username">
+        <label class="form-label" for="email">Usuário</label>
+        <input class="form-control" id="email" type="text" placeholder="nome.sobrenome@dept" required autocomplete="username">
       </div>
       <div class="form-group">
         <label class="form-label" for="senha">Senha</label>
@@ -664,9 +664,9 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
     </form>
     <div class="demo-hint">
       <strong>🔑 Acessos de demonstração</strong>
-      <div class="demo-row" onclick="fillDemo('admin@inventcorp.com','admin123')"><span>admin@inventcorp.com</span><span class="demo-key">admin123</span></div>
-      <div class="demo-row" onclick="fillDemo('editor@inventcorp.com','editor123')"><span>editor@inventcorp.com</span><span class="demo-key">editor123</span></div>
-      <div class="demo-row" onclick="fillDemo('viewer@inventcorp.com','viewer123')"><span>viewer@inventcorp.com</span><span class="demo-key">viewer123</span></div>
+      <div class="demo-row" onclick="fillDemo('admin@pmo','admin123')"><span>admin@pmo</span><span class="demo-key">admin123</span></div>
+      <div class="demo-row" onclick="fillDemo('editor@pmo','editor123')"><span>editor@pmo</span><span class="demo-key">editor123</span></div>
+      <div class="demo-row" onclick="fillDemo('viewer@pmo','viewer123')"><span>viewer@pmo</span><span class="demo-key">viewer123</span></div>
     </div>
     <div class="login-footer">Velox by Invent Corp © 2026 · v16</div>
   </div>
@@ -687,7 +687,7 @@ document.getElementById('login-form').addEventListener('submit',function(e){
     const user=USUARIOS.find(u=>u.email.toLowerCase()===email&&u.senha===senha&&u.ativo);
     if(user){setCurrentUser(user);location.href='index.html';}
     else{
-      errEl.textContent=USUARIOS.find(u=>u.email.toLowerCase()===email&&!u.ativo)?'Conta desativada. Contate o administrador.':'E-mail ou senha incorretos.';
+      errEl.textContent=USUARIOS.find(u=>u.email.toLowerCase()===email&&!u.ativo)?'Conta desativada. Contate o administrador.':'Usuário ou senha incorretos.';
       errEl.classList.add('show'); btn.disabled=false; btn.innerHTML='Entrar →';
     }
   },400);

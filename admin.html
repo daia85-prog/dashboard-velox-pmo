@@ -527,9 +527,23 @@ function showTabUsuarios(){
 const PAGE_OPTS = [{val:'index',lbl:'Dashboard'},{val:'gerencial',lbl:'Gerencial'},{val:'projetos',lbl:'Projetos'},{val:'squads',lbl:'Áreas'},{val:'alertas',lbl:'Alertas'},{val:'admin',lbl:'Admin'}];
 function userFormHtml(u={}){
   const pagesAll = u.paginas?.includes('all');
+  const uLogin   = (u.email||'').split('@')[0];
+  const uDept    = (u.email||'').split('@')[1] || 'pmo';
   return `<div class="form-grid">
-    <div class="form-group"><div class="form-label">Nome *</div><input class="form-control" id="uf-nome" value="${esc(u.nome||'')}"></div>
-    <div class="form-group"><div class="form-label">E-mail *</div><input class="form-control" id="uf-email" type="email" value="${esc(u.email||'')}"></div>
+    <div class="form-group"><div class="form-label">Nome completo *</div><input class="form-control" id="uf-nome" value="${esc(u.nome||'')}"></div>
+    <div class="form-group form-full">
+      <div class="form-label">Usuário de acesso *</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input class="form-control" id="uf-username" placeholder="nome.sobrenome" style="flex:1"
+          oninput="checkLoginDisponivel()" value="${esc(uLogin)}">
+        <span style="color:var(--muted);font-weight:700;font-size:16px">@</span>
+        <select class="form-control" id="uf-dept" onchange="checkLoginDisponivel()"
+          style="width:170px;background:var(--surface);border:1px solid var(--border);color:var(--text)">
+          ${DEPARTAMENTOS.map(d=>`<option value="${d.val}" ${uDept===d.val?'selected':''} style="background:#1e293b;color:#f1f5f9">${d.lbl}</option>`).join('')}
+        </select>
+      </div>
+      <div id="uf-login-preview" style="font-size:11px;margin-top:5px;min-height:16px"></div>
+    </div>
     <div class="form-group">
       <div class="form-label">Senha ${u.id?'(deixe vazio para manter)':''} *</div>
       <div style="display:flex;gap:8px">
@@ -561,14 +575,34 @@ function togglePagesVisibility(){
   const pg = document.getElementById('pages-group');
   if(pg) pg.style.opacity = papel==='admin'?'0.4':'1';
 }
+function checkLoginDisponivel(editId){
+  const username = document.getElementById('uf-username')?.value.trim().toLowerCase().replace(/\s+/g,'.');
+  const dept     = document.getElementById('uf-dept')?.value;
+  const preview  = document.getElementById('uf-login-preview');
+  if(!preview) return;
+  if(!username){ preview.innerHTML=''; return; }
+  const login    = username + '@' + dept;
+  const existe   = USUARIOS.find(u=>u.email===login && u.id!==(editId||'__novo__'));
+  if(existe){
+    // Gera sugestão: tenta login2, login3...
+    let n=2, sugestao=username+n+'@'+dept;
+    while(USUARIOS.find(u=>u.email===sugestao)){ n++; sugestao=username+n+'@'+dept; }
+    preview.innerHTML=`<span style="color:#f87171">⚠ "${login}" já existe.</span> <span style="color:#94a3b8">Sugestão: </span><span style="color:#f5c300;cursor:pointer;font-weight:700" onclick="document.getElementById('uf-username').value='${username+n}';checkLoginDisponivel();">${sugestao} (clique para usar)</span>`;
+  } else {
+    preview.innerHTML=`<span style="color:#4ade80">✓ Login disponível: <strong>${login}</strong></span>`;
+  }
+}
 function collectUserForm(orig={}){
-  const senha = document.getElementById('uf-senha').value;
-  const papel = document.getElementById('uf-papel').value;
-  const pages = papel==='admin'?['all']:PAGE_OPTS.filter(p=>document.getElementById('pg-'+p.val)?.checked).map(p=>p.val);
+  const senha    = document.getElementById('uf-senha').value;
+  const papel    = document.getElementById('uf-papel').value;
+  const pages    = papel==='admin'?['all']:PAGE_OPTS.filter(p=>document.getElementById('pg-'+p.val)?.checked).map(p=>p.val);
+  const username = document.getElementById('uf-username')?.value.trim().toLowerCase().replace(/\s+/g,'.') || '';
+  const dept     = document.getElementById('uf-dept')?.value || 'pmo';
+  const email    = username ? username+'@'+dept : '';
   return {
     id: orig.id || 'u'+Date.now(),
     nome:   document.getElementById('uf-nome').value.trim(),
-    email:  document.getElementById('uf-email').value.trim().toLowerCase(),
+    email,
     senha:  senha || orig.senha || '',
     papel,
     paginas:pages,
@@ -582,8 +616,8 @@ function novoUser(){
 }
 function salvarNovoUser(){
   const u = collectUserForm();
-  if(!u.nome||!u.email||!u.senha){ toast('Preencha nome, e-mail e senha.','warn'); return; }
-  if(USUARIOS.find(x=>x.email===u.email)){ toast('E-mail já cadastrado.','error'); return; }
+  if(!u.nome||!u.email||!u.senha){ toast('Preencha nome, usuário e senha.','warn'); return; }
+  if(USUARIOS.find(x=>x.email===u.email)){ toast('Usuário já cadastrado. Use a sugestão ou escolha outro.','error'); return; }
   USUARIOS.push(u); saveUsers(); closeModal(); showTabUsuarios(); toast('Usuário criado!','success');
 }
 function editUser(id){
