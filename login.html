@@ -161,6 +161,25 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
 }
 @keyframes termBlink{0%,100%{opacity:1}50%{opacity:0}}
 
+/* ── Modal: Primeiro Acesso ── */
+.pa-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;animation:paFade .3s ease}
+@keyframes paFade{from{opacity:0}to{opacity:1}}
+.pa-card{background:rgba(6,12,28,.97);border:1px solid rgba(255,255,255,.09);border-radius:22px;padding:40px 36px 32px;width:100%;max-width:390px;box-shadow:0 40px 90px rgba(0,0,0,.75),0 0 0 1px rgba(99,102,241,.08);animation:paSlide .35s cubic-bezier(.34,1.2,.64,1)}
+@keyframes paSlide{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+.pa-icon{font-size:34px;text-align:center;margin-bottom:12px}
+.pa-title{font-size:19px;font-weight:800;color:#f1f5f9;text-align:center;margin-bottom:6px}
+.pa-sub{font-size:13px;color:#64748b;text-align:center;margin-bottom:24px;line-height:1.6}
+.pa-crit-grid{background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.14);border-radius:10px;padding:12px 14px;margin-bottom:20px;display:grid;grid-template-columns:1fr 1fr;gap:7px 10px}
+.pa-crit{font-size:11px;font-weight:600;color:#475569;display:flex;align-items:center;gap:6px;transition:color .25s}
+.pa-crit.ok{color:#22c55e}
+.pa-crit-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;transition:background .25s}
+.pa-field-wrap{position:relative;margin-bottom:14px}
+.pa-match{font-size:11px;font-weight:600;color:#f87171;text-align:center;min-height:16px;margin-top:4px}
+.pa-btn{width:100%;padding:14px;border-radius:12px;border:none;cursor:pointer;background:linear-gradient(135deg,#f5c300,#f59e0b);color:#0a0e19;font-weight:800;font-size:15px;letter-spacing:.2px;margin-top:16px;transition:opacity .2s,transform .1s}
+.pa-btn:disabled{opacity:.35;cursor:not-allowed}
+.pa-btn:not(:disabled):hover{opacity:.88}
+.pa-btn:not(:disabled):active{transform:scale(.98)}
+
 /* ── Ticker inferior ── */
 .sys-ticker{
   position:fixed;bottom:0;left:0;right:0;z-index:6;
@@ -828,7 +847,7 @@ document.getElementById('login-form').addEventListener('submit',function(e){
   btn.disabled=true; btn.innerHTML='<span style="display:inline-block;animation:spin .7s linear infinite">⟳</span> Verificando…'; errEl.classList.remove('show');
   setTimeout(()=>{
     const user=USUARIOS.find(u=>u.email.toLowerCase()===email&&u.senha===senha&&u.ativo);
-    if(user){setCurrentUser(user);location.href='index.html';}
+    if(user){setCurrentUser(user);if(user.primeiroAcesso)paShow(user);else location.href='index.html';}
     else{
       errEl.textContent=USUARIOS.find(u=>u.email.toLowerCase()===email&&!u.ativo)?'Conta desativada. Contate o administrador.':'Usuário ou senha incorretos.';
       errEl.classList.add('show'); btn.disabled=false; btn.innerHTML='Entrar →';
@@ -836,7 +855,67 @@ document.getElementById('login-form').addEventListener('submit',function(e){
   },400);
 });
 function fillDemo(e,s){document.getElementById('email').value=e;document.getElementById('senha').value=s;}
+
+/* ── Primeiro Acesso ── */
+let _paUser=null;
+function paShow(user){
+  _paUser=user;
+  document.getElementById('pa-overlay').style.display='flex';
+  setTimeout(()=>document.getElementById('pa-nova').focus(),120);
+}
+function paToggle(id,btn){
+  const el=document.getElementById(id);
+  el.type=el.type==='password'?'text':'password';
+  btn.textContent=el.type==='password'?'👁':'🙈';
+}
+function paCheck(){
+  const v=document.getElementById('pa-nova').value;
+  const c=document.getElementById('pa-conf').value;
+  const ok={len:v.length>=8,up:/[A-Z]/.test(v),num:/[0-9]/.test(v),esp:/[^A-Za-z0-9]/.test(v)};
+  ['len','up','num','esp'].forEach(k=>document.getElementById('pc-'+k).classList.toggle('ok',ok[k]));
+  const allOk=ok.len&&ok.up&&ok.num&&ok.esp;
+  document.getElementById('pa-match').textContent=c.length>0&&v!==c?'As senhas não coincidem.':'';
+  document.getElementById('pa-btn').disabled=!(allOk&&v===c&&c.length>0);
+}
+function paSalvar(){
+  const nova=document.getElementById('pa-nova').value;
+  loadUsers();
+  const idx=USUARIOS.findIndex(u=>u.id===_paUser.id);
+  if(idx!==-1){USUARIOS[idx].senha=nova;USUARIOS[idx].primeiroAcesso=false;saveUsers();setCurrentUser(USUARIOS[idx]);}
+  location.href='index.html';
+}
 </script>
+
+<!-- Modal: Primeiro Acesso -->
+<div class="pa-overlay" id="pa-overlay" style="display:none">
+  <div class="pa-card">
+    <div class="pa-icon">🔑</div>
+    <div class="pa-title">Defina sua senha</div>
+    <div class="pa-sub">Primeiro acesso detectado.<br>Escolha uma senha segura para continuar.</div>
+    <div class="pa-crit-grid">
+      <span class="pa-crit" id="pc-len"><span class="pa-crit-dot"></span>Mín. 8 caracteres</span>
+      <span class="pa-crit" id="pc-up"><span class="pa-crit-dot"></span>Letra maiúscula</span>
+      <span class="pa-crit" id="pc-num"><span class="pa-crit-dot"></span>Número</span>
+      <span class="pa-crit" id="pc-esp"><span class="pa-crit-dot"></span>Caractere especial</span>
+    </div>
+    <div class="form-group pa-field-wrap">
+      <label class="form-label">Nova senha</label>
+      <div style="position:relative">
+        <input class="form-control" type="password" id="pa-nova" placeholder="Digite sua nova senha" oninput="paCheck()" autocomplete="new-password">
+        <button type="button" onclick="paToggle('pa-nova',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:0">👁</button>
+      </div>
+    </div>
+    <div class="form-group pa-field-wrap" style="margin-bottom:0">
+      <label class="form-label">Confirmar senha</label>
+      <div style="position:relative">
+        <input class="form-control" type="password" id="pa-conf" placeholder="Repita a nova senha" oninput="paCheck()" autocomplete="new-password">
+        <button type="button" onclick="paToggle('pa-conf',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:0">👁</button>
+      </div>
+    </div>
+    <div class="pa-match" id="pa-match"></div>
+    <button class="pa-btn" id="pa-btn" disabled onclick="paSalvar()">Salvar e entrar →</button>
+  </div>
+</div>
 
 
 <!-- Terminal typewriter animation -->

@@ -599,6 +599,7 @@ function collectUserForm(orig={}){
   const username = document.getElementById('uf-username')?.value.trim().toLowerCase().replace(/\s+/g,'.') || '';
   const dept     = document.getElementById('uf-dept')?.value || 'pmo';
   const email    = username ? username+'@'+dept : '';
+  const isNovo = !orig.id;
   return {
     id: orig.id || 'u'+Date.now(),
     nome:   document.getElementById('uf-nome').value.trim(),
@@ -607,6 +608,7 @@ function collectUserForm(orig={}){
     papel,
     paginas:pages,
     ativo:  orig.ativo !== undefined ? orig.ativo : true,
+    primeiroAcesso: isNovo ? true : (orig.primeiroAcesso ?? false),
   };
 }
 function novoUser(){

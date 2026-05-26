@@ -972,13 +972,13 @@ const DEPARTAMENTOS = [
 
 const USUARIOS_PADRAO = [
   {id:'u1', nome:'Administrador', email:'admin@pmo', senha:'admin123',
-   papel:'admin', paginas:['all'], ativo:true},
+   papel:'admin', paginas:['all'], ativo:true, primeiroAcesso:false},
   {id:'u2', nome:'Editor Padrão', email:'editor@pmo', senha:'editor123',
-   papel:'editor', paginas:['index','gerencial','projetos','squads','alertas'], ativo:true},
+   papel:'editor', paginas:['index','gerencial','projetos','squads','alertas'], ativo:true, primeiroAcesso:false},
   {id:'u3', nome:'Visualizador', email:'viewer@pmo', senha:'viewer123',
-   papel:'viewer', paginas:['index','gerencial','squads'], ativo:true},
+   papel:'viewer', paginas:['index','gerencial','squads'], ativo:true, primeiroAcesso:false},
   {id:'u4', nome:'Ivan Duarte', email:'ivan.duarte@infra', senha:'ivan123',
-   papel:'viewer', paginas:['index','gerencial','projetos','squads','alertas'], ativo:true},
+   papel:'viewer', paginas:['index','gerencial','projetos','squads','alertas'], ativo:true, primeiroAcesso:true},
 ];
 
 // ── Estado Global ─────────────────────────────────────────
@@ -1296,6 +1296,14 @@ function loadUsers(){
   USUARIOS_PADRAO.forEach(padrao => {
     const existe = USUARIOS.find(u => u.email === padrao.email || u.id === padrao.id);
     if(!existe){ USUARIOS.push(JSON.parse(JSON.stringify(padrao))); changed = true; }
+  });
+  // Migração: garante flag primeiroAcesso em usuários antigos
+  const IDS_DEMO = ['u1','u2','u3'];
+  USUARIOS.forEach(u => {
+    if(u.primeiroAcesso === undefined){
+      u.primeiroAcesso = !IDS_DEMO.includes(u.id);
+      changed = true;
+    }
   });
   if(changed) saveUsers();
 }
