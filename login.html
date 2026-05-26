@@ -34,11 +34,11 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
 #wm-gear-sm{animation:wmGear 22s linear infinite;transform-box:fill-box;transform-origin:center}
 @keyframes wmGear{to{transform:rotate(360deg)}}
 .wm-belt{animation:wmBeltAnim 2s linear infinite}
-@keyframes wmBeltAnim{from{stroke-dashoffset:0}to{stroke-dashoffset:-80}}
+@keyframes wmBeltAnim{from{stroke-dashoffset:0}to{stroke-dashoffset:80}}
 .wm-flow{animation:wmFlowAnim 4s linear infinite}
 @keyframes wmFlowAnim{from{stroke-dashoffset:0}to{stroke-dashoffset:-24}}
 /* ── Caixas deslizando na esteira ── */
-@keyframes wmBoxSlide{from{transform:translateX(1520px)}to{transform:translateX(-200px)}}
+@keyframes wmBoxSlide{from{transform:translateX(-200px)}to{transform:translateX(1520px)}}
 #wmb1{animation:wmBoxSlide 24s linear 0s     infinite}
 #wmb2{animation:wmBoxSlide 24s linear -4.8s  infinite}
 #wmb3{animation:wmBoxSlide 24s linear -9.6s  infinite}
