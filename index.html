@@ -1019,43 +1019,43 @@ function buildSlides(){
   const taxaConc  = PROJETOS.length ? Math.round(concluidos.length/PROJETOS.length*100) : 0;
   const atrasadosTv = PROJETOS.filter(p=>calcStatus(p)==='Atrasado').length;
   const s0 = `
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;width:100%">
-    <div style="display:flex;align-items:center;gap:32px;margin-bottom:0">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;width:100%">
+    <div style="display:flex;align-items:center;gap:40px">
       ${tvSvgRing(health,hColor,260)}
       <div>
-        <div style="font-size:14px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#6d6e85;margin-bottom:8px">Portfólio · ${HOJE.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</div>
-        <div style="font-size:68px;font-weight:900;letter-spacing:-4px;line-height:1;color:#f1f5f9">Velox PMO</div>
-        <div style="font-size:19px;font-weight:600;color:${hColor};margin-top:12px;display:flex;align-items:center;gap:10px">
-          <span style="width:12px;height:12px;border-radius:50%;background:${hColor};display:inline-block;box-shadow:0 0 14px ${hColor}"></span>
+        <div style="font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#3d3d5c;margin-bottom:10px">Portfólio · ${HOJE.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}</div>
+        <div style="font-size:72px;font-weight:900;letter-spacing:-4px;line-height:.95;color:#f1f5f9">Velox<br><span style="color:#F5C300">PMO</span></div>
+        <div style="font-size:20px;font-weight:700;color:${hColor};margin-top:14px;display:flex;align-items:center;gap:10px">
+          <span style="width:10px;height:10px;border-radius:50%;background:${hColor};display:inline-block;animation:blink 2s infinite;box-shadow:0 0 12px ${hColor}"></span>
           ${hLabel}
         </div>
-        <div style="font-size:14px;color:#475569;margin-top:8px">${PROJETOS.length} projetos no portfólio · ${ativos.length} ativos agora</div>
+        <div style="font-size:13px;color:#3d3d5c;margin-top:6px">${PROJETOS.length} projetos · ${ativos.length} ativos · ${concluidos.length} concluídos</div>
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;width:100%">
-      <div class="tv-kpi" style="border-color:rgba(59,130,246,.3);border-top-color:rgba(59,130,246,.6)">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;width:100%">
+      <div class="tv-kpi" style="background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.35);border-top-color:rgba(59,130,246,.7)">
         <div class="tv-kpi-accent" style="background:linear-gradient(90deg,transparent,#3b82f6,transparent)"></div>
         <div class="tv-kpi-val" style="color:#60a5fa">${ativos.length}</div>
-        <div class="tv-kpi-lbl">Projetos Ativos</div>
-        <div class="tv-kpi-sub">${PROJETOS.length} total · ${concluidos.length} concluídos</div>
+        <div class="tv-kpi-lbl" style="color:#3b82f6">Projetos Ativos</div>
+        <div class="tv-kpi-sub" style="color:#1e40af">${PROJETOS.length} total · ${concluidos.length} concluídos</div>
       </div>
-      <div class="tv-kpi" style="border-color:rgba(239,68,68,.3);border-top-color:rgba(239,68,68,.6)">
+      <div class="tv-kpi" style="background:rgba(239,68,68,.07);border-color:rgba(239,68,68,.35);border-top-color:rgba(239,68,68,.7)">
         <div class="tv-kpi-accent" style="background:linear-gradient(90deg,transparent,#ef4444,transparent)"></div>
         <div class="tv-kpi-val" style="color:#f87171">${atrasadosTv}</div>
-        <div class="tv-kpi-lbl">Em Atraso</div>
-        <div class="tv-kpi-sub">${ativos.length>0?Math.round(atrasadosTv/ativos.length*100):0}% dos ativos</div>
+        <div class="tv-kpi-lbl" style="color:#ef4444">Em Atraso</div>
+        <div class="tv-kpi-sub" style="color:#7f1d1d">${ativos.length>0?Math.round(atrasadosTv/ativos.length*100):0}% dos ativos</div>
       </div>
-      <div class="tv-kpi" style="border-color:rgba(249,115,22,.3);border-top-color:rgba(249,115,22,.6)">
+      <div class="tv-kpi" style="background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.35);border-top-color:rgba(249,115,22,.7)">
         <div class="tv-kpi-accent" style="background:linear-gradient(90deg,transparent,#f97316,transparent)"></div>
         <div class="tv-kpi-val" style="color:#fb923c">${bloqCount}</div>
-        <div class="tv-kpi-lbl">Bloqueadores</div>
-        <div class="tv-kpi-sub">${criticos.length} projetos críticos</div>
+        <div class="tv-kpi-lbl" style="color:#f97316">Bloqueadores</div>
+        <div class="tv-kpi-sub" style="color:#7c2d12">${criticos.length} projetos críticos</div>
       </div>
-      <div class="tv-kpi" style="border-color:rgba(245,195,0,.3);border-top-color:rgba(245,195,0,.6)">
+      <div class="tv-kpi" style="background:rgba(245,195,0,.07);border-color:rgba(245,195,0,.35);border-top-color:rgba(245,195,0,.7)">
         <div class="tv-kpi-accent" style="background:linear-gradient(90deg,transparent,#F5C300,transparent)"></div>
         <div class="tv-kpi-val" style="color:#fbbf24">${goliveProx}</div>
-        <div class="tv-kpi-lbl">Go Live &lt;30d</div>
-        <div class="tv-kpi-sub">prazos críticos este mês</div>
+        <div class="tv-kpi-lbl" style="color:#F5C300">Go Live &lt;30d</div>
+        <div class="tv-kpi-sub" style="color:#78350f">prazos críticos este mês</div>
       </div>
     </div>
   </div>`;
@@ -1106,7 +1106,7 @@ function buildSlides(){
   </div>`;
 
   // ── Slide 2: Críticos & Bloqueados ─────────────────────
-  const bloqRows = bloqueados.length ? bloqueados.slice(0,10).map(p=>{
+  const bloqRows = bloqueados.length ? bloqueados.slice(0,8).map((p,idx)=>{
     const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
     const sema=tvSemaforoClass(p);
     const fe=getFimEfetivo(p)||p.fim;
@@ -1114,125 +1114,147 @@ function buildSlides(){
     const dc=dias===null?'#64748b':dias<0?'#ef4444':dias<=7?'#ef4444':dias<=30?'#F5C300':'#94a3b8';
     const diasStr=dias===null?'—':dias<0?`${Math.abs(dias)}d atraso`:dias===0?'Hoje!':dias+'d';
     const bloq=p.bloqueador?p.bloqueador.split(';')[0].trim():'';
-    return `<div style="display:grid;grid-template-columns:32px 1fr 100px 70px;gap:10px;align-items:center;padding:8px 12px;border-radius:8px;border-left:3px solid ${sema.border};background:rgba(255,255,255,.02);margin-bottom:4px">
-      <div style="width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;background:${sema.bg}">${sema.icon}</div>
-      <div>
-        <div style="font-size:13px;font-weight:800;margin-bottom:2px">${escHtml(p.nome)}</div>
-        <div style="font-size:10px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:380px">${bloq?'🔒 '+escHtml(bloq):escHtml(p.local||'')}</div>
+    const prog=calcProgresso(p);
+    const isP0 = isCritico(p)||(dias!==null&&dias<0);
+    return `<div style="display:grid;grid-template-columns:44px 1fr 130px 75px 100px;gap:14px;align-items:center;padding:12px 16px;border-radius:10px;border-left:4px solid ${sema.border};background:${isP0?'rgba(239,68,68,.06)':'rgba(255,255,255,.025)'};margin-bottom:6px;animation:bentoIn .4s ease ${(idx*.05).toFixed(2)}s both">
+      <div style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;background:${sema.bg};border:1px solid ${sema.border}">${sema.icon}</div>
+      <div style="min-width:0">
+        <div style="font-size:16px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f1f5f9">${escHtml(p.nome)}</div>
+        <div style="font-size:11px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">${bloq?'🔒 '+escHtml(bloq):(p.pmo?'👤 '+escHtml(p.pmo):'')}</div>
       </div>
-      <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;background:${sm.bg};color:${sm.color};text-align:center">${sm.icon} ${sm.label}</span>
-      <span style="font-size:12px;font-weight:700;color:${dc};text-align:right">${diasStr}</span>
+      <span style="font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;background:${sm.bg};color:${sm.color};text-align:center;white-space:nowrap">${sm.icon} ${sm.label}</span>
+      <span style="font-size:15px;font-weight:900;color:${dc};text-align:right;letter-spacing:-.5px">${diasStr}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden"><div style="height:100%;width:${prog}%;background:${sm.color};border-radius:4px;box-shadow:0 0 6px ${sm.color}88"></div></div>
+        <span style="font-size:12px;font-weight:800;color:${sm.color};flex-shrink:0">${prog}%</span>
+      </div>
     </div>`;
   }).join('')
-  : `<div style="text-align:center;padding:60px;color:#22c55e;font-size:18px;font-weight:700">✅ Nenhum projeto crítico ou bloqueado</div>`;
+  : `<div style="text-align:center;padding:80px;color:#22c55e;font-size:22px;font-weight:700;letter-spacing:-.5px">✅ Nenhum projeto crítico ou bloqueado</div>`;
 
   const s2=`
-  <div class="tv-s-title">Alertas — Bloqueados & Críticos <span class="tv-s-title-sub">${bloqueados.length} projeto${bloqueados.length!==1?'s':''} requerem atenção</span></div>
+  <div class="tv-s-title">⚠️ Alertas — Bloqueados & Críticos <span class="tv-s-title-sub">${bloqueados.length} projeto${bloqueados.length!==1?'s':''} requerem atenção</span></div>
   <div style="width:100%">${bloqRows}</div>`;
 
-  // ── helper: gera linha compacta do farol ───────────────
+  // ── helper: gera linha do farol — legível na TV ────────
   function _farolRow(p){
     const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
     const sema=tvSemaforoClass(p);
     const prog=calcProgresso(p);
     const fe=getFimEfetivo(p)||p.fim;
     const dias=fe?Math.round((new Date(fe)-HOJE)/86400000):null;
-    const dc=dias===null?'#64748b':dias<0?'#ef4444':dias<=30?'#F5C300':'#94a3b8';
-    const diasStr=dias===null?'—':dias<0?`${Math.abs(dias)}d`:dias===0?'Hoje!':dias+'d';
-    return `<div style="display:grid;grid-template-columns:26px 1fr 88px 52px 60px 80px;gap:8px;align-items:center;padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.04)">
-      <div style="width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;background:${sema.bg};border:1px solid ${sema.border}">${sema.icon}</div>
-      <div>
-        <div style="font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.nome)}</div>
-        <div style="font-size:9px;color:#64748b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.local||'')}</div>
+    const dc=dias===null?'#475569':dias<0?'#ef4444':dias<=7?'#ef4444':dias<=30?'#F5C300':'#94a3b8';
+    const diasStr=dias===null?'—':dias<0?`${Math.abs(dias)}d atr`:dias===0?'Hoje':dias+'d';
+    return `<div style="display:grid;grid-template-columns:32px 1fr 105px 55px 72px;gap:10px;align-items:center;padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.05);border-left:3px solid ${sema.border}">
+      <div style="width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;background:${sema.bg}">${sema.icon}</div>
+      <div style="min-width:0">
+        <div style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e2e8f0">${escHtml(p.nome)}</div>
+        <div style="font-size:11px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px">${escHtml(p.pmo||p.local||'—')}</div>
       </div>
-      <span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:6px;background:${sm.bg};color:${sm.color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${sm.icon} ${sm.label}</span>
-      <span style="font-size:10px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.pmo||'—')}</span>
-      <span style="font-size:11px;font-weight:700;color:${dc};text-align:right">${diasStr}</span>
-      <div style="display:flex;align-items:center;gap:5px">
-        <div style="flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:${prog}%;background:${sm.color};border-radius:3px"></div></div>
-        <span style="font-size:9px;font-weight:700;color:${sm.color};flex-shrink:0">${prog}%</span>
+      <span style="font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;background:${sm.bg};color:${sm.color};text-align:center;white-space:nowrap">${sm.icon} ${sm.label}</span>
+      <span style="font-size:13px;font-weight:800;color:${dc};text-align:right">${diasStr}</span>
+      <div style="display:flex;align-items:center;gap:4px">
+        <div style="flex:1;height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:${prog}%;background:${sm.color};border-radius:3px"></div></div>
+        <span style="font-size:11px;font-weight:700;color:${sm.color};flex-shrink:0;min-width:26px;text-align:right">${prog}%</span>
       </div>
     </div>`;
   }
 
-  // ── Slide 3: Farol Compacto — todos os ativos ──────────
+  // ── Slide 3: Farol Completo — todos os ativos ──────────
   const ativosSort=[...ativos].sort((a,b)=>{
-    const ord={'Crítico':0,'Atrasado':1,'Bloqueado':2,'Aguardando':3,'Em andamento':4};
-    const oa=ord[calcStatus(a)]??5, ob=ord[calcStatus(b)]??5;
+    const ord={'Atrasado':0,'Bloqueado':1,'Aguardando':2,'Em andamento':3};
+    const critA=isCritico(a)?-1:0, critB=isCritico(b)?-1:0;
+    if(critA!==critB) return critA-critB;
+    const oa=ord[calcStatus(a)]??4, ob=ord[calcStatus(b)]??4;
     if(oa!==ob) return oa-ob;
     const fa=getFimEfetivo(a)||a.fim||'9999', fb=getFimEfetivo(b)||b.fim||'9999';
     return fa.localeCompare(fb);
   });
-  const meio = Math.ceil(ativosSort.length/2);
-  const col1 = ativosSort.slice(0,meio);
-  const col2 = ativosSort.slice(meio);
+  // Limita a 14 projetos (7+7) para não ficar ilegível na TV
+  const maxFarol = 14;
+  const farolSlice = ativosSort.slice(0, maxFarol);
+  const meio = Math.ceil(farolSlice.length/2);
+  const col1 = farolSlice.slice(0,meio);
+  const col2 = farolSlice.slice(meio);
+  const maisLabel = ativos.length > maxFarol ? `<div style="text-align:center;padding:10px 0 0;font-size:12px;color:#3d3d5c">+ ${ativos.length-maxFarol} projetos adicionais</div>` : '';
   const s3=`
-  <div class="tv-s-title">Farol Completo — Projetos Ativos <span class="tv-s-title-sub">${ativos.length} projetos em andamento</span></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 16px;width:100%">
+  <div class="tv-s-title">🚦 Farol de Projetos <span class="tv-s-title-sub">${ativos.length} projetos ativos · ordenado por urgência</span></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 20px;width:100%">
     <div>${col1.map(_farolRow).join('')}</div>
     <div>${col2.map(_farolRow).join('')}</div>
-  </div>`;
+  </div>
+  ${maisLabel}`;
 
-  // ── Slide 2: Go Lives — próximos 90 dias ───────────────
+  // ── Slide 5: Go Lives — próximos prazos ───────────────
   const proximos = ativos
     .filter(p=>getFimEfetivo(p)||p.fim)
     .sort((a,b)=>new Date(getFimEfetivo(a)||a.fim)-new Date(getFimEfetivo(b)||b.fim))
     .slice(0,8);
-  const goCards = proximos.map(p=>{
+  const goCards = proximos.map((p,idx)=>{
     const fe=getFimEfetivo(p)||p.fim;
     const dias=Math.round((new Date(fe)-HOJE)/86400000);
-    const dc=dias<0?'#ef4444':dias<=7?'#ef4444':dias<=30?'#F5C300':'#22c55e';
+    const isUrgente = dias <= 7;
+    const isAtras   = dias < 0;
+    const dc=isAtras?'#ef4444':isUrgente?'#ef4444':dias<=30?'#F5C300':'#22c55e';
     const prog=calcProgresso(p);
-    const label=dias<0?`${Math.abs(dias)}d atraso`:dias===0?'Hoje!':dias+'d';
+    const label=isAtras?`${Math.abs(dias)}d atraso`:dias===0?'HOJE':dias+'d';
     const sm=STATUS_MAP[calcStatus(p)]||STATUS_MAP['Em andamento'];
-    return `<div class="tv-golive-card" style="border-color:${dc}40;background:rgba(255,255,255,.025);position:relative;overflow:hidden">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${dc};opacity:.7;border-radius:16px 16px 0 0"></div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px">
-        <div class="tv-golive-name">${escHtml(p.nome)}</div>
-        <span style="font-size:10px;background:${sm.bg};color:${sm.color};padding:3px 8px;border-radius:8px;font-weight:700;flex-shrink:0;margin-left:8px">${sm.label}</span>
+    return `<div style="border-radius:16px;padding:20px 22px;border:1px solid ${dc}35;background:linear-gradient(145deg,${dc}09,rgba(255,255,255,.015));position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.06).toFixed(2)}s both">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,${dc},transparent);opacity:.8"></div>
+      <div style="position:absolute;top:0;right:0;bottom:0;width:3px;background:linear-gradient(180deg,${dc},transparent);opacity:.3"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:8px">
+        <div style="font-size:15px;font-weight:800;color:#f1f5f9;line-height:1.2;flex:1">${escHtml(p.nome)}</div>
+        <span style="font-size:10px;background:${sm.bg};color:${sm.color};padding:3px 8px;border-radius:8px;font-weight:700;flex-shrink:0">${sm.label}</span>
       </div>
-      <div class="tv-golive-pmo">${escHtml(p.pmo||'—')} · ${escHtml(p.local||'')}</div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin:12px 0 4px">
-        <div class="tv-golive-date" style="font-size:20px">${formatDate(fe)}</div>
-        <div class="tv-golive-countdown" style="color:${dc};font-size:28px;font-weight:900;letter-spacing:-1px">${label}</div>
+      <div style="font-size:11px;color:#475569;margin-bottom:14px">${escHtml(p.pmo||'—')}</div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+        <div style="font-size:13px;color:#64748b;font-weight:600">${formatDate(fe)}</div>
+        <div style="font-size:${isAtras||isUrgente?'40':'36'}px;font-weight:900;color:${dc};letter-spacing:-2px;line-height:1;${isAtras?'animation:urgPulse 1.5s infinite':''}">${label}</div>
       </div>
-      <div class="tv-golive-prog" style="height:5px;margin-top:10px"><div class="tv-golive-prog-fill" style="width:${prog}%;background:${dc};box-shadow:0 0 8px ${dc}66"></div></div>
-      <div style="font-size:10px;color:#475569;margin-top:5px;font-weight:600">${prog}% concluído</div>
+      <div style="height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;margin-bottom:6px">
+        <div style="height:100%;width:${prog}%;background:${dc};border-radius:4px;box-shadow:0 0 10px ${dc}77;transition:width .8s ease"></div>
+      </div>
+      <div style="font-size:11px;color:#475569;font-weight:600">${prog}% concluído</div>
     </div>`;
-  }).join('')||`<div style="text-align:center;padding:40px;color:#22c55e;font-size:16px">Nenhum Go Live ativo nos próximos 90 dias</div>`;
+  }).join('')||`<div style="text-align:center;padding:60px;color:#22c55e;font-size:22px;font-weight:700">✅ Nenhum Go Live próximo</div>`;
   const s5=`
-  <div class="tv-s-title">Go Lives — Próximos Prazos <span class="tv-s-title-sub">${proximos.length} projetos com prazo definido</span></div>
-  <div class="tv-golive-grid">${goCards}</div>`;
+  <div class="tv-s-title">📅 Go Lives — Próximos Prazos <span class="tv-s-title-sub">${proximos.length} projetos ordenados por data</span></div>
+  <div class="tv-golive-grid" style="grid-template-columns:repeat(${Math.min(proximos.length,4)},1fr)">${goCards}</div>`;
 
-  // ── Slide 6: Por PMO ───────────────────────────────────
+  // ── Slide 6: Por PMO — cards visuais ──────────────────
   const wl=calcWorkload();
   const wlEntries=Object.entries(wl).sort((a,b)=>b[1].total-a[1].total);
   const maxWl=wlEntries.reduce((m,[,d])=>Math.max(m,d.total),1);
-  const pmoRows=wlEntries.map(([nome,d])=>{
+  const pmoCards=wlEntries.map(([nome,d],idx)=>{
     const pct=Math.round(d.total/maxWl*100);
     const riskColor=d.criticos>0?'#ef4444':d.bloqueados>0?'#f97316':'#22c55e';
-    return `<div style="display:grid;grid-template-columns:120px 1fr 90px 90px 90px;gap:14px;align-items:center;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.05)">
-      <div style="font-size:14px;font-weight:800;color:#f1f5f9">${escHtml(nome)}</div>
-      <div style="background:rgba(255,255,255,.06);border-radius:5px;height:12px;overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#3b82f6,#06b6d4);border-radius:5px"></div>
+    const riskBg   =d.criticos>0?'rgba(239,68,68,.1)':d.bloqueados>0?'rgba(249,115,22,.08)':'rgba(34,197,94,.06)';
+    const initials = nome.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||nome.substring(0,2).toUpperCase();
+    const dots = (d.projetos||[]).slice(0,6).map(pr=>{
+      const dotC = pr.crit?'#ef4444':pr.bloq?'#f97316':(pr.status==='Atrasado'?'#F5C300':'#6366f1');
+      return `<span style="width:9px;height:9px;border-radius:50%;background:${dotC};display:inline-block;box-shadow:0 0 5px ${dotC}88" title="${pr.nome}"></span>`;
+    }).join('');
+    return `<div style="background:${riskBg};border:1px solid ${riskColor}40;border-top:2px solid ${riskColor};border-radius:16px;padding:18px 20px;animation:bentoIn .4s ease ${(idx*.08).toFixed(2)}s both">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,${riskColor}40,${riskColor}20);border:1px solid ${riskColor}50;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:${riskColor};flex-shrink:0">${initials}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:15px;font-weight:800;color:#f1f5f9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(nome)}</div>
+          <div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap">${dots}</div>
+        </div>
       </div>
-      <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:#3b82f6">${d.total}</div><div style="font-size:10px;color:#64748b">projetos</div></div>
-      <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:${d.bloqueados>0?'#f97316':'#94a3b8'}">${d.bloqueados}</div><div style="font-size:10px;color:#64748b">bloqueados</div></div>
-      <div style="text-align:center"><div style="font-size:22px;font-weight:800;color:${riskColor}">${d.criticos}</div><div style="font-size:10px;color:#64748b">críticos</div></div>
+      <div style="height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;margin-bottom:10px">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${riskColor}cc,${riskColor}66);border-radius:5px;box-shadow:0 0 8px ${riskColor}55"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+        <div><div style="font-size:26px;font-weight:900;color:#60a5fa;letter-spacing:-1px">${d.total}</div><div style="font-size:10px;color:#475569;font-weight:600">projetos</div></div>
+        <div><div style="font-size:26px;font-weight:900;color:${d.bloqueados>0?'#f97316':'#334155'};letter-spacing:-1px">${d.bloqueados}</div><div style="font-size:10px;color:#475569;font-weight:600">bloqueados</div></div>
+        <div><div style="font-size:26px;font-weight:900;color:${riskColor};letter-spacing:-1px">${d.criticos}</div><div style="font-size:10px;color:#475569;font-weight:600">críticos</div></div>
+      </div>
     </div>`;
   }).join('');
   const s6=`
-  <div class="tv-s-title">Carga por PMO / Gestor <span class="tv-s-title-sub">${wlEntries.length} gestores · portfólio ativo</span></div>
-  <div style="width:100%;margin-top:8px">
-    <div style="display:grid;grid-template-columns:120px 1fr 90px 90px 90px;gap:14px;padding:8px 16px 10px;border-bottom:1px solid rgba(255,255,255,.1)">
-      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px">PMO</div>
-      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px">Carga</div>
-      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;text-align:center">Total</div>
-      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;text-align:center">Bloqueados</div>
-      <div style="font-size:10px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.8px;text-align:center">Críticos</div>
-    </div>
-    ${pmoRows}
-  </div>`;
+  <div class="tv-s-title">👥 Carga por PMO / Gestor <span class="tv-s-title-sub">${wlEntries.length} gestores · portfólio ativo</span></div>
+  <div style="display:grid;grid-template-columns:repeat(${Math.min(wlEntries.length,4)},1fr);gap:14px;width:100%">${pmoCards}</div>`;
 
   return [
     {title:'VELOX PMO',          html:s0},
