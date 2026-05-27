@@ -166,6 +166,7 @@ a{color:inherit;text-decoration:none}
 .tv-slide{display:none;width:100%;max-width:1480px;animation:tvIn .5s cubic-bezier(.22,1,.36,1)}
 .tv-slide.active{display:flex;flex-direction:column}
 @keyframes tvIn{from{opacity:0;transform:translateY(24px) scale(.99)}to{opacity:1;transform:none}}
+@keyframes tvRotAnim{0%,100%{transform:rotate(0deg)}30%{transform:rotate(90deg)}70%{transform:rotate(90deg)}}
 .tv-footer{padding:12px 52px;border-top:1px solid rgba(139,92,246,.12);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:2;background:rgba(10,6,28,.88);backdrop-filter:blur(20px)}
 .tv-prog-bar{flex:1;height:3px;background:rgba(255,255,255,.07);border-radius:2px;margin:0 28px;overflow:hidden}
 .tv-prog-fill{height:100%;background:linear-gradient(90deg,#8b5cf6,#F5C300);border-radius:2px;transition:width .1s linear;box-shadow:0 0 10px rgba(139,92,246,.6)}
@@ -350,7 +351,7 @@ a{color:inherit;text-decoration:none}
     <div class="topbar-actions">
       <div class="topbar-clock no-print" id="topbar-clock">--:--:--</div>
       <button class="btn-print no-print" onclick="openPM()">📄 PDF / Imprimir</button>
-      <button class="btn-tv no-print" onclick="openTV()">📺 Projetar na TV</button>
+      <button class="btn-tv no-print" onclick="openTV()">📺 <span class="btn-tv-lbl">Projetar na TV</span></button>
       <button class="btn-cmd no-print" onclick="document.getElementById('cmd-overlay').classList.add('open')">⌘ Buscar <kbd>Ctrl K</kbd></button>
       <button class="btn-icon no-print" onclick="toggleTheme()">◑</button>
     </div>
@@ -374,6 +375,13 @@ a{color:inherit;text-decoration:none}
 
 <!-- TV Overlay -->
 <div id="tv-overlay">
+  <!-- Portrait-mode rotation hint (mobile only) -->
+  <div id="tv-portrait-hint" style="display:none;position:absolute;inset:0;z-index:20;background:rgba(2,8,16,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px;text-align:center;padding:32px">
+    <div style="font-size:64px;animation:tvRotAnim 2s ease-in-out infinite">🔄</div>
+    <div style="font-size:22px;font-weight:800;color:#f1f5f9;letter-spacing:-.5px">Gire o dispositivo</div>
+    <div style="font-size:14px;color:#64748b;max-width:260px;line-height:1.5">O modo TV foi projetado para visualização em <strong style="color:#a78bfa">paisagem (horizontal)</strong>. Rode o celular para continuar.</div>
+    <button onclick="closeTV()" style="margin-top:8px;padding:10px 24px;border-radius:10px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#f87171;font-size:13px;font-weight:700;cursor:pointer">✕ Fechar TV</button>
+  </div>
   <!-- Ambient glow background -->
   <div class="tv-bg-glow" id="tv-bg-glow">
     <div class="tv-glow-orb" id="tv-orb-1" style="width:600px;height:600px;top:-200px;left:-100px;animation-delay:0s"></div>
@@ -1359,17 +1367,27 @@ function tvUpdateTheme(){
   document.getElementById('tv-orb-2').style.background = `radial-gradient(circle, ${t.orb2}, transparent 70%)`;
 }
 
+function tvCheckOrientation(){
+  const hint=document.getElementById('tv-portrait-hint');
+  if(!hint) return;
+  const isPortrait=window.innerHeight>window.innerWidth;
+  hint.style.display=isPortrait?'flex':'none';
+}
 function openTV(){
   tvSlides=buildSlides(); tvSlide=0; tvPaused=false;
   document.getElementById('tv-overlay').classList.add('open');
   tvRender(); tvStart(); tvClock();
   tvClkInt=setInterval(tvClock,1000);
+  tvCheckOrientation();
 }
 function closeTV(){
   document.getElementById('tv-overlay').classList.remove('open');
   clearInterval(tvTimer); clearInterval(tvClkInt);
   tvTimer=null; tvClkInt=null;
 }
+window.addEventListener('resize',()=>{
+  if(document.getElementById('tv-overlay').classList.contains('open')) tvCheckOrientation();
+});
 function tvRender(){
   const s=tvSlides[tvSlide];
   document.getElementById('tv-body').innerHTML=`<div class="tv-slide active">${s.html}</div>`;

@@ -92,8 +92,32 @@
   .topbar { padding: 10px 14px !important; gap: 8px; flex-wrap: nowrap; }
   .topbar-title { font-size: 15px !important; }
   .topbar-sub { display: none !important; }
-  .btn-print, .btn-tv, .btn-cmd { display: none !important; }
+  .btn-print, .btn-cmd { display: none !important; }
   .topbar-clock { display: none !important; }
+
+  /* ── TV button: mantém visível como ícone apenas ── */
+  .btn-tv { display: flex !important; padding: 7px 10px !important; gap: 0 !important; }
+  .btn-tv-lbl { display: none !important; }
+
+  /* ── TV Overlay: ajustes para mobile ── */
+  .tv-header { padding: 10px 14px !important; gap: 8px !important; flex-wrap: wrap !important; }
+  .tv-logo-row { gap: 8px !important; }
+  .tv-logo-icon { width: 28px !important; height: 28px !important; font-size: 11px !important; }
+  .tv-logo-name { font-size: 16px !important; }
+  .tv-logo-by { font-size: 8px !important; }
+  .tv-slide-badge { padding: 4px 12px !important; }
+  .tv-slide-badge-txt { font-size: 11px !important; letter-spacing: .8px !important; }
+  .tv-clock { font-size: 16px !important; }
+  .tv-date-lbl { display: none !important; }
+  .tv-body { padding: 12px 14px !important; overflow-y: auto !important; }
+  .tv-s-title { font-size: 16px !important; margin-bottom: 12px !important; }
+  .tv-s-title-sub { font-size: 10px !important; }
+  .tv-kpi-val { font-size: 48px !important; }
+  .tv-kpi-lbl { font-size: 11px !important; }
+  .tv-kpi-sub { font-size: 10px !important; }
+  .tv-footer { padding: 10px 14px !important; }
+  .tv-golive-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .tv-kbd { display: none !important; }
 
   /* ── Urgency Banner ── */
   #urgency-banner { padding: 8px 14px !important; }
