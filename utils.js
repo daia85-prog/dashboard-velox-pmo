@@ -1980,6 +1980,76 @@ function toast(msg, type='info', dur=3500){
   setTimeout(() => t.remove(), dur);
 }
 
+// ── Portrait Mode Hint ────────────────────────────────────
+(function initPortraitHint(){
+  let dismissed = false;
+
+  function injectHint(){
+    if(document.getElementById('portrait-toast')) return;
+
+    // Keyframe styles
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes phRotate{0%,30%{transform:rotate(0deg)}55%,85%{transform:rotate(90deg)}100%{transform:rotate(90deg)}}
+      @keyframes phSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+      @keyframes phSlideDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(20px)}}
+      #portrait-toast{animation:phSlideUp .35s cubic-bezier(.22,1,.36,1)}
+      #portrait-toast.hiding{animation:phSlideDown .3s ease forwards}
+    `;
+    document.head.appendChild(style);
+
+    const el = document.createElement('div');
+    el.id = 'portrait-toast';
+    el.style.cssText = [
+      'position:fixed','bottom:72px','left:50%','transform:translateX(-50%)',
+      'z-index:9990','display:flex','align-items:center','gap:12px',
+      'padding:13px 18px 13px 14px','border-radius:16px',
+      'background:rgba(10,6,28,.96)','border:1px solid rgba(139,92,246,.35)',
+      'box-shadow:0 8px 32px rgba(0,0,0,.55),0 0 0 1px rgba(139,92,246,.1)',
+      'backdrop-filter:blur(16px)','-webkit-backdrop-filter:blur(16px)',
+      'white-space:nowrap','pointer-events:auto'
+    ].join(';');
+
+    el.innerHTML = `
+      <span id="ph-phone" style="font-size:26px;display:inline-block;animation:phRotate 2.2s ease-in-out infinite">📱</span>
+      <div style="line-height:1.35">
+        <div style="font-size:13px;font-weight:700;color:#f1f5f9">Gire o celular!</div>
+        <div style="font-size:11px;color:#64748b">Melhor visualização em paisagem</div>
+      </div>
+      <button id="ph-close" style="margin-left:6px;width:26px;height:26px;border-radius:8px;
+        background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+        color:#64748b;font-size:14px;cursor:pointer;display:flex;align-items:center;
+        justify-content:center;flex-shrink:0;font-family:inherit;line-height:1">✕</button>
+    `;
+    document.body.appendChild(el);
+
+    document.getElementById('ph-close').addEventListener('click', () => {
+      dismissed = true;
+      hideHint();
+    });
+  }
+
+  function hideHint(){
+    const el = document.getElementById('portrait-toast');
+    if(!el) return;
+    el.classList.add('hiding');
+    setTimeout(() => { if(el.parentNode) el.remove(); }, 320);
+  }
+
+  function checkHint(){
+    const isMobile = window.innerWidth < 900;
+    const isPortrait = window.innerHeight > window.innerWidth;
+    if(isMobile && isPortrait && !dismissed){
+      injectHint();
+    } else {
+      hideHint();
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', checkHint);
+  window.addEventListener('resize', checkHint);
+})();
+
 // ── Sparkline SVG ─────────────────────────────────────────
 function makeSparkline(data, {w=80, h=28, color='#3b82f6', fill=true}={}){
   if(!data || data.length < 2) return '';
