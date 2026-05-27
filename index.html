@@ -1060,50 +1060,6 @@ function buildSlides(){
     </div>
   </div>`;
 
-  // ── Slide 1: Visão Executiva ──────────────────────────
-  const s1 = `
-  <div class="tv-s-title">Visão Executiva do Portfólio <span class="tv-s-title-sub">${PROJETOS.length} projetos · health ${health}%</span></div>
-  <div style="display:grid;grid-template-columns:220px 1fr;gap:28px;align-items:start;margin-bottom:20px">
-    <div style="text-align:center;background:rgba(255,255,255,.025);border:1px solid rgba(139,92,246,.18);border-radius:20px;padding:24px 16px">
-      ${tvSvgRing(health,hColor,180)}
-      <div style="font-size:14px;font-weight:800;color:${hColor};margin-top:6px">${hLabel}</div>
-      <div style="font-size:11px;color:#475569;margin-top:4px">${taxaConc}% concluídos</div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-      <div class="tv-kpi" style="border-color:rgba(59,130,246,.3);border-top-color:rgba(59,130,246,.5)">
-        <div class="tv-kpi-accent" style="background:linear-gradient(90deg,transparent,#3b82f6,transparent)"></div>
-        <div class="tv-kpi-val" style="color:#60a5fa;font-size:72px">${ativos.length}</div>
-        <div class="tv-kpi-lbl">Ativos</div>
-        <div class="tv-kpi-sub">${PROJETOS.length} no portfólio</div>
-      </div>
-      <div class="tv-kpi" style="border-color:rgba(34,197,94,.3);border-top-color:rgba(34,197,94,.5)">
-        <div class="tv-kpi-accent" style="background:linear-gradient(90deg,transparent,#22c55e,transparent)"></div>
-        <div class="tv-kpi-val" style="color:#4ade80;font-size:72px">${concluidos.length}</div>
-        <div class="tv-kpi-lbl">Concluídos</div>
-        <div class="tv-kpi-sub">${taxaConc}% do portfólio</div>
-      </div>
-      <div class="tv-kpi" style="border-color:rgba(239,68,68,.3);border-top-color:rgba(239,68,68,.5)">
-        <div class="tv-kpi-accent" style="background:linear-gradient(90deg,transparent,#ef4444,transparent)"></div>
-        <div class="tv-kpi-val" style="color:#f87171;font-size:72px">${bloqCount}</div>
-        <div class="tv-kpi-lbl">Bloqueadores</div>
-        <div class="tv-kpi-sub">${criticos.length} alto risco</div>
-      </div>
-      <div class="tv-kpi" style="border-color:rgba(245,195,0,.3);border-top-color:rgba(245,195,0,.5)">
-        <div class="tv-kpi-accent" style="background:linear-gradient(90deg,transparent,#F5C300,transparent)"></div>
-        <div class="tv-kpi-val" style="color:#fbbf24;font-size:72px">${goliveProx}</div>
-        <div class="tv-kpi-lbl">Go Live &lt;30d</div>
-        <div class="tv-kpi-sub">prazo crítico</div>
-      </div>
-    </div>
-  </div>
-  <div style="margin-top:8px">
-    ${(()=>{
-      const dist=ativos.reduce((acc,p)=>{const s=calcStatus(p);acc[s]=(acc[s]||0)+1;return acc;},{});
-      const barOrder=['Bloqueado','Crítico','Atrasado','Aguardando','Em andamento'];
-      return `<div style="display:flex;height:10px;border-radius:5px;overflow:hidden;gap:2px;width:100%">${barOrder.filter(s=>dist[s]).map(s=>{const sm=STATUS_MAP[s]||STATUS_MAP['Em andamento'];return `<div title="${sm.label}: ${dist[s]}" style="flex:${dist[s]};background:${sm.color};opacity:.9"></div>`;}).join('')}</div>
-      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:9px">${barOrder.filter(s=>dist[s]).map(s=>{const sm=STATUS_MAP[s]||STATUS_MAP['Em andamento'];return `<span style="font-size:12px;color:${sm.color};font-weight:800">${sm.icon} ${dist[s]} ${sm.label}</span>`;}).join('')}</div>`;
-    })()}
-  </div>`;
 
   // ── Slide 2: Críticos & Bloqueados ─────────────────────
   const bloqRows = bloqueados.length ? bloqueados.slice(0,8).map((p,idx)=>{
@@ -1279,13 +1235,113 @@ function buildSlides(){
   <div class="tv-s-title">👥 Carga por PMO / Gestor <span class="tv-s-title-sub">${wlEntries.length} gestores · portfólio ativo</span></div>
   <div style="display:grid;grid-template-columns:repeat(${Math.min(wlEntries.length,4)},1fr);gap:14px;width:100%">${pmoCards}</div>`;
 
+  // ── Slide Conquistas ──────────────────────────────────────────
+  const hoje90c=new Date(HOJE); hoje90c.setDate(hoje90c.getDate()-90);
+  const concFilt=concluidos.filter(p=>p.fim&&new Date(p.fim)>=hoje90c);
+  const concShow=(concFilt.length?concFilt:[...concluidos])
+    .sort((a,b)=>new Date(b.fim||'2000')-new Date(a.fim||'2000')).slice(0,8);
+  const conquCards=concShow.length===0?`<div style="text-align:center;padding:80px;color:#475569;font-size:20px;font-weight:600">Nenhum projeto concluído ainda</div>`:
+    concShow.map((p,idx)=>{
+      const fim=p.fim||'';
+      const diasAtras=fim?Math.round((HOJE-new Date(fim))/86400000):null;
+      const diasLabel=diasAtras===null?'—':diasAtras===0?'Hoje':diasAtras===1?'Ontem':`${diasAtras}d atrás`;
+      const isRecente=diasAtras!==null&&diasAtras<=30;
+      return `<div style="border-radius:16px;padding:18px 20px;background:linear-gradient(145deg,rgba(34,197,94,.09),rgba(16,185,129,.04));border:1px solid rgba(34,197,94,.3);border-top:3px solid #22c55e;position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.05).toFixed(2)}s both">
+      <div style="position:absolute;bottom:-14px;right:-10px;font-size:56px;opacity:.07;pointer-events:none;line-height:1">🏆</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:10px">
+        <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(34,197,94,.2);color:#22c55e;white-space:nowrap">✅ Concluído</span>
+        <span style="font-size:${isRecente?'16':'14'}px;font-weight:900;color:${isRecente?'#4ade80':'#94a3b8'};letter-spacing:-.5px;white-space:nowrap">${diasLabel}</span>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:#f1f5f9;line-height:1.25;margin-bottom:6px;min-height:38px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(p.nome)}</div>
+      <div style="font-size:11px;color:#475569;margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.pmo||p.local||'—')}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden"><div style="height:100%;width:100%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:4px;box-shadow:0 0 8px #22c55e55"></div></div>
+        <span style="font-size:15px;font-weight:900;color:#22c55e;flex-shrink:0">100%</span>
+      </div>
+      ${fim?`<div style="font-size:10px;color:#1e3a1e;margin-top:6px;font-weight:600">${formatDate(fim)}</div>`:''}
+    </div>`;
+    }).join('');
+  const sConq=`
+  <div class="tv-s-title">🏆 Conquistas <span class="tv-s-title-sub">${concShow.length} projeto${concShow.length!==1?'s':''} entregues</span></div>
+  <div style="display:grid;grid-template-columns:repeat(${Math.min(concShow.length||1,4)},1fr);gap:12px;width:100%">${conquCards}</div>`;
+
+  // ── Slide Atenção Imediata (TV) ────────────────────────────────
+  const tvAtvItems=[];
+  PROJETOS.forEach(p=>{
+    const st=calcStatus(p);
+    if(st==='Concluído'||st==='Não Iniciado'||st==='Standby') return;
+    const fe=getFimEfetivo(p)||p.fim;
+    const d=fe?Math.round((new Date(fe)-HOJE)/86400000):null;
+    const dp=calcDiasParadoAuto(p);
+    if(st==='Bloqueado'&&p.bloqueador)   tvAtvItems.push({sev:'P0',p,tip:'Bloqueado'});
+    else if(st==='Atrasado')             tvAtvItems.push({sev:'P0',p,tip:'Atrasado'+(d!==null?' '+Math.abs(d)+'d':'')});
+    else if(dp>=15)                      tvAtvItems.push({sev:'P1',p,tip:'Parado '+dp+'d'});
+    else if(d!==null&&d<=7&&d>=0)        tvAtvItems.push({sev:'P1',p,tip:'Go Live '+(d===0?'hoje':d+'d')});
+    else if(d!==null&&d<=30)             tvAtvItems.push({sev:'P2',p,tip:'Prazo '+d+'d'});
+  });
+  tvAtvItems.sort((a,b)=>a.sev.localeCompare(b.sev));
+  const tvSevFill  ={P0:'rgba(239,68,68,.42)',  P1:'rgba(249,115,22,.38)', P2:'rgba(59,130,246,.34)'};
+  const tvSevStroke={P0:'#ff5252',              P1:'#ff9a3c',              P2:'#60a5fa'};
+  const tvSevEdge  ={P0:'rgba(255,120,120,.55)',P1:'rgba(255,180,80,.5)',  P2:'rgba(120,180,255,.48)'};
+  const tvAtvW=1100, tvSevR={P0:68,P1:50,P2:36};
+  const tvP0list=tvAtvItems.filter(a=>a.sev==='P0').slice(0,5);
+  const tvP1list=tvAtvItems.filter(a=>a.sev==='P1').slice(0,6);
+  const tvP2list=tvAtvItems.filter(a=>a.sev==='P2').slice(0,7);
+  function tvBubRow(items,r,cy){
+    if(!items.length) return '';
+    const sp=Math.min(tvAtvW/(items.length+.5),r*2+28);
+    const sx=(tvAtvW-sp*(items.length-1))/2;
+    return items.map((b,i)=>{
+      const cx=(sx+i*sp).toFixed(1);
+      const col=tvSevStroke[b.sev];
+      const gid=`tvbg${b.sev}${i}`;
+      const fid=`tvfw${b.sev}${i}`;
+      const words=b.p.nome.replace(/\s*[-–]\s*/g,' ').split(' ').filter(Boolean);
+      const ln1=words.slice(0,2).join(' ').substring(0,15);
+      const ln2=words.length>2?words.slice(2,4).join(' ').substring(0,15):'';
+      const fsN=r>=60?13:r>=44?11:9;
+      const fsTip=r>=60?10:9;
+      const yOff=ln2?-(fsN+2):0;
+      return `<defs><radialGradient id="${gid}" cx="38%" cy="35%" r="60%"><stop offset="0%" stop-color="${tvSevEdge[b.sev]}"/><stop offset="100%" stop-color="${tvSevFill[b.sev]}"/></radialGradient><filter id="${fid}" x="-80%" y="-80%" width="260%" height="260%"><feGaussianBlur stdDeviation="${r>=60?6:4}" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#${gid})" stroke="${col}" stroke-width="2.5" filter="url(#${fid})"/><text x="${cx}" y="${cy+yOff}" text-anchor="middle" dominant-baseline="middle" font-size="${fsN}" font-weight="800" fill="#ffffff" font-family="Inter,sans-serif">${ln1}</text>${ln2?`<text x="${cx}" y="${cy+yOff+fsN+4}" text-anchor="middle" dominant-baseline="middle" font-size="${fsN}" font-weight="800" fill="#ffffff" font-family="Inter,sans-serif">${ln2}</text>`:''}<text x="${cx}" y="${cy+r-fsTip-4}" text-anchor="middle" dominant-baseline="middle" font-size="${fsTip}" font-weight="700" fill="${col}" font-family="Inter,sans-serif">${b.tip}</text><text x="${cx}" y="${cy+r+15}" text-anchor="middle" font-size="10" fill="#64748b" font-family="Inter,sans-serif" font-weight="600">${escHtml(b.p.pmo||'')}</text>`;
+    }).join('');
+  }
+  let tvBH=20,tvBRows='';
+  if(tvP0list.length){tvBRows+=tvBubRow(tvP0list,tvSevR.P0,tvBH+tvSevR.P0+10);tvBH+=tvSevR.P0*2+42;}
+  if(tvP1list.length){tvBRows+=tvBubRow(tvP1list,tvSevR.P1,tvBH+tvSevR.P1+8); tvBH+=tvSevR.P1*2+38;}
+  if(tvP2list.length){tvBRows+=tvBubRow(tvP2list,tvSevR.P2,tvBH+tvSevR.P2+6); tvBH+=tvSevR.P2*2+32;}
+  const tvBViewH=Math.max(100,tvBH+10);
+  let sAtencao;
+  if(tvAtvItems.length===0){
+    sAtencao=`
+  <div class="tv-s-title">⚡ Atenção Imediata <span class="tv-s-title-sub">0 alertas ativos</span></div>
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:18px">
+    <div style="font-size:90px;line-height:1">✅</div>
+    <div style="font-size:36px;font-weight:900;color:#22c55e;letter-spacing:-2px">Portfólio Saudável</div>
+    <div style="font-size:17px;color:#475569">Nenhum projeto em situação crítica no momento</div>
+  </div>`;
+  } else {
+    sAtencao=`
+  <div class="tv-s-title">⚡ Atenção Imediata <span class="tv-s-title-sub">${tvAtvItems.length} projeto${tvAtvItems.length!==1?'s':''} requerem atenção</span></div>
+  <div style="display:flex;gap:14px;margin-bottom:10px;flex-wrap:wrap">
+    ${tvP0list.length?`<div style="display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:10px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.35)"><span style="width:11px;height:11px;border-radius:50%;background:#ef4444;display:inline-block;animation:blink 2s infinite;box-shadow:0 0 8px #ef4444"></span><span style="font-size:13px;font-weight:800;color:#f87171">P0 — ${tvP0list.length} crítico${tvP0list.length!==1?'s':''}</span></div>`:''}
+    ${tvP1list.length?`<div style="display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:10px;background:rgba(249,115,22,.10);border:1px solid rgba(249,115,22,.3)"><span style="width:11px;height:11px;border-radius:50%;background:#f97316;display:inline-block;animation:blink 2.5s infinite;box-shadow:0 0 8px #f97316"></span><span style="font-size:13px;font-weight:800;color:#fb923c">P1 — ${tvP1list.length} alerta${tvP1list.length!==1?'s':''}</span></div>`:''}
+    ${tvP2list.length?`<div style="display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:10px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3)"><span style="width:11px;height:11px;border-radius:50%;background:#3b82f6;display:inline-block;box-shadow:0 0 8px #3b82f6"></span><span style="font-size:13px;font-weight:800;color:#60a5fa">P2 — ${tvP2list.length} prazo${tvP2list.length!==1?'s':''}</span></div>`:''}
+  </div>
+  <div style="width:100%;overflow:hidden">
+    <svg width="100%" viewBox="0 0 ${tvAtvW} ${tvBViewH}" preserveAspectRatio="xMidYMid meet" style="overflow:visible">
+      ${tvBRows}
+    </svg>
+  </div>`;
+  }
+
   return [
     {title:'VELOX PMO',          html:s0},
-    {title:'VISÃO EXECUTIVA',    html:s1},
     {title:'GO LIVES',           html:s5},
-    {title:'CARGA POR PMO',      html:s6},
     {title:'ALERTAS · CRÍTICOS', html:s2},
-    {title:'FAROL COMPLETO',     html:s3},
+    {title:'CONQUISTAS',         html:sConq},
+    {title:'FAROL · ATIVOS',     html:s3},
+    {title:'CARGA POR PMO',      html:s6},
+    {title:'ATENÇÃO IMEDIATA',   html:sAtencao},
   ];
 }
 
