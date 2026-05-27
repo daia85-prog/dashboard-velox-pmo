@@ -235,3 +235,28 @@
   /* Hide decorative side panels */
   .side-panel-deco { display: none !important; }
 }
+
+/* ── TV Overlay: landscape mobile (altura < 560px) ─────────────
+   Breakpoint por ALTURA — cobre landscape em qualquer largura   */
+@media (max-height: 560px) {
+  /* Header compacto */
+  .tv-header { padding: 7px 14px !important; gap: 6px !important; }
+  .tv-logo-icon { width: 26px !important; height: 26px !important; font-size: 10px !important; }
+  .tv-logo-name { font-size: 14px !important; }
+  .tv-logo-by   { display: none !important; }
+  .tv-logo-row  { gap: 7px !important; }
+  .tv-slide-badge { padding: 4px 12px !important; }
+  .tv-slide-badge-txt { font-size: 10px !important; letter-spacing: .6px !important; }
+  .tv-clock { font-size: 15px !important; }
+  .tv-date-lbl { display: none !important; }
+  /* Body: sem padding extra, permite o fit-scale trabalhar */
+  .tv-body { padding: 8px 12px !important; overflow: hidden !important; }
+  .tv-s-title { font-size: 15px !important; margin-bottom: 8px !important; }
+  .tv-s-title-sub { font-size: 9px !important; }
+  /* Footer compacto */
+  .tv-footer { padding: 7px 12px !important; }
+  .tv-btn { width: 30px !important; height: 30px !important; font-size: 14px !important; }
+  .tv-kbd  { display: none !important; }
+  .tv-slide-dots { gap: 4px !important; }
+  .tv-dot { width: 6px !important; height: 6px !important; }
+}

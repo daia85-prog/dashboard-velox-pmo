@@ -1403,8 +1403,46 @@ function closeTV(){
   tvTimer=null; tvClkInt=null;
 }
 window.addEventListener('resize',()=>{
-  if(document.getElementById('tv-overlay').classList.contains('open')) tvCheckOrientation();
+  const ov=document.getElementById('tv-overlay');
+  if(ov&&ov.classList.contains('open')){ tvCheckOrientation(); tvFitSlide(); }
 });
+
+// ── TV: swipe touch para mudar slide ─────────────────────
+(function(){
+  let tx=0, ty=0;
+  document.addEventListener('DOMContentLoaded',()=>{
+    const ov=document.getElementById('tv-overlay');
+    if(!ov) return;
+    ov.addEventListener('touchstart',e=>{
+      tx=e.touches[0].clientX; ty=e.touches[0].clientY;
+    },{passive:true});
+    ov.addEventListener('touchend',e=>{
+      if(!ov.classList.contains('open')) return;
+      const dx=e.changedTouches[0].clientX-tx;
+      const dy=e.changedTouches[0].clientY-ty;
+      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>48){
+        if(dx<0) tvNext(); else tvPrev();
+      }
+    },{passive:true});
+  });
+})();
+function tvFitSlide(){
+  const body=document.getElementById('tv-body');
+  if(!body) return;
+  const slide=body.querySelector('.tv-slide');
+  if(!slide) return;
+  slide.style.transform=''; slide.style.transformOrigin=''; body.style.alignItems='';
+  requestAnimationFrame(()=>{
+    const bH=body.clientHeight-8, bW=body.clientWidth-8;
+    const sH=slide.scrollHeight, sW=slide.scrollWidth;
+    const scale=Math.min(1, bH/Math.max(sH,1), bW/Math.max(sW,1));
+    if(scale<0.97){
+      body.style.alignItems='flex-start';
+      slide.style.transformOrigin='top center';
+      slide.style.transform=`scale(${scale.toFixed(3)})`;
+    }
+  });
+}
 function tvRender(){
   const s=tvSlides[tvSlide];
   document.getElementById('tv-body').innerHTML=`<div class="tv-slide active">${s.html}</div>`;
@@ -1413,6 +1451,7 @@ function tvRender(){
   tvProg=0;
   tvUpdateDots();
   tvUpdateTheme();
+  tvFitSlide();
 }
 function tvNext(){ clearInterval(tvTimer); tvSlide=(tvSlide+1)%tvSlides.length; tvRender(); if(!tvPaused)tvStart(); }
 function tvPrev(){ clearInterval(tvTimer); tvSlide=(tvSlide-1+tvSlides.length)%tvSlides.length; tvRender(); if(!tvPaused)tvStart(); }
