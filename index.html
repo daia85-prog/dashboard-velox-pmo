@@ -101,15 +101,14 @@ a{color:inherit;text-decoration:none}
 .intel-card{grid-column:span 12}
 .intel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .farol-mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:8px}
-.farol-mini{background:var(--surface2);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all .25s;border:1px solid var(--border);position:relative;overflow:hidden}
+.farol-mini{background:var(--surface2);border-radius:12px;padding:14px 16px;cursor:default;transition:all .25s;border:1px solid var(--border);position:relative;overflow:hidden}
 .farol-mini::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.02),transparent);pointer-events:none}
 .farol-mini:hover{border-color:rgba(255,255,255,.18);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.25)}
 /* Urgency Banner */
 #urgency-banner{padding:9px 28px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid rgba(245,158,11,.2);background:linear-gradient(90deg,rgba(245,158,11,.07),transparent)}
 #urgency-banner.has-overdue{border-color:rgba(239,68,68,.25);background:linear-gradient(90deg,rgba(239,68,68,.07),transparent)}
 .urg-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);flex-shrink:0}
-.urg-item{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#f59e0b;cursor:pointer;transition:all .2s}
-.urg-item:hover{background:rgba(245,158,11,.2)}
+.urg-item{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);color:#f59e0b;cursor:default;transition:all .2s}
 .urg-item.overdue{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#ef4444}
 .urg-item.overdue{animation:urgPulse 2s infinite}
 @keyframes urgPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 3px rgba(239,68,68,.15)}}
@@ -267,7 +266,7 @@ a{color:inherit;text-decoration:none}
 .proj-table{width:100%;border-collapse:collapse}
 .proj-table th{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.07);white-space:nowrap}
 .proj-table td{padding:11px 12px;font-size:12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
-.proj-table tr{cursor:pointer;transition:background .12s}
+.proj-table tr{cursor:default;transition:background .12s}
 .proj-table tr:hover td{background:rgba(139,92,246,.08)}
 .proj-table td:first-child{border-left:3px solid transparent}
 .proj-table tr.row-crit td{background:rgba(239,68,68,.05)} .proj-table tr.row-crit td:first-child{border-left-color:#ef4444}
@@ -277,7 +276,7 @@ a{color:inherit;text-decoration:none}
 .pbar-fill{height:100%;border-radius:3px;transition:width .7s ease}
 /* Alerts sidebar */
 .alerts-section{grid-column:span 4;display:flex;flex-direction:column;gap:10px}
-.alert-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid transparent;cursor:pointer;transition:all .15s}
+.alert-item{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid transparent;cursor:default;transition:all .15s}
 .alert-item.sev-p0{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2)}
 .alert-item.sev-p1{background:rgba(249,115,22,.07);border-color:rgba(249,115,22,.18)}
 .alert-item.sev-p2{background:rgba(245,195,0,.06);border-color:rgba(245,195,0,.15)}
@@ -337,6 +336,7 @@ a{color:inherit;text-decoration:none}
     <a class="nav-item" href="squads.html">          <span class="nav-icon">🏢</span><span class="nav-label">Áreas</span></a>
     <a class="nav-item" href="alertas.html">         <span class="nav-icon">🔔</span><span class="nav-label" id="nav-alertas-label">Alertas</span></a>
     <a class="nav-item edit-only" href="admin.html"> <span class="nav-icon">⚙</span><span class="nav-label">Admin</span></a>
+    <a class="nav-item" href="releases.html">        <span class="nav-icon">🚀</span><span class="nav-label">Releases</span></a>
   </div>
   <div class="sb-footer"><div id="sidebar-user"></div></div>
 </nav>
