@@ -189,17 +189,33 @@
   .topbar-hamburger { width: 34px; height: 34px; }
 }
 
-/* ── Login page mobile ──────────────────────────────────────── */
+/* ── Login page mobile — portrait ───────────────────────────── */
 @media (max-width: 768px) {
   html, body { overflow: auto !important; height: auto !important; }
   .login-wrap { padding: 20px 16px 40px !important; min-height: 100dvh; align-items: flex-start !important; padding-top: 48px !important; }
   .login-card { padding: 32px 24px 28px !important; max-width: 100% !important; }
-  /* Hide heavy background animations on mobile for perf */
   .wm-bg, .wm-belt, #wm-gear-lg, #wm-gear-md, #wm-gear-sm { display: none !important; }
 }
 @media (max-width: 480px) {
   .login-wrap { padding: 12px 10px 32px !important; padding-top: 32px !important; }
   .login-card { padding: 28px 18px 24px !important; border-radius: 16px !important; }
+}
+
+/* ── Login page mobile — landscape (altura pequena) ──────────── */
+@media (max-height: 560px) {
+  html, body { overflow: auto !important; height: auto !important; }
+  .login-wrap {
+    min-height: 100dvh !important;
+    align-items: flex-start !important;
+    padding: 16px 20px 32px !important;
+    padding-top: 20px !important;
+  }
+  .login-card { padding: 24px 28px 20px !important; max-width: 480px !important; }
+  .wm-bg, .wm-belt, #wm-gear-lg, #wm-gear-md, #wm-gear-sm { display: none !important; }
+  /* Compactar logo e espaçamentos */
+  .login-logo { width: 52px !important; height: 52px !important; border-radius: 14px !important; }
+  .logo-name { font-size: 26px !important; }
+  .logo-welcome { margin-top: 8px !important; font-size: 12px !important; }
 }
 
 /* ── Releases page mobile ───────────────────────────────────── */
