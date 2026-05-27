@@ -885,6 +885,24 @@ function paSalvar(){
   if(idx!==-1){USUARIOS[idx].senha=nova;USUARIOS[idx].primeiroAcesso=false;saveUsers();setCurrentUser(USUARIOS[idx]);}
   location.href='index.html';
 }
+
+// ── Scroll em landscape mobile ────────────────────────────
+function loginFixOrientation(){
+  var landscape = window.innerWidth > window.innerHeight;
+  var dh = document.documentElement; var db = document.body;
+  var wrap = document.querySelector('.login-wrap');
+  if(landscape){
+    dh.style.overflow='auto'; dh.style.height='auto';
+    db.style.overflow='auto'; db.style.height='auto';
+    if(wrap){ wrap.style.alignItems='flex-start'; wrap.style.paddingTop='16px'; wrap.style.minHeight=''; }
+  } else {
+    dh.style.overflow=''; dh.style.height='';
+    db.style.overflow=''; db.style.height='';
+    if(wrap){ wrap.style.alignItems=''; wrap.style.paddingTop=''; wrap.style.minHeight=''; }
+  }
+}
+loginFixOrientation();
+window.addEventListener('resize', loginFixOrientation);
 </script>
 
 <!-- Modal: Primeiro Acesso -->

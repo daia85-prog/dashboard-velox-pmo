@@ -1390,41 +1390,64 @@ function tvCheckOrientation(){
   const isPortrait=window.innerHeight>window.innerWidth;
   hint.style.display=isPortrait?'flex':'none';
 }
+// ── TV: Fullscreen helpers ────────────────────────────────
+function tvEnterFullscreen(){
+  const el=document.documentElement;
+  try{
+    if(el.requestFullscreen)          el.requestFullscreen({navigationUI:'hide'});
+    else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    else if(el.mozRequestFullScreen)    el.mozRequestFullScreen();
+  }catch(e){}
+}
+function tvExitFullscreen(){
+  try{
+    if(document.exitFullscreen&&document.fullscreenElement)          document.exitFullscreen();
+    else if(document.webkitExitFullscreen&&document.webkitFullscreenElement) document.webkitExitFullscreen();
+    else if(document.mozCancelFullScreen&&document.mozFullScreenElement)     document.mozCancelFullScreen();
+  }catch(e){}
+}
+// Se usuário sair do fullscreen pelo SO → fechar TV também
+['fullscreenchange','webkitfullscreenchange','mozfullscreenchange'].forEach(ev=>{
+  document.addEventListener(ev,()=>{
+    const fs=document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement;
+    if(!fs){
+      const ov=document.getElementById('tv-overlay');
+      if(ov&&ov.classList.contains('open')) closeTV();
+    }
+  });
+});
+
 function openTV(){
   tvSlides=buildSlides(); tvSlide=0; tvPaused=false;
   document.getElementById('tv-overlay').classList.add('open');
   tvRender(); tvStart(); tvClock();
   tvClkInt=setInterval(tvClock,1000);
   tvCheckOrientation();
+  tvEnterFullscreen();
 }
 function closeTV(){
   document.getElementById('tv-overlay').classList.remove('open');
   clearInterval(tvTimer); clearInterval(tvClkInt);
   tvTimer=null; tvClkInt=null;
+  tvExitFullscreen();
 }
 window.addEventListener('resize',()=>{
   const ov=document.getElementById('tv-overlay');
   if(ov&&ov.classList.contains('open')){ tvCheckOrientation(); tvFitSlide(); }
 });
 
-// ── TV: swipe touch para mudar slide ─────────────────────
+// ── TV: swipe touch (executado direto — DOM já pronto aqui) ───
 (function(){
+  const ov=document.getElementById('tv-overlay');
+  if(!ov) return;
   let tx=0, ty=0;
-  document.addEventListener('DOMContentLoaded',()=>{
-    const ov=document.getElementById('tv-overlay');
-    if(!ov) return;
-    ov.addEventListener('touchstart',e=>{
-      tx=e.touches[0].clientX; ty=e.touches[0].clientY;
-    },{passive:true});
-    ov.addEventListener('touchend',e=>{
-      if(!ov.classList.contains('open')) return;
-      const dx=e.changedTouches[0].clientX-tx;
-      const dy=e.changedTouches[0].clientY-ty;
-      if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>48){
-        if(dx<0) tvNext(); else tvPrev();
-      }
-    },{passive:true});
-  });
+  ov.addEventListener('touchstart',e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+  ov.addEventListener('touchend',e=>{
+    if(!ov.classList.contains('open')) return;
+    const dx=e.changedTouches[0].clientX-tx;
+    const dy=e.changedTouches[0].clientY-ty;
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>48){ if(dx<0) tvNext(); else tvPrev(); }
+  },{passive:true});
 })();
 function tvFitSlide(){
   const body=document.getElementById('tv-body');
