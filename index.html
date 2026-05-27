@@ -1160,30 +1160,53 @@ function buildSlides(){
     </div>`;
   }
 
-  // ── Slide 3: Farol Completo — todos os ativos ──────────
+  // ── Slide 3: Farol Visual — grid de tiles por projeto ──
   const ativosSort=[...ativos].sort((a,b)=>{
-    const ord={'Atrasado':0,'Bloqueado':1,'Aguardando':2,'Em andamento':3};
     const critA=isCritico(a)?-1:0, critB=isCritico(b)?-1:0;
     if(critA!==critB) return critA-critB;
+    const ord={'Atrasado':0,'Bloqueado':1,'Aguardando':2,'Em andamento':3};
     const oa=ord[calcStatus(a)]??4, ob=ord[calcStatus(b)]??4;
     if(oa!==ob) return oa-ob;
     const fa=getFimEfetivo(a)||a.fim||'9999', fb=getFimEfetivo(b)||b.fim||'9999';
     return fa.localeCompare(fb);
   });
-  // Limita a 14 projetos (7+7) para não ficar ilegível na TV
-  const maxFarol = 14;
-  const farolSlice = ativosSort.slice(0, maxFarol);
-  const meio = Math.ceil(farolSlice.length/2);
-  const col1 = farolSlice.slice(0,meio);
-  const col2 = farolSlice.slice(meio);
-  const maisLabel = ativos.length > maxFarol ? `<div style="text-align:center;padding:10px 0 0;font-size:12px;color:#3d3d5c">+ ${ativos.length-maxFarol} projetos adicionais</div>` : '';
+  const maxFarol = 12;
+  const farolTiles = ativosSort.slice(0, maxFarol).map((p, idx)=>{
+    const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
+    const prog=calcProgresso(p);
+    const fe=getFimEfetivo(p)||p.fim;
+    const dias=fe?Math.round((new Date(fe)-HOJE)/86400000):null;
+    const isCrit=isCritico(p), isBloq=!!(p.bloqueador&&p.bloqueador.trim()&&st!=='Concluído');
+    // Cor dominante do tile baseada no risco real
+    const tileColor = isCrit||st==='Atrasado' ? '#ef4444'
+                    : isBloq||st==='Bloqueado' ? '#f97316'
+                    : st==='Aguardando'         ? '#f59e0b'
+                    : '#6366f1';
+    const dc = dias===null?'#475569':dias<0?'#ef4444':dias<=7?'#ef4444':dias<=30?'#F5C300':'#94a3b8';
+    const diasTxt = dias===null?'—':dias<0?`${Math.abs(dias)}d atr`:dias===0?'HOJE':dias+'d';
+    const diasBig = dias!==null && (dias<0||dias<=7);
+    return `<div style="border-radius:16px;padding:16px 18px;background:linear-gradient(145deg,${tileColor}12,${tileColor}06);border:1px solid ${tileColor}35;border-top:3px solid ${tileColor};position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.04).toFixed(2)}s both">
+      <div style="position:absolute;bottom:-20px;right:-14px;font-size:52px;opacity:.06;pointer-events:none;line-height:1">${sm.icon}</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:10px">
+        <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:${tileColor}25;color:${tileColor};white-space:nowrap">${sm.icon} ${sm.label}</span>
+        <span style="font-size:${diasBig?'20':'17'}px;font-weight:900;color:${dc};letter-spacing:-1px;white-space:nowrap;${diasBig?'animation:urgPulse 1.5s infinite':''}">${diasTxt}</span>
+      </div>
+      <div style="font-size:15px;font-weight:800;color:#f1f5f9;line-height:1.25;margin-bottom:6px;min-height:38px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(p.nome)}</div>
+      <div style="font-size:11px;color:#475569;margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.pmo||p.local||'—')}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="flex:1;height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${prog}%;background:${tileColor};border-radius:4px;box-shadow:0 0 8px ${tileColor}66"></div>
+        </div>
+        <span style="font-size:15px;font-weight:900;color:${tileColor};flex-shrink:0">${prog}%</span>
+      </div>
+    </div>`;
+  }).join('');
+  const maisLabel3 = ativos.length > maxFarol
+    ? `<div style="text-align:center;padding:10px 0 0;font-size:13px;color:#3d3d5c;font-weight:600">+ ${ativos.length-maxFarol} projetos adicionais</div>` : '';
   const s3=`
-  <div class="tv-s-title">🚦 Farol de Projetos <span class="tv-s-title-sub">${ativos.length} projetos ativos · ordenado por urgência</span></div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 20px;width:100%">
-    <div>${col1.map(_farolRow).join('')}</div>
-    <div>${col2.map(_farolRow).join('')}</div>
-  </div>
-  ${maisLabel}`;
+  <div class="tv-s-title">🚦 Farol de Projetos <span class="tv-s-title-sub">${ativos.length} ativos · urgência → verde</span></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%">${farolTiles}</div>
+  ${maisLabel3}`;
 
   // ── Slide 5: Go Lives — próximos prazos ───────────────
   const proximos = ativos
