@@ -733,11 +733,10 @@ function render(){
   // Build bubble SVG
   const bvW=280;
   const sevR={P0:30,P1:22,P2:16};
-  // Glass-bubble style: fill quase transparente + stroke neon + glow
-  const sevFill  ={P0:'rgba(239,68,68,.13)',  P1:'rgba(249,115,22,.12)', P2:'rgba(59,130,246,.11)'};
-  const sevStroke={P0:'#ff4444',              P1:'#ff8c00',              P2:'#4fa3ff'};
-  const sevGlow  ={P0:'rgba(239,68,68,.7)',   P1:'rgba(249,115,22,.6)',  P2:'rgba(59,130,246,.55)'};
-  const sevRim   ={P0:'rgba(239,68,68,.22)',  P1:'rgba(249,115,22,.18)', P2:'rgba(59,130,246,.15)'};
+  // Fill sólido mas com gradiente interno — equilibrado como PMO/Portfolio
+  const sevFill  ={P0:'rgba(239,68,68,.42)',   P1:'rgba(249,115,22,.38)',  P2:'rgba(59,130,246,.34)'};
+  const sevStroke={P0:'#ff5252',               P1:'#ff9a3c',               P2:'#60a5fa'};
+  const sevEdge  ={P0:'rgba(255,120,120,.55)', P1:'rgba(255,180,80,.5)',   P2:'rgba(120,180,255,.48)'};
 
   function bubbleRow(items, r, cy){
     if(!items.length) return '';
@@ -748,21 +747,24 @@ function render(){
       const abbr=b.p.nome.replace(/[^A-Z0-9]/gi,'').substring(0,3).toUpperCase()||b.p.nome.substring(0,3).toUpperCase();
       const col=sevStroke[b.sev];
       const fs=r>=28?12:r>=20?10:9;
-      const glowId=`g${b.sev}${i}`;
-      // Anel de pulso externo (só P0 e P1)
-      const pulse = b.sev!=='P2'
-        ? `<circle cx="${cx.toFixed(1)}" cy="${cy}" r="${(r+10).toFixed(1)}" fill="none" stroke="${col}" stroke-width="1" opacity=".18"/>`
-        : '';
-      return `<defs><filter id="${glowId}" x="-60%" y="-60%" width="220%" height="220%">
-  <feGaussianBlur stdDeviation="4" result="blur"/>
-  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-</filter></defs>
-${pulse}
-<circle cx="${cx.toFixed(1)}" cy="${cy}" r="${r}" fill="${sevFill[b.sev]}" stroke="${col}" stroke-width="2" filter="url(#${glowId})"/>
-<circle cx="${cx.toFixed(1)}" cy="${cy}" r="${r}" fill="none" stroke="${sevRim[b.sev]}" stroke-width="${r*0.6}" opacity=".35"/>
-<text x="${cx.toFixed(1)}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="${fs}" font-weight="900" fill="${col}" font-family="Inter,sans-serif" filter="url(#${glowId})">${abbr}</text>
-<text x="${cx.toFixed(1)}" y="${cy+r+11}" text-anchor="middle" font-size="8" fill="#64748b" font-family="Inter,sans-serif" font-weight="600">${b.p.nome.split(/[\s-]/)[0].substring(0,10)}</text>
-<text x="${cx.toFixed(1)}" y="${cy+r+21}" text-anchor="middle" font-size="7.5" fill="${col}" font-family="Inter,sans-serif" font-weight="700" opacity=".85">${b.tip}</text>`;
+      const gradId=`bg${b.sev}${i}`;
+      const glowId=`gw${b.sev}${i}`;
+      // Nome completo do projeto (1ª palavra), mais longo
+      const nomeCurto=b.p.nome.replace(/\s*-\s*/g,' ').split(' ')[0].substring(0,11);
+      return `<defs>
+  <radialGradient id="${gradId}" cx="38%" cy="35%" r="60%">
+    <stop offset="0%" stop-color="${sevEdge[b.sev]}"/>
+    <stop offset="100%" stop-color="${sevFill[b.sev]}"/>
+  </radialGradient>
+  <filter id="${glowId}" x="-80%" y="-80%" width="260%" height="260%">
+    <feGaussianBlur stdDeviation="3.5" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<circle cx="${cx.toFixed(1)}" cy="${cy}" r="${r}" fill="url(#${gradId})" stroke="${col}" stroke-width="2" filter="url(#${glowId})"/>
+<text x="${cx.toFixed(1)}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-size="${fs}" font-weight="900" fill="#ffffff" font-family="Inter,sans-serif">${abbr}</text>
+<text x="${cx.toFixed(1)}" y="${cy+r+11}" text-anchor="middle" font-size="8.5" fill="#94a3b8" font-family="Inter,sans-serif" font-weight="700">${nomeCurto}</text>
+<text x="${cx.toFixed(1)}" y="${cy+r+22}" text-anchor="middle" font-size="8" fill="${col}" font-family="Inter,sans-serif" font-weight="700">${b.tip}</text>`;
     }).join('');
   }
 
