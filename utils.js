@@ -2485,3 +2485,65 @@ function simulateSparkData(currentValue, volatility) {
   data.push(currentValue);
   return data;
 }
+
+// ── Mobile Sidebar Drawer ─────────────────────────────────────
+// Auto-inicializa em todas as páginas: injeta backdrop + hamburger,
+// gerencia drawer em telas ≤ 900px.
+(function initMobileNav(){
+  document.addEventListener('DOMContentLoaded', function(){
+    const sidebar = document.getElementById('sidebar');
+    if(!sidebar) return;
+
+    // ── Backdrop ──
+    const bd = document.createElement('div');
+    bd.id = 'sidebar-backdrop';
+    document.body.appendChild(bd);
+    bd.addEventListener('click', closeMobileNav);
+
+    // ── Hamburger injetado no topbar ──
+    const topbar = document.querySelector('.topbar');
+    if(topbar && !topbar.querySelector('.topbar-hamburger')){
+      const btn = document.createElement('button');
+      btn.className = 'topbar-hamburger';
+      btn.setAttribute('aria-label', 'Abrir menu');
+      btn.setAttribute('title', 'Menu');
+      btn.innerHTML = '&#9776;';
+      topbar.insertBefore(btn, topbar.firstChild);
+      btn.addEventListener('click', toggleMobileNav);
+    }
+
+    // ── Fechar ao clicar em link do nav (UX mobile) ──
+    sidebar.querySelectorAll('.nav-item').forEach(function(a){
+      a.addEventListener('click', function(){
+        if(window.innerWidth <= 900) closeMobileNav();
+      });
+    });
+
+    // ── Fechar com Escape ──
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeMobileNav();
+    });
+  });
+
+  function toggleMobileNav(){
+    const sidebar = document.getElementById('sidebar');
+    if(!sidebar) return;
+    sidebar.classList.contains('mobile-open') ? closeMobileNav() : openMobileNav();
+  }
+
+  function openMobileNav(){
+    const sidebar  = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if(sidebar)  sidebar.classList.add('mobile-open');
+    if(backdrop) backdrop.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMobileNav(){
+    const sidebar  = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebar-backdrop');
+    if(sidebar)  sidebar.classList.remove('mobile-open');
+    if(backdrop) backdrop.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+})();

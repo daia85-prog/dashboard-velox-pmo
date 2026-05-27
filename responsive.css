@@ -1,0 +1,208 @@
+/* ============================================================
+ * RESPONSIVE.CSS — V16 · Velox by Invent · PMO Dashboard
+ * Mobile-friendly overrides · desktop ≥1024 · tablet 768-1023 · mobile <768
+ * ============================================================ */
+
+/* ── Hamburger button (visible only on mobile) ─────────────── */
+.topbar-hamburger {
+  display: none;
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  align-items: center; justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--muted2);
+  font-size: 18px;
+  cursor: pointer;
+  transition: all .2s;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+.topbar-hamburger:hover { background: var(--surface2); color: var(--text); }
+
+/* ── Mobile backdrop (behind drawer) ───────────────────────── */
+#sidebar-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 99;
+  animation: fadeInBd .2s ease;
+}
+#sidebar-backdrop.open { display: block; }
+@keyframes fadeInBd { from { opacity:0 } to { opacity:1 } }
+
+/* ── Tablet: 900–1199px ─────────────────────────────────────── */
+@media (max-width: 1199px) {
+  .bento { padding: 18px 20px !important; gap: 14px !important; }
+  .tv-body { padding: 16px 32px !important; }
+  .topbar { padding: 12px 20px !important; }
+}
+
+/* ── Sidebar drawer (< 900px) ───────────────────────────────── */
+@media (max-width: 900px) {
+  /* Show hamburger */
+  .topbar-hamburger { display: flex !important; }
+
+  /* Sidebar becomes fixed drawer */
+  #sidebar {
+    position: fixed !important;
+    top: 0; left: 0; height: 100dvh !important;
+    z-index: 100 !important;
+    transform: translateX(-110%) !important;
+    transition: transform .3s cubic-bezier(.4,0,.2,1) !important;
+    width: 260px !important;
+    min-width: 260px !important;
+    box-shadow: none;
+  }
+  #sidebar.mobile-open {
+    transform: translateX(0) !important;
+    box-shadow: 6px 0 40px rgba(0,0,0,.55) !important;
+  }
+  /* When collapsed on mobile, drawer still shows full width */
+  #sidebar.collapsed {
+    width: 260px !important;
+    min-width: 260px !important;
+  }
+  #sidebar.collapsed .sb-brand { opacity: 1 !important; width: auto !important; }
+  #sidebar.collapsed .nav-label { opacity: 1 !important; width: auto !important; overflow: visible !important; }
+  #sidebar.collapsed .su-info { opacity: 1 !important; width: auto !important; overflow: visible !important; }
+
+  /* Hide desktop collapse toggle */
+  #sidebar-toggle { display: none !important; }
+
+  /* Topbar breathing room */
+  .topbar { padding: 10px 16px !important; gap: 8px; }
+
+  /* Hide large action buttons on tablet */
+  .btn-print, .btn-tv { font-size: 11px !important; padding: 6px 10px !important; }
+  .btn-cmd { display: none !important; }
+  .topbar-clock { display: none !important; }
+}
+
+/* ── Mobile layout (< 768px) ────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Allow page to scroll */
+  html, body { overflow: auto !important; height: auto !important; }
+  .app { flex-direction: column; overflow: visible !important; height: auto !important; }
+  #main { height: auto !important; overflow: visible !important; }
+
+  /* ── Topbar ── */
+  .topbar { padding: 10px 14px !important; gap: 8px; flex-wrap: nowrap; }
+  .topbar-title { font-size: 15px !important; }
+  .topbar-sub { display: none !important; }
+  .btn-print, .btn-tv, .btn-cmd { display: none !important; }
+  .topbar-clock { display: none !important; }
+
+  /* ── Urgency Banner ── */
+  #urgency-banner { padding: 8px 14px !important; }
+
+  /* ── Bento grid → vertical stack ── */
+  .bento {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 14px !important;
+    gap: 12px !important;
+  }
+
+  /* ── KPI row → 2-column grid ── */
+  .kpi-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  /* ── KPI card sizes ── */
+  .kpi-big { padding: 18px 14px 14px !important; }
+  .kpi-big-num { font-size: 42px !important; letter-spacing: -2.5px !important; }
+  .kpi-big-lbl { font-size: 10px !important; }
+  .kpi-big-sub { font-size: 11px !important; }
+
+  /* ── Mid-row (Portfolio / PMO / Atenção) → stacked ── */
+  .mid-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  .donut-section, .pmo-section, .atencao-section { width: 100% !important; }
+
+  /* ── Status table + alerts → stacked ── */
+  .status-section { width: 100% !important; overflow-x: auto !important; }
+  .alerts-section { width: 100% !important; }
+  .timeline-section { width: 100% !important; }
+
+  /* ── Gantt → horizontal scroll ── */
+  .gantt-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+
+  /* ── Proj table → horizontal scroll ── */
+  .proj-table { min-width: 540px; }
+
+  /* ── Intel grid → 2 col ── */
+  .intel-grid { grid-template-columns: 1fr 1fr !important; }
+  .intel-card { width: 100% !important; }
+
+  /* ── Farol grid → 1 col ── */
+  .farol-mini-grid { grid-template-columns: 1fr !important; }
+
+  /* ── General card ── */
+  .card { min-width: 0; width: 100% !important; }
+}
+
+/* ── Small mobile (< 480px) ─────────────────────────────────── */
+@media (max-width: 480px) {
+  .bento { padding: 10px !important; gap: 10px !important; }
+  .kpi-row { grid-template-columns: 1fr !important; }
+  .kpi-big-num { font-size: 36px !important; }
+  .intel-grid { grid-template-columns: 1fr !important; }
+  .topbar-hamburger { width: 34px; height: 34px; }
+}
+
+/* ── Login page mobile ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  html, body { overflow: auto !important; height: auto !important; }
+  .login-wrap { padding: 20px 16px 40px !important; min-height: 100dvh; align-items: flex-start !important; padding-top: 48px !important; }
+  .login-card { padding: 32px 24px 28px !important; max-width: 100% !important; }
+  /* Hide heavy background animations on mobile for perf */
+  .wm-bg, .wm-belt, #wm-gear-lg, #wm-gear-md, #wm-gear-sm { display: none !important; }
+}
+@media (max-width: 480px) {
+  .login-wrap { padding: 12px 10px 32px !important; padding-top: 32px !important; }
+  .login-card { padding: 28px 18px 24px !important; border-radius: 16px !important; }
+}
+
+/* ── Releases page mobile ───────────────────────────────────── */
+@media (max-width: 768px) {
+  .releases-wrap { padding: 16px 14px !important; }
+  .rel-hero { flex-direction: column !important; text-align: center !important; padding: 24px 18px !important; gap: 16px !important; }
+  .rel-hero-badge { width: 100px; margin: 0 auto; }
+  .rel-hero-sub { max-width: 100% !important; }
+  .rel-hero-meta { justify-content: center; }
+  .rel-grid { grid-template-columns: 1fr !important; }
+  .rel-modules { grid-template-columns: 1fr !important; }
+  .rel-next-grid { grid-template-columns: 1fr 1fr !important; }
+}
+@media (max-width: 480px) {
+  .rel-next-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── Other pages (gerencial, projetos, squads, alertas, admin) ─ */
+@media (max-width: 768px) {
+  /* Generic page content areas */
+  .page-wrap, .page-content, .content-wrap {
+    padding: 14px !important;
+  }
+  /* Tables in other pages */
+  table { min-width: 480px; }
+  .table-wrap, .proj-list-wrap { overflow-x: auto !important; -webkit-overflow-scrolling: touch; }
+  /* Filters and toolbars */
+  .filters-bar, .toolbar { flex-wrap: wrap !important; gap: 8px !important; padding: 10px 14px !important; }
+  /* Modals */
+  .modal-box, .dialog-box { width: 95vw !important; max-width: 95vw !important; margin: 10px !important; }
+  /* Charts */
+  .chart-wrap { min-height: 180px; }
+  /* Hide decorative side panels */
+  .side-panel-deco { display: none !important; }
+}

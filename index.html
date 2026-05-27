@@ -317,6 +317,7 @@ a{color:inherit;text-decoration:none}
   @page{margin:12mm 14mm;size:A4 landscape}
 }
 </style>
+<link rel="stylesheet" href="responsive.css">
 </head>
 <body>
 <div class="app">
@@ -836,7 +837,7 @@ function render(){
   </div>`;
 
   document.getElementById('bento').innerHTML = kpiHtml + `
-  <div style="grid-column:span 12;display:grid;grid-template-columns:5fr 4fr 3fr;gap:16px;align-items:stretch">
+  <div class="mid-row" style="grid-column:span 12;display:grid;grid-template-columns:5fr 4fr 3fr;gap:16px;align-items:stretch">
     ${donutHtml}${pmoHtml}${atvHtml}
   </div>` + ganttHtml;
   // Dashboard é estático — nada clicável nas áreas de gráfico.
