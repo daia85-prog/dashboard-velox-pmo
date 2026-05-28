@@ -1295,7 +1295,7 @@ function buildSlides(){
       </div>`;
     }).join('');
     const extras=(d.projetos||[]).length>5?`<div style="font-size:10px;color:#475569;text-align:center;padding-top:5px;font-weight:600">+${(d.projetos||[]).length-5} projetos</div>`:'';
-    return `<div style="background:${riskBg};border:1px solid ${riskColor}35;border-top:3px solid ${riskColor};border-radius:16px;padding:16px 18px;animation:bentoIn .4s ease ${(idx*.08).toFixed(2)}s both;display:flex;flex-direction:column">
+    return `<div style="grid-column:${idx+1};min-width:0;overflow:hidden;background:${riskBg};border:1px solid ${riskColor}35;border-top:3px solid ${riskColor};border-radius:16px;padding:16px 18px;animation:bentoIn .4s ease ${(idx*.08).toFixed(2)}s both;display:flex;flex-direction:column">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
         <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,${riskColor}35,${riskColor}15);border:1px solid ${riskColor}45;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:${riskColor};flex-shrink:0">${initials}</div>
         <div style="flex:1;min-width:0">
@@ -1312,10 +1312,10 @@ function buildSlides(){
       <div style="flex:1">${projList}${extras}</div>
     </div>`;
   }).join('');
-  const _gCols6=Math.min(wlEntries.length||1,4);
+  const _gCols6=Math.min(wlEntries.length||1,5); // Até 5 colunas — evita PMO solitário em 2ª linha
   const s6=`
   <div class="tv-s-title">👥 Carga por PMO / Gestor <span class="tv-s-title-sub">${wlEntries.length} gestores · portfólio ativo</span></div>
-  <div class="tv-pmo-grid" style="grid-template-columns:repeat(${_gCols6},1fr)">${pmoCards}</div>`;
+  <div class="tv-pmo-grid" style="grid-template-columns:repeat(${_gCols6},minmax(0,1fr))">${pmoCards}</div>`;
 
   // ── Slide Conquistas ──────────────────────────────────────────
   const hoje90c=new Date(HOJE); hoje90c.setDate(hoje90c.getDate()-90);
@@ -1380,10 +1380,10 @@ function buildSlides(){
   const tvSevFill  ={P0:'rgba(239,68,68,.42)',  P1:'rgba(249,115,22,.38)', P2:'rgba(59,130,246,.34)'};
   const tvSevStroke={P0:'#ff5252',              P1:'#ff9a3c',              P2:'#60a5fa'};
   const tvSevEdge  ={P0:'rgba(255,120,120,.55)',P1:'rgba(255,180,80,.5)',  P2:'rgba(120,180,255,.48)'};
-  const tvAtvW=1100, tvSevR={P0:68,P1:50,P2:36};
-  const tvP0list=tvAtvItems.filter(a=>a.sev==='P0').slice(0,5);
+  const tvAtvW=1100, tvSevR={P0:58,P1:44,P2:44};
+  const tvP0list=tvAtvItems.filter(a=>a.sev==='P0').slice(0,6);
   const tvP1list=tvAtvItems.filter(a=>a.sev==='P1').slice(0,6);
-  const tvP2list=tvAtvItems.filter(a=>a.sev==='P2').slice(0,7);
+  const tvP2list=tvAtvItems.filter(a=>a.sev==='P2').slice(0,5);
   function tvBubRow(items,r,cy){
     if(!items.length) return '';
     const sp=Math.min(tvAtvW/(items.length+.5),r*2+28);
@@ -1403,9 +1403,11 @@ function buildSlides(){
     }).join('');
   }
   let tvBH=20,tvBRows='';
-  if(tvP0list.length){tvBRows+=tvBubRow(tvP0list,tvSevR.P0,tvBH+tvSevR.P0+10);tvBH+=tvSevR.P0*2+42;}
-  if(tvP1list.length){tvBRows+=tvBubRow(tvP1list,tvSevR.P1,tvBH+tvSevR.P1+8); tvBH+=tvSevR.P1*2+38;}
-  if(tvP2list.length){tvBRows+=tvBubRow(tvP2list,tvSevR.P2,tvBH+tvSevR.P2+6); tvBH+=tvSevR.P2*2+32;}
+  // P0 sozinho na 1ª linha — maior destaque; P1+P2 juntos na 2ª linha
+  // Resultado: viewBox mais curto → bolas 40% maiores no mobile
+  if(tvP0list.length){tvBRows+=tvBubRow(tvP0list,tvSevR.P0,tvBH+tvSevR.P0+10);tvBH+=tvSevR.P0*2+20;}
+  const tvP1P2=[...tvP1list,...tvP2list];
+  if(tvP1P2.length){tvBRows+=tvBubRow(tvP1P2,tvSevR.P1,tvBH+tvSevR.P1+8);tvBH+=tvSevR.P1*2+16;}
   const tvBViewH=Math.max(100,tvBH+10);
   let sAtencao;
   if(tvAtvItems.length===0){
@@ -1585,8 +1587,8 @@ function tvFitSlide(){
   const inner=slide.children[0];
   // Captura justifyContent ANTES de resetar (getComputedStyle após reset retorna "normal")
   const origJC=inner ? getComputedStyle(inner).justifyContent : '';
-  // Reset completo
-  slide.style.transform=''; slide.style.transformOrigin=''; slide.style.zoom='';
+  // Reset completo (overflow também — restaura overflow:hidden da classe CSS)
+  slide.style.transform=''; slide.style.transformOrigin=''; slide.style.zoom=''; slide.style.overflow='';
   if(inner) inner.style.justifyContent='';
   // Só aplica em telas pequenas (mobile landscape)
   const availH=body.clientHeight; const availW=body.clientWidth;
@@ -1596,6 +1598,10 @@ function tvFitSlide(){
   if(inner&&origJC==='center'){
     inner.style.justifyContent='flex-start';
   }
+  // overflow:visible ANTES de medir — permite que getBoundingClientRect
+  // reporte filhos além do flex:1 (que estão clipped pelo overflow:hidden padrão).
+  // O tv-body (pai) tem overflow:hidden e faz a clipagem final.
+  slide.style.overflow='visible';
   // Mede altura natural do conteúdo (overflow relativo ao slide)
   const sr=slide.getBoundingClientRect();
   let minTop=Infinity, maxBot=-Infinity;
@@ -1606,13 +1612,17 @@ function tvFitSlide(){
       maxBot=Math.max(maxBot,r.bottom-sr.top);
     }
   });
-  if(minTop===Infinity) return;
+  if(minTop===Infinity){ slide.style.overflow=''; return; }
   const contentH=maxBot-minTop;
   const contentW=slide.scrollWidth;
   if(contentH>availH+8||contentW>availW+8){
+    // overflow:visible já foi setado — mantém para que o transform:scale
+    // escale o conteúdo COMPLETO (não o conteúdo pré-clippado pelo flex:1)
     const scale=Math.min((availH*0.96)/contentH,(availW*0.97)/contentW,1);
     slide.style.transform=`scale(${scale.toFixed(3)})`;
     slide.style.transformOrigin='top center';
+  } else {
+    slide.style.overflow=''; // conteúdo cabe — restaura overflow:hidden
   }
 }
 // Navegação por toque/clique nas zonas esquerda e direita do tv-body
