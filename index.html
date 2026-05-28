@@ -1559,10 +1559,42 @@ window.addEventListener('resize',()=>{
   },{passive:true});
 })();
 function tvFitSlide(){
-  // CSS grid-auto-rows:minmax(0,1fr) + flex:1 + align-items:stretch cuidam do layout.
-  // Esta função apenas garante que nenhum transform residual de slides anteriores persista.
-  const slide=document.querySelector('#tv-body .tv-slide');
-  if(slide){ slide.style.transform=''; slide.style.transformOrigin=''; }
+  // Usa transform:scale (não zoom) — zoom em flex:1 distorce o layout
+  const body=document.getElementById('tv-body');
+  const slide=document.querySelector('#tv-body .tv-slide.active');
+  if(!slide||!body) return;
+  const inner=slide.children[0];
+  // Captura justifyContent ANTES de resetar (getComputedStyle após reset retorna "normal")
+  const origJC=inner ? getComputedStyle(inner).justifyContent : '';
+  // Reset completo
+  slide.style.transform=''; slide.style.transformOrigin=''; slide.style.zoom='';
+  if(inner) inner.style.justifyContent='';
+  // Só aplica em telas pequenas (mobile landscape)
+  const availH=body.clientHeight; const availW=body.clientWidth;
+  if(availH>=420&&availW>=900) return; // desktop/tablet — sem escala
+  // Para slides que usam justify-content:center: muda para flex-start
+  // para o conteúdo começar no topo (transform-origin:top center)
+  if(inner&&origJC==='center'){
+    inner.style.justifyContent='flex-start';
+  }
+  // Mede altura natural do conteúdo (overflow relativo ao slide)
+  const sr=slide.getBoundingClientRect();
+  let minTop=Infinity, maxBot=-Infinity;
+  slide.querySelectorAll('*').forEach(el=>{
+    const r=el.getBoundingClientRect();
+    if(r.height>2&&r.width>2){
+      minTop=Math.min(minTop,r.top-sr.top);
+      maxBot=Math.max(maxBot,r.bottom-sr.top);
+    }
+  });
+  if(minTop===Infinity) return;
+  const contentH=maxBot-minTop;
+  const contentW=slide.scrollWidth;
+  if(contentH>availH+8||contentW>availW+8){
+    const scale=Math.min((availH*0.96)/contentH,(availW*0.97)/contentW,1);
+    slide.style.transform=`scale(${scale.toFixed(3)})`;
+    slide.style.transformOrigin='top center';
+  }
 }
 // Navegação por toque/clique nas zonas esquerda e direita do tv-body
 (function(){
