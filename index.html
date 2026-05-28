@@ -1538,10 +1538,29 @@ function closeTV(){
   tvTimer=null; tvClkInt=null;
   tvExitFullscreen();
 }
-window.addEventListener('resize',()=>{
-  const ov=document.getElementById('tv-overlay');
-  if(ov&&ov.classList.contains('open')){ tvCheckOrientation(); tvFitSlide(); }
-});
+// ── TV: resize + orientationchange (mobile/tablet) ───────────
+// Debounce: evita disparar em cada px do resize (ex: barra de endereço iOS/Android)
+(function(){
+  let _tvResizeTimer=null;
+  function _tvOnResize(){
+    const ov=document.getElementById('tv-overlay');
+    if(!ov||!ov.classList.contains('open')) return;
+    tvCheckOrientation();
+    // rAF garante medição após reflow (crítico no orientationchange)
+    requestAnimationFrame(()=>{ tvFitSlide(); });
+  }
+  window.addEventListener('resize',()=>{
+    clearTimeout(_tvResizeTimer);
+    _tvResizeTimer=setTimeout(_tvOnResize, 120); // 120 ms debounce
+  });
+  // orientationchange: iOS/Android disparam este evento ANTES do resize
+  // — sem este listener, a rotação pode não ser detectada a tempo
+  window.addEventListener('orientationchange',()=>{
+    clearTimeout(_tvResizeTimer);
+    // Aguarda viewport estabilizar após rotação (200 ms é padrão seguro)
+    _tvResizeTimer=setTimeout(_tvOnResize, 200);
+  });
+})();
 
 // ── TV: swipe touch — listener no document (mais robusto) ────
 (function(){
