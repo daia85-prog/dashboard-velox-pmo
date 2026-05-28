@@ -175,6 +175,15 @@ a{color:inherit;text-decoration:none}
 .tv-golive-grid{display:grid;gap:14px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
 .tv-glcval{font-size:52px;font-weight:900;letter-spacing:-3px;line-height:1}
 .tv-glcval.urgent{font-size:56px}
+/* Go Lives card — CSS-driven responsive (não depende de isMob em JS) */
+.tv-glcard{padding:28px}
+.tv-glcard-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:6px}
+.tv-glcard-name{font-size:20px;font-weight:900;color:#f1f5f9;line-height:1.2;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tv-glcard-badge{font-size:11px;padding:4px 10px;border-radius:9px;font-weight:700;flex-shrink:0;display:inline-flex;align-items:center;gap:0}
+.tv-glcard-pmo{font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px}
+/* badge: mostra label completo por padrão (desktop/TV), só ícone no mobile via CSS */
+.tv-sb-lbl{display:inline}
+.tv-sb-ico{display:none}
 .tv-farol-grid{display:grid;gap:12px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
 .tv-pmo-grid{display:grid;gap:14px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
 .tv-conq-grid{display:grid;gap:12px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
@@ -1216,17 +1225,16 @@ function buildSlides(){
     const isAtras   = dias < 0;
     const dc=isAtras?'#ef4444':isUrgente?'#ef4444':dias<=30?'#F5C300':'#22c55e';
     const prog=calcProgresso(p);
-    const isMob=window.innerWidth<768;
-    const label=isAtras?(isMob?`−${Math.abs(dias)}d`:`${Math.abs(dias)}d atraso`):dias===0?'HOJE':dias+'d';
+    const label=isAtras?`−${Math.abs(dias)}d`:dias===0?'HOJE':dias+'d';
     const sm=STATUS_MAP[calcStatus(p)]||STATUS_MAP['Em andamento'];
-    return `<div style="border-radius:20px;padding:${isMob?'16px':'28px 28px'};border:1px solid ${dc}35;background:linear-gradient(145deg,${dc}09,rgba(255,255,255,.015));position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.06).toFixed(2)}s both;display:flex;flex-direction:column">
+    return `<div class="tv-glcard" style="border-radius:20px;border:1px solid ${dc}35;background:linear-gradient(145deg,${dc}09,rgba(255,255,255,.015));position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.06).toFixed(2)}s both;display:flex;flex-direction:column">
       <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,${dc},transparent);opacity:.9"></div>
       <div style="position:absolute;top:0;right:0;bottom:0;width:4px;background:linear-gradient(180deg,${dc},transparent);opacity:.4"></div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:${isMob?'6':'10'}px;gap:6px">
-        <div style="font-size:${isMob?'14':'20'}px;font-weight:900;color:#f1f5f9;line-height:1.2;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${escHtml(p.nome)}</div>
-        <span style="font-size:${isMob?'14':'11'}px;background:${sm.bg};color:${sm.color};padding:${isMob?'3px 6px':'4px 10px'};border-radius:9px;font-weight:700;flex-shrink:0">${isMob?sm.icon:sm.label}</span>
+      <div class="tv-glcard-top">
+        <div class="tv-glcard-name">${escHtml(p.nome)}</div>
+        <span class="tv-glcard-badge" style="background:${sm.bg};color:${sm.color}"><span class="tv-sb-lbl">${sm.icon} ${sm.label}</span><span class="tv-sb-ico">${sm.icon}</span></span>
       </div>
-      <div style="font-size:${isMob?'11':'13'}px;color:#64748b;font-weight:600;margin-bottom:6px">${escHtml(p.pmo||'—')}</div>
+      <div class="tv-glcard-pmo">${escHtml(p.pmo||'—')}</div>
       <div style="flex:1"></div>
       <div class="tv-glcval-row" style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
         <div class="tv-glcval-date" style="font-size:15px;color:#64748b;font-weight:600">${formatDate(fe)}</div>

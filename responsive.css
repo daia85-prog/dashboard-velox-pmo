@@ -134,6 +134,15 @@
   .tv-glcval-date { font-size: 11px !important; }
   .tv-glcval       { font-size: 30px !important; letter-spacing: -1px !important; }
   .tv-glcval.urgent{ font-size: 32px !important; }
+  /* Go Lives card: ajustes por CSS (não por isMob em JS) */
+  .tv-glcard        { padding: 16px !important; }
+  .tv-glcard-top    { margin-bottom: 6px !important; }
+  .tv-glcard-name   { font-size: 14px !important; }
+  .tv-glcard-pmo    { font-size: 11px !important; }
+  .tv-glcard-badge  { font-size: 14px !important; padding: 3px 6px !important; }
+  /* Badge: esconde o texto, mostra só o ícone */
+  .tv-sb-lbl { display: none !important; }
+  .tv-sb-ico { display: inline !important; }
   .tv-kbd { display: none !important; }
 
   /* ── Urgency Banner ── */
@@ -292,6 +301,14 @@
   .tv-golive-date { font-size: 22px !important; }
   .tv-golive-countdown { font-size: 11px !important; }
   .tv-golive-prog { margin-top: 8px !important; }
+  /* Go Lives card — landscape mobile: compact mas ícone ainda */
+  .tv-glcard        { padding: 10px 12px !important; }
+  .tv-glcard-top    { margin-bottom: 4px !important; }
+  .tv-glcard-name   { font-size: 12px !important; }
+  .tv-glcard-pmo    { font-size: 9px !important; }
+  .tv-glcard-badge  { font-size: 13px !important; padding: 2px 5px !important; }
+  .tv-sb-lbl { display: none !important; }
+  .tv-sb-ico { display: inline !important; }
   /* Footer compacto */
   .tv-footer { padding: 5px 12px !important; }
   .tv-btn { width: 28px !important; height: 28px !important; font-size: 13px !important; }
