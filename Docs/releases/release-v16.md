@@ -122,7 +122,7 @@ Suas credenciais de acesso:
 | Campo | Valor |
 |---|---|
 | **Usuário** | `ivan.duarte@infra` |
-| **Senha inicial** | `ivan123` |
+| **Senha inicial** | `[ver credenciais]` |
 | **Perfil** | Viewer — visualização completa, sem edição |
 
 ### O que você pode explorar:

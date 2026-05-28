@@ -39,9 +39,9 @@
 
 | E-mail | Senha | Papel |
 |---|---|---|
-| `admin@inventcorp.com` | `admin123` | Admin |
-| `editor@inventcorp.com` | `editor123` | Editor |
-| `viewer@inventcorp.com` | `viewer123` | Viewer |
+| `admin@pmo` | `[ver credenciais]` | Admin |
+| `editor@pmo` | `[ver credenciais]` | Editor |
+| `viewer@pmo` | `[ver credenciais]` | Viewer |
 
 3. Dados do v15 são migrados automaticamente — nenhuma ação necessária
 

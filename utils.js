@@ -971,11 +971,11 @@ const DEPARTAMENTOS = [
 ];
 
 const USUARIOS_PADRAO = [
-  {id:'u1', nome:'Administrador', email:'admin@pmo', senha:'admin123',
+  {id:'u1', nome:'Administrador', email:'admin@pmo', senha:'Xm7!qK3@rPnL9#vJ',
    papel:'admin', paginas:['all'], ativo:true, primeiroAcesso:false},
-  {id:'u2', nome:'Editor Padrão', email:'editor@pmo', senha:'editor123',
+  {id:'u2', nome:'Editor Padrão', email:'editor@pmo', senha:'Bw4#tGhR2$nYcP8!',
    papel:'editor', paginas:['index','gerencial','projetos','squads','alertas'], ativo:true, primeiroAcesso:false},
-  {id:'u3', nome:'Visualizador', email:'viewer@pmo', senha:'viewer123',
+  {id:'u3', nome:'Visualizador', email:'viewer@pmo', senha:'Dp6@wKmT5#jFxN3$',
    papel:'viewer', paginas:['index','gerencial','squads'], ativo:true, primeiroAcesso:false},
   {id:'u4', nome:'Ivan Duarte', email:'ivan.duarte@infra', senha:'ivan123',
    papel:'viewer', paginas:['index','gerencial','projetos','squads','alertas'], ativo:true, primeiroAcesso:true},
