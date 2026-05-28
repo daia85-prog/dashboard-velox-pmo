@@ -825,8 +825,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:radial-gradient(
         <div style="position:relative">
           <input class="form-control" id="senha" type="password" placeholder="••••••••" required autocomplete="current-password" style="padding-right:44px">
           <button type="button" id="btn-eye"
-            onclick="(function(){const i=document.getElementById('senha');const b=document.getElementById('btn-eye');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'👁':'🙈';})()"
-            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;line-height:1;padding:2px">👁</button>
+            onclick="(function(){const i=document.getElementById('senha');const b=document.getElementById('btn-eye');const show=i.type==='password';i.type=show?'text':'password';b.innerHTML=show?'<svg width=&quot;17&quot; height=&quot;17&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;><path d=&quot;M17.94 17.94A10 10 0 0 1 12 20c-7 0-11-8-11-8a18 18 0 0 1 5.06-5.94M9.9 4.24A9 9 0 0 1 12 4c7 0 11 8 11 8a18 18 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24&quot;/><line x1=&quot;1&quot; y1=&quot;1&quot; x2=&quot;23&quot; y2=&quot;23&quot;/></svg>':'<svg width=&quot;17&quot; height=&quot;17&quot; viewBox=&quot;0 0 24 24&quot; fill=&quot;none&quot; stroke=&quot;currentColor&quot; stroke-width=&quot;2&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;><path d=&quot;M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z&quot;/><circle cx=&quot;12&quot; cy=&quot;12&quot; r=&quot;3&quot;/></svg>';})()"
+            style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:var(--muted2);display:flex;align-items:center;line-height:1"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </div>
       <button class="btn-login" type="submit" id="btn-login">Entrar →</button>
@@ -864,10 +864,13 @@ function paShow(user){
   document.getElementById('pa-overlay').style.display='flex';
   setTimeout(()=>document.getElementById('pa-nova').focus(),120);
 }
+const _eyeOn='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+const _eyeOff='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10 10 0 0 1 12 20c-7 0-11-8-11-8a18 18 0 0 1 5.06-5.94M9.9 4.24A9 9 0 0 1 12 4c7 0 11 8 11 8a18 18 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
 function paToggle(id,btn){
   const el=document.getElementById(id);
-  el.type=el.type==='password'?'text':'password';
-  btn.textContent=el.type==='password'?'👁':'🙈';
+  const show=el.type==='password';
+  el.type=show?'text':'password';
+  btn.innerHTML=show?_eyeOff:_eyeOn;
 }
 function paCheck(){
   const v=document.getElementById('pa-nova').value;
@@ -921,14 +924,14 @@ window.addEventListener('resize', loginFixOrientation);
       <label class="form-label">Nova senha</label>
       <div style="position:relative">
         <input class="form-control" type="password" id="pa-nova" placeholder="Digite sua nova senha" oninput="paCheck()" autocomplete="new-password">
-        <button type="button" onclick="paToggle('pa-nova',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:0">👁</button>
+        <button type="button" onclick="paToggle('pa-nova',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted2);padding:4px;display:flex;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
     </div>
     <div class="form-group pa-field-wrap" style="margin-bottom:0">
       <label class="form-label">Confirmar senha</label>
       <div style="position:relative">
         <input class="form-control" type="password" id="pa-conf" placeholder="Repita a nova senha" oninput="paCheck()" autocomplete="new-password">
-        <button type="button" onclick="paToggle('pa-conf',this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:15px;padding:0">👁</button>
+        <button type="button" onclick="paToggle('pa-conf',this)" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted2);padding:4px;display:flex;align-items:center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
     </div>
     <div class="pa-match" id="pa-match"></div>

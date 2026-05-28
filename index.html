@@ -1436,17 +1436,16 @@ window.addEventListener('resize',()=>{
   if(ov&&ov.classList.contains('open')){ tvCheckOrientation(); tvFitSlide(); }
 });
 
-// ── TV: swipe touch (executado direto — DOM já pronto aqui) ───
+// ── TV: swipe touch — listener no document (mais robusto) ────
 (function(){
-  const ov=document.getElementById('tv-overlay');
-  if(!ov) return;
   let tx=0, ty=0;
-  ov.addEventListener('touchstart',e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
-  ov.addEventListener('touchend',e=>{
-    if(!ov.classList.contains('open')) return;
+  document.addEventListener('touchstart',e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+  document.addEventListener('touchend',e=>{
+    const ov=document.getElementById('tv-overlay');
+    if(!ov||!ov.classList.contains('open')) return;
     const dx=e.changedTouches[0].clientX-tx;
     const dy=e.changedTouches[0].clientY-ty;
-    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>48){ if(dx<0) tvNext(); else tvPrev(); }
+    if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>44){ if(dx<0) tvNext(); else tvPrev(); }
   },{passive:true});
 })();
 function tvFitSlide(){
@@ -1458,7 +1457,8 @@ function tvFitSlide(){
   requestAnimationFrame(()=>{
     const bH=body.clientHeight-8, bW=body.clientWidth-8;
     const sH=slide.scrollHeight, sW=slide.scrollWidth;
-    const scale=Math.min(1, bH/Math.max(sH,1), bW/Math.max(sW,1));
+    // Escala até 1.4× para preencher — e reduz se ultrapassar
+    const scale=Math.min(1.4, bH/Math.max(sH,1), bW/Math.max(sW,1));
     if(scale<0.97){
       body.style.alignItems='flex-start';
       slide.style.transformOrigin='top center';
