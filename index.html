@@ -173,6 +173,8 @@ a{color:inherit;text-decoration:none}
 .tv-slide{display:none;width:100%;max-width:1480px;animation:tvIn .5s cubic-bezier(.22,1,.36,1)}
 .tv-slide.active{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
 .tv-golive-grid{display:grid;gap:14px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.tv-glcval{font-size:52px;font-weight:900;letter-spacing:-3px;line-height:1}
+.tv-glcval.urgent{font-size:56px}
 .tv-farol-grid{display:grid;gap:12px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
 .tv-pmo-grid{display:grid;gap:14px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
 .tv-conq-grid{display:grid;gap:12px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
@@ -1214,20 +1216,21 @@ function buildSlides(){
     const isAtras   = dias < 0;
     const dc=isAtras?'#ef4444':isUrgente?'#ef4444':dias<=30?'#F5C300':'#22c55e';
     const prog=calcProgresso(p);
-    const label=isAtras?`${Math.abs(dias)}d atraso`:dias===0?'HOJE':dias+'d';
+    const isMob=window.innerWidth<768;
+    const label=isAtras?(isMob?`−${Math.abs(dias)}d`:`${Math.abs(dias)}d atraso`):dias===0?'HOJE':dias+'d';
     const sm=STATUS_MAP[calcStatus(p)]||STATUS_MAP['Em andamento'];
-    return `<div style="border-radius:20px;padding:28px 28px;border:1px solid ${dc}35;background:linear-gradient(145deg,${dc}09,rgba(255,255,255,.015));position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.06).toFixed(2)}s both;display:flex;flex-direction:column">
+    return `<div style="border-radius:20px;padding:${isMob?'16px':'28px 28px'};border:1px solid ${dc}35;background:linear-gradient(145deg,${dc}09,rgba(255,255,255,.015));position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.06).toFixed(2)}s both;display:flex;flex-direction:column">
       <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,${dc},transparent);opacity:.9"></div>
       <div style="position:absolute;top:0;right:0;bottom:0;width:4px;background:linear-gradient(180deg,${dc},transparent);opacity:.4"></div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px">
-        <div style="font-size:20px;font-weight:900;color:#f1f5f9;line-height:1.2;flex:1">${escHtml(p.nome)}</div>
-        <span style="font-size:11px;background:${sm.bg};color:${sm.color};padding:4px 10px;border-radius:9px;font-weight:700;flex-shrink:0">${sm.label}</span>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:${isMob?'6':'10'}px;gap:6px">
+        <div style="font-size:${isMob?'14':'20'}px;font-weight:900;color:#f1f5f9;line-height:1.2;flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${escHtml(p.nome)}</div>
+        <span style="font-size:${isMob?'14':'11'}px;background:${sm.bg};color:${sm.color};padding:${isMob?'3px 6px':'4px 10px'};border-radius:9px;font-weight:700;flex-shrink:0">${isMob?sm.icon:sm.label}</span>
       </div>
-      <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px">${escHtml(p.pmo||'—')}</div>
+      <div style="font-size:${isMob?'11':'13'}px;color:#64748b;font-weight:600;margin-bottom:6px">${escHtml(p.pmo||'—')}</div>
       <div style="flex:1"></div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
-        <div style="font-size:15px;color:#64748b;font-weight:600">${formatDate(fe)}</div>
-        <div style="font-size:${isAtras||isUrgente?'56':'52'}px;font-weight:900;color:${dc};letter-spacing:-3px;line-height:1;${isAtras?'animation:urgPulse 1.5s infinite':''}">${label}</div>
+      <div class="tv-glcval-row" style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+        <div class="tv-glcval-date" style="font-size:15px;color:#64748b;font-weight:600">${formatDate(fe)}</div>
+        <div class="tv-glcval${isAtras||isUrgente?' urgent':''}" style="color:${dc};${isAtras?'animation:urgPulse 1.5s infinite':''}">${label}</div>
       </div>
       <div style="height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;margin-bottom:8px">
         <div style="height:100%;width:${prog}%;background:${dc};border-radius:5px;box-shadow:0 0 14px ${dc}77;transition:width .8s ease"></div>
@@ -1473,6 +1476,7 @@ function tvExitFullscreen(){
 
 function openTV(){
   tvSlides=buildSlides(); tvSlide=0; tvPaused=false;
+  if(typeof window._hidePortraitToast === 'function') window._hidePortraitToast();
   document.getElementById('tv-overlay').classList.add('open');
   tvRender(); tvStart(); tvClock();
   tvClkInt=setInterval(tvClock,1000);

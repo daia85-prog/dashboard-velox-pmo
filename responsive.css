@@ -129,6 +129,11 @@
   .tv-golive-card { padding: 14px 16px !important; }
   .tv-golive-name { font-size: 13px !important; }
   .tv-golive-date { font-size: 20px !important; }
+  /* Go Lives mobile: data em cima, countdown embaixo (evita overflow lateral) */
+  .tv-glcval-row { flex-direction: column !important; align-items: flex-start !important; gap: 2px !important; }
+  .tv-glcval-date { font-size: 11px !important; }
+  .tv-glcval       { font-size: 30px !important; letter-spacing: -1px !important; }
+  .tv-glcval.urgent{ font-size: 32px !important; }
   .tv-kbd { display: none !important; }
 
   /* ── Urgency Banner ── */

@@ -2002,7 +2002,7 @@ function toast(msg, type='info', dur=3500){
     el.id = 'portrait-toast';
     el.style.cssText = [
       'position:fixed','bottom:72px','left:50%','transform:translateX(-50%)',
-      'z-index:9990','display:flex','align-items:center','gap:12px',
+      'z-index:7999','display:flex','align-items:center','gap:12px',
       'padding:13px 18px 13px 14px','border-radius:16px',
       'background:rgba(10,6,28,.96)','border:1px solid rgba(139,92,246,.35)',
       'box-shadow:0 8px 32px rgba(0,0,0,.55),0 0 0 1px rgba(139,92,246,.1)',
@@ -2039,12 +2039,15 @@ function toast(msg, type='info', dur=3500){
   function checkHint(){
     const isMobile = window.innerWidth < 900;
     const isPortrait = window.innerHeight > window.innerWidth;
-    if(isMobile && isPortrait && !dismissed){
+    const tvOpen = !!(document.getElementById('tv-overlay') && document.getElementById('tv-overlay').classList.contains('open'));
+    if(isMobile && isPortrait && !dismissed && !tvOpen){
       injectHint();
     } else {
       hideHint();
     }
   }
+  // Expose so openTV() can dismiss the toast
+  window._hidePortraitToast = hideHint;
 
   document.addEventListener('DOMContentLoaded', checkHint);
   window.addEventListener('resize', checkHint);
