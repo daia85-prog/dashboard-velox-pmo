@@ -103,10 +103,37 @@ a{color:inherit;text-decoration:none}
 @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .releases-wrap>*{animation:fadeIn .4s ease forwards;opacity:0}
 .releases-wrap>*:nth-child(1){animation-delay:.05s}
-.releases-wrap>*:nth-child(2){animation-delay:.1s}
-.releases-wrap>*:nth-child(3){animation-delay:.15s}
-.releases-wrap>*:nth-child(4){animation-delay:.2s}
-.releases-wrap>*:nth-child(5){animation-delay:.25s}
+
+/* ── Accordion ─────────────────────────────────────────────── */
+.rel-accordion{display:flex;flex-direction:column;gap:10px}
+.rel-acc-item{border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;transition:border-color .2s}
+.rel-acc-item.open{border-color:rgba(245,195,0,.28)}
+.rel-acc-header{display:flex;align-items:center;gap:16px;padding:16px 22px;cursor:pointer;background:var(--surface);transition:background .2s;user-select:none}
+.rel-acc-header:hover{background:var(--surface2)}
+.rel-acc-item.open>.rel-acc-header{background:rgba(245,195,0,.06);border-bottom:1px solid rgba(245,195,0,.12)}
+.rel-acc-vbadge{border-radius:12px;padding:10px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;min-width:64px}
+.rel-acc-vbadge--current{background:linear-gradient(135deg,#F5C300,#d97706);box-shadow:0 4px 20px rgba(245,195,0,.28)}
+.rel-acc-vbadge--next{background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.22)}
+.rel-acc-vbadge--future{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09)}
+.rel-acc-v{font-size:18px;font-weight:900;letter-spacing:-.5px;line-height:1}
+.rel-acc-vbadge--current .rel-acc-v{color:#0a0e19}
+.rel-acc-vbadge--next .rel-acc-v{color:#c4b5fd}
+.rel-acc-vbadge--future .rel-acc-v{color:#475569}
+.rel-acc-vl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-top:3px;opacity:.6}
+.rel-acc-vbadge--current .rel-acc-vl{color:#0a0e19}
+.rel-acc-vbadge--next .rel-acc-vl{color:#a78bfa}
+.rel-acc-vbadge--future .rel-acc-vl{color:#334155}
+.rel-acc-info{flex:1;min-width:0}
+.rel-acc-title{font-size:14px;font-weight:700;line-height:1.3;margin-bottom:5px}
+.rel-acc-chips{display:flex;gap:7px;flex-wrap:wrap}
+.rel-acc-chevron{font-size:14px;color:var(--muted);transition:transform .3s;flex-shrink:0;margin-left:4px}
+.rel-acc-item.open .rel-acc-chevron{transform:rotate(180deg)}
+.rel-acc-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s cubic-bezier(.4,0,.2,1)}
+.rel-acc-item.open .rel-acc-body{grid-template-rows:1fr}
+.rel-acc-inner{overflow:hidden}
+.rel-acc-content{padding:24px 22px;display:flex;flex-direction:column;gap:28px}
+/* inside accordion: remove margin-bottom from sections (gap handles spacing) */
+.rel-acc-content .rel-section{margin-bottom:0}
 </style>
 <link rel="stylesheet" href="responsive.css">
 </head>
@@ -148,244 +175,242 @@ a{color:inherit;text-decoration:none}
   </div>
 
   <div class="releases-wrap">
+    <div class="rel-accordion">
 
-    <!-- Hero V16 -->
-    <div class="rel-hero">
-      <div class="rel-hero-badge">
-        <div class="rel-hero-v">V16</div>
-        <div class="rel-hero-vl">versão atual</div>
-      </div>
-      <div class="rel-hero-info">
-        <div class="rel-hero-title"><span>Velox PMO</span> — Release 16</div>
-        <div class="rel-hero-sub">Dashboard inteligente de gestão de projetos. Visão em tempo real do portfólio, alertas automáticos, acesso seguro por perfil e experiência mobile completa — incluindo modo TV com navegação por toque.</div>
-        <div class="rel-hero-meta">
-          <span class="rel-meta-chip">📅 Maio 2026</span>
-          <span class="rel-meta-chip">✅ Versão estável</span>
-          <span class="rel-meta-chip">🔐 Acesso por perfil</span>
-          <span class="rel-meta-chip">📱 Mobile ready</span>
-          <span class="rel-meta-chip">🖥️ Modo TV</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- O que há de novo -->
-    <div class="rel-section">
-      <div class="rel-section-title">✨ Destaques da V16</div>
-      <div class="rel-grid">
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🔐</span>
-          <div class="rel-card-title">Login por usuário corporativo</div>
-          <div class="rel-card-desc">Acesso com formato <strong>nome.sobrenome@departamento</strong>. Cada usuário tem seu próprio perfil e permissões definidas pelo administrador.</div>
-          <span class="rel-card-tag tag-new">✦ Novo</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🔑</span>
-          <div class="rel-card-title">Troca de senha no primeiro acesso</div>
-          <div class="rel-card-desc">Novos usuários são obrigados a criar uma senha pessoal no primeiro login, com critérios de segurança em tempo real.</div>
-          <span class="rel-card-tag tag-sec">🛡 Segurança</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🎨</span>
-          <div class="rel-card-title">Tela de login redesenhada</div>
-          <div class="rel-card-desc">Nova identidade visual com animações industriais — correia transportadora, caixas em movimento e widgets decorativos de sistema.</div>
-          <span class="rel-card-tag tag-new">✦ Novo</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">👁</span>
-          <div class="rel-card-title">Perfis de acesso</div>
-          <div class="rel-card-desc">Três papéis distintos: <strong>Admin</strong> (acesso total), <strong>Editor</strong> (cria e edita) e <strong>Viewer</strong> (somente leitura). Cada um vê apenas o que precisa.</div>
-          <span class="rel-card-tag tag-imp">↑ Melhoria</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🗂</span>
-          <div class="rel-card-title">Cadastro de usuários no Admin</div>
-          <div class="rel-card-desc">Criação de novos acessos com detecção automática de conflito de nome — sugere variações como <code>joao.silva2@pmo</code> quando necessário.</div>
-          <span class="rel-card-tag tag-imp">↑ Melhoria</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🐛</span>
-          <div class="rel-card-title">Correções de estabilidade</div>
-          <div class="rel-card-desc">Tela branca no Gerencial corrigida, bug de bypass de senha resolvido e proteção contra XSS aplicada nos campos de usuário.</div>
-          <span class="rel-card-tag tag-fix">✓ Correção</span>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Mobile & TV -->
-    <div class="rel-section">
-      <div class="rel-section-title">📱 Mobile &amp; TV — novidades</div>
-      <div class="rel-grid">
-
-        <div class="rel-card">
-          <span class="rel-card-icon">📱</span>
-          <div class="rel-card-title">Interface mobile completa</div>
-          <div class="rel-card-desc">Sidebar vira drawer deslizante com backdrop blur. Hamburger menu no topbar. Layout empilhado, KPIs em grid 2×2 e scroll natural em todas as telas abaixo de 768 px.</div>
-          <span class="rel-card-tag tag-new">✦ Novo</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🖥️</span>
-          <div class="rel-card-title">Modo TV com navegação por toque</div>
-          <div class="rel-card-desc">Deslize horizontalmente para trocar slides ou toque na metade esquerda/direita da tela para navegar. Funciona em qualquer dispositivo com touchscreen — tablet, celular ou smart TV.</div>
-          <span class="rel-card-tag tag-new">✦ Novo</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🍎</span>
-          <div class="rel-card-title">Compatibilidade iOS e PWA</div>
-          <div class="rel-card-desc">Meta tags Apple Web App adicionadas para experiência fullscreen via "Adicionar à Tela Inicial". Toast de orientação guia o usuário no iOS quando a API de tela cheia não está disponível.</div>
-          <span class="rel-card-tag tag-new">✦ Novo</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🌙</span>
-          <div class="rel-card-title">Tema claro/escuro aprimorado</div>
-          <div class="rel-card-desc">Alternância com ícone dinâmico ☀️/🌙 em todas as páginas. Preferência salva no localStorage e restaurada automaticamente a cada visita.</div>
-          <span class="rel-card-tag tag-imp">↑ Melhoria</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">👁</span>
-          <div class="rel-card-title">Ícone de mostrar/ocultar senha</div>
-          <div class="rel-card-desc">Botão com ícone SVG (olho aberto/fechado) nos campos de senha do login e da troca de senha. Melhora usabilidade em dispositivos touch.</div>
-          <span class="rel-card-tag tag-imp">↑ Melhoria</span>
-        </div>
-
-        <div class="rel-card">
-          <span class="rel-card-icon">🔄</span>
-          <div class="rel-card-title">Login adaptado ao landscape mobile</div>
-          <div class="rel-card-desc">Card de login reposicionado e compacto quando a altura da tela é menor que 560 px — cobre celulares em modo paisagem sem cortar o formulário.</div>
-          <span class="rel-card-tag tag-fix">✓ Correção</span>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Módulos disponíveis -->
-    <div class="rel-section">
-      <div class="rel-section-title">📋 Módulos disponíveis nesta versão</div>
-      <div class="rel-modules">
-
-        <div class="rel-module">
-          <span class="rel-module-icon">📊</span>
-          <div>
-            <div class="rel-module-title">Dashboard Principal</div>
-            <div class="rel-module-desc">Visão executiva com KPIs do portfólio, farol de projetos, alertas de prazo, carga por gestor e linha do tempo. Modo TV para salas de reunião.</div>
+      <!-- ── V16 (atual) ──────────────────────────────────────── -->
+      <div class="rel-acc-item open" id="acc-v16">
+        <div class="rel-acc-header" onclick="toggleAcc('acc-v16')">
+          <div class="rel-acc-vbadge rel-acc-vbadge--current">
+            <div class="rel-acc-v">V16</div>
+            <div class="rel-acc-vl">atual</div>
           </div>
-        </div>
-
-        <div class="rel-module">
-          <span class="rel-module-icon">📋</span>
-          <div>
-            <div class="rel-module-title">Projetos</div>
-            <div class="rel-module-desc">Gestão completa do ciclo de vida — cadastro, edição, status automático, indicador de risco, histórico de atividades e filtros avançados.</div>
-          </div>
-        </div>
-
-        <div class="rel-module">
-          <span class="rel-module-icon">⊞</span>
-          <div>
-            <div class="rel-module-title">Gerencial</div>
-            <div class="rel-module-desc">Tabela executiva com todos os projetos, Gantt dinâmico e exportação para impressão. Ideal para reuniões de diretoria.</div>
-          </div>
-        </div>
-
-        <div class="rel-module">
-          <span class="rel-module-icon">🏢</span>
-          <div>
-            <div class="rel-module-title">Áreas (Squads)</div>
-            <div class="rel-module-desc">Organização dos times por área, com membros, missão, projetos vinculados e visualização em Gantt por squad.</div>
-          </div>
-        </div>
-
-        <div class="rel-module">
-          <span class="rel-module-icon">🔔</span>
-          <div>
-            <div class="rel-module-title">Central de Alertas</div>
-            <div class="rel-module-desc">Radar de riscos com alertas automáticos por prioridade (P0 crítico · P1 alto · P2 médio). Filtros, cards e lista — estado salvo entre sessões.</div>
-          </div>
-        </div>
-
-        <div class="rel-module">
-          <span class="rel-module-icon">⚙</span>
-          <div>
-            <div class="rel-module-title">Administração</div>
-            <div class="rel-module-desc">Gestão de usuários e permissões. Acesso restrito ao perfil Admin. Criação, edição, ativação e desativação de contas.</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Próximas versões -->
-    <div class="rel-section">
-      <div class="rel-section-title">🔭 Roadmap — Próximas Versões</div>
-      <div style="display:flex;flex-direction:column;gap:14px">
-
-        <!-- V17 -->
-        <div class="rel-next">
-          <div class="rel-next-title" style="font-size:15px">🔭 V17 — Em desenvolvimento
-            <span style="font-size:11px;font-weight:500;color:#6d6e85;margin-left:8px">previsão 2º semestre 2026</span>
-          </div>
-          <div class="rel-next-grid">
-            <div class="rel-next-item">
-              <div class="rel-next-item-title">🔐 Hash de senha</div>
-              <div class="rel-next-item-desc">Senhas armazenadas com criptografia SHA-256</div>
+          <div class="rel-acc-info">
+            <div class="rel-acc-title">Release 16 — Velox PMO</div>
+            <div class="rel-acc-chips">
+              <span class="rel-meta-chip">📅 Maio 2026</span>
+              <span class="rel-meta-chip" style="color:#22c55e;border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.07)">✅ Versão estável</span>
+              <span class="rel-meta-chip">📱 Mobile ready</span>
+              <span class="rel-meta-chip">🖥️ Modo TV</span>
             </div>
-            <div class="rel-next-item">
-              <div class="rel-next-item-title">👤 Papéis expandidos</div>
-              <div class="rel-next-item-desc">Super Admin · Dept Admin · Editor · Viewer</div>
+          </div>
+          <span class="rel-acc-chevron">▼</span>
+        </div>
+        <div class="rel-acc-body">
+          <div class="rel-acc-inner">
+            <div class="rel-acc-content">
+
+              <!-- Destaques V16 -->
+              <div class="rel-section">
+                <div class="rel-section-title">✨ Destaques da V16</div>
+                <div class="rel-grid">
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🔐</span>
+                    <div class="rel-card-title">Login por usuário corporativo</div>
+                    <div class="rel-card-desc">Acesso com formato <strong>nome.sobrenome@departamento</strong>. Cada usuário tem seu próprio perfil e permissões definidas pelo administrador.</div>
+                    <span class="rel-card-tag tag-new">✦ Novo</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🔑</span>
+                    <div class="rel-card-title">Troca de senha no primeiro acesso</div>
+                    <div class="rel-card-desc">Novos usuários são obrigados a criar uma senha pessoal no primeiro login, com critérios de segurança em tempo real.</div>
+                    <span class="rel-card-tag tag-sec">🛡 Segurança</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🎨</span>
+                    <div class="rel-card-title">Tela de login redesenhada</div>
+                    <div class="rel-card-desc">Nova identidade visual com animações industriais — correia transportadora, caixas em movimento e widgets decorativos de sistema.</div>
+                    <span class="rel-card-tag tag-new">✦ Novo</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">👁</span>
+                    <div class="rel-card-title">Perfis de acesso</div>
+                    <div class="rel-card-desc">Três papéis distintos: <strong>Admin</strong> (acesso total), <strong>Editor</strong> (cria e edita) e <strong>Viewer</strong> (somente leitura). Cada um vê apenas o que precisa.</div>
+                    <span class="rel-card-tag tag-imp">↑ Melhoria</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🗂</span>
+                    <div class="rel-card-title">Cadastro de usuários no Admin</div>
+                    <div class="rel-card-desc">Criação de novos acessos com detecção automática de conflito de nome — sugere variações como <code>joao.silva2@pmo</code> quando necessário.</div>
+                    <span class="rel-card-tag tag-imp">↑ Melhoria</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🐛</span>
+                    <div class="rel-card-title">Correções de estabilidade</div>
+                    <div class="rel-card-desc">Tela branca no Gerencial corrigida, bug de bypass de senha resolvido e proteção contra XSS aplicada nos campos de usuário.</div>
+                    <span class="rel-card-tag tag-fix">✓ Correção</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Mobile & TV -->
+              <div class="rel-section">
+                <div class="rel-section-title">📱 Mobile &amp; TV — novidades</div>
+                <div class="rel-grid">
+                  <div class="rel-card">
+                    <span class="rel-card-icon">📱</span>
+                    <div class="rel-card-title">Interface mobile completa</div>
+                    <div class="rel-card-desc">Sidebar vira drawer deslizante com backdrop blur. Hamburger menu no topbar. Layout empilhado, KPIs em grid 2×2 e scroll natural em todas as telas abaixo de 768 px.</div>
+                    <span class="rel-card-tag tag-new">✦ Novo</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🖥️</span>
+                    <div class="rel-card-title">Modo TV com navegação por toque</div>
+                    <div class="rel-card-desc">Deslize horizontalmente para trocar slides ou toque na metade esquerda/direita da tela para navegar. Funciona em qualquer dispositivo com touchscreen.</div>
+                    <span class="rel-card-tag tag-new">✦ Novo</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🍎</span>
+                    <div class="rel-card-title">Compatibilidade iOS e PWA</div>
+                    <div class="rel-card-desc">Meta tags Apple Web App adicionadas para experiência fullscreen via "Adicionar à Tela Inicial". Toast de orientação guia no iOS.</div>
+                    <span class="rel-card-tag tag-new">✦ Novo</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🌙</span>
+                    <div class="rel-card-title">Tema claro/escuro aprimorado</div>
+                    <div class="rel-card-desc">Alternância com ícone dinâmico ☀️/🌙 em todas as páginas. Preferência salva no localStorage e restaurada automaticamente a cada visita.</div>
+                    <span class="rel-card-tag tag-imp">↑ Melhoria</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">👁</span>
+                    <div class="rel-card-title">Ícone de mostrar/ocultar senha</div>
+                    <div class="rel-card-desc">Botão com ícone SVG (olho aberto/fechado) nos campos de senha do login e da troca de senha. Melhora usabilidade em dispositivos touch.</div>
+                    <span class="rel-card-tag tag-imp">↑ Melhoria</span>
+                  </div>
+                  <div class="rel-card">
+                    <span class="rel-card-icon">🔄</span>
+                    <div class="rel-card-title">Login adaptado ao landscape mobile</div>
+                    <div class="rel-card-desc">Card de login reposicionado e compacto quando a altura da tela é menor que 560 px — cobre celulares em modo paisagem sem cortar o formulário.</div>
+                    <span class="rel-card-tag tag-fix">✓ Correção</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Módulos -->
+              <div class="rel-section">
+                <div class="rel-section-title">📋 Módulos disponíveis nesta versão</div>
+                <div class="rel-modules">
+                  <div class="rel-module">
+                    <span class="rel-module-icon">📊</span>
+                    <div><div class="rel-module-title">Dashboard Principal</div><div class="rel-module-desc">Visão executiva com KPIs do portfólio, farol de projetos, alertas de prazo, carga por gestor e linha do tempo. Modo TV para salas de reunião.</div></div>
+                  </div>
+                  <div class="rel-module">
+                    <span class="rel-module-icon">📋</span>
+                    <div><div class="rel-module-title">Projetos</div><div class="rel-module-desc">Gestão completa do ciclo de vida — cadastro, edição, status automático, indicador de risco, histórico de atividades e filtros avançados.</div></div>
+                  </div>
+                  <div class="rel-module">
+                    <span class="rel-module-icon">⊞</span>
+                    <div><div class="rel-module-title">Gerencial</div><div class="rel-module-desc">Tabela executiva com todos os projetos, Gantt dinâmico e exportação para impressão. Ideal para reuniões de diretoria.</div></div>
+                  </div>
+                  <div class="rel-module">
+                    <span class="rel-module-icon">🏢</span>
+                    <div><div class="rel-module-title">Áreas (Squads)</div><div class="rel-module-desc">Organização dos times por área, com membros, missão, projetos vinculados e visualização em Gantt por squad.</div></div>
+                  </div>
+                  <div class="rel-module">
+                    <span class="rel-module-icon">🔔</span>
+                    <div><div class="rel-module-title">Central de Alertas</div><div class="rel-module-desc">Radar de riscos com alertas automáticos por prioridade (P0 crítico · P1 alto · P2 médio). Filtros, cards e lista — estado salvo entre sessões.</div></div>
+                  </div>
+                  <div class="rel-module">
+                    <span class="rel-module-icon">⚙</span>
+                    <div><div class="rel-module-title">Administração</div><div class="rel-module-desc">Gestão de usuários e permissões. Acesso restrito ao perfil Admin. Criação, edição, ativação e desativação de contas.</div></div>
+                  </div>
+                </div>
+              </div>
+
+            </div><!-- /rel-acc-content -->
+          </div><!-- /rel-acc-inner -->
+        </div><!-- /rel-acc-body -->
+      </div><!-- /acc-v16 -->
+
+      <!-- ── V17 (em desenvolvimento) ──────────────────────────── -->
+      <div class="rel-acc-item" id="acc-v17">
+        <div class="rel-acc-header" onclick="toggleAcc('acc-v17')">
+          <div class="rel-acc-vbadge rel-acc-vbadge--next">
+            <div class="rel-acc-v">V17</div>
+            <div class="rel-acc-vl">próxima</div>
+          </div>
+          <div class="rel-acc-info">
+            <div class="rel-acc-title">Release 17 — Em desenvolvimento</div>
+            <div class="rel-acc-chips">
+              <span class="rel-meta-chip">📅 2º sem. 2026</span>
+              <span class="rel-meta-chip" style="color:#a78bfa;border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.07)">🔭 Planejado</span>
             </div>
-            <div class="rel-next-item">
-              <div class="rel-next-item-title">📋 Log de auditoria</div>
-              <div class="rel-next-item-desc">Quem criou, editou ou removeu — e quando</div>
-            </div>
-            <div class="rel-next-item">
-              <div class="rel-next-item-title">🔔 Alerta de deleção</div>
-              <div class="rel-next-item-desc">P0 automático na Central quando algo é removido</div>
+          </div>
+          <span class="rel-acc-chevron">▼</span>
+        </div>
+        <div class="rel-acc-body">
+          <div class="rel-acc-inner">
+            <div class="rel-acc-content">
+              <div class="rel-next">
+                <div class="rel-next-title">🔭 O que vem por aí</div>
+                <div class="rel-next-grid">
+                  <div class="rel-next-item">
+                    <div class="rel-next-item-title">🔐 Hash de senha</div>
+                    <div class="rel-next-item-desc">Senhas armazenadas com criptografia SHA-256</div>
+                  </div>
+                  <div class="rel-next-item">
+                    <div class="rel-next-item-title">👤 Papéis expandidos</div>
+                    <div class="rel-next-item-desc">Super Admin · Dept Admin · Editor · Viewer</div>
+                  </div>
+                  <div class="rel-next-item">
+                    <div class="rel-next-item-title">📋 Log de auditoria</div>
+                    <div class="rel-next-item-desc">Quem criou, editou ou removeu — e quando</div>
+                  </div>
+                  <div class="rel-next-item">
+                    <div class="rel-next-item-title">🔔 Alerta de deleção</div>
+                    <div class="rel-next-item-desc">P0 automático na Central quando algo é removido</div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </div><!-- /acc-v17 -->
 
-        <!-- V18+ -->
-        <div style="background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.1);border-radius:var(--radius);padding:24px 28px">
-          <div style="font-size:15px;font-weight:700;color:#475569;margin-bottom:14px;display:flex;align-items:center;gap:8px">
-            <span style="font-size:18px">🌑</span> V18 e além — Em planejamento
-            <span style="font-size:11px;font-weight:500;color:#334155;margin-left:8px">ideias e visão de futuro</span>
+      <!-- ── V18+ (em planejamento) ────────────────────────────── -->
+      <div class="rel-acc-item" id="acc-v18">
+        <div class="rel-acc-header" onclick="toggleAcc('acc-v18')">
+          <div class="rel-acc-vbadge rel-acc-vbadge--future">
+            <div class="rel-acc-v">V18+</div>
+            <div class="rel-acc-vl">futuro</div>
           </div>
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
-            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;opacity:.7">
-              <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px">📊 Relatórios PDF</div>
-              <div style="font-size:11px;color:#334155">Exportação automática com capa e resumo executivo</div>
-            </div>
-            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;opacity:.7">
-              <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px">🔗 Integrações</div>
-              <div style="font-size:11px;color:#334155">Conectores com Jira, Trello e sistemas legados</div>
-            </div>
-            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;opacity:.7">
-              <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px">📱 App Mobile</div>
-              <div style="font-size:11px;color:#334155">Acompanhamento de projetos no celular</div>
-            </div>
-            <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;opacity:.7">
-              <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px">🤖 IA Preditiva</div>
-              <div style="font-size:11px;color:#334155">Previsão de atrasos e sugestões automáticas de ação</div>
+          <div class="rel-acc-info">
+            <div class="rel-acc-title">V18 e além — Em planejamento</div>
+            <div class="rel-acc-chips">
+              <span class="rel-meta-chip" style="color:#475569;border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.03)">💡 Visão de produto</span>
             </div>
           </div>
-          <div style="margin-top:16px;font-size:12px;color:#1e293b;font-style:italic;display:flex;align-items:center;gap:6px">
-            <span>💡</span> Funcionalidades sujeitas a mudança conforme evolução do produto. Sua opinião importa!
+          <span class="rel-acc-chevron">▼</span>
+        </div>
+        <div class="rel-acc-body">
+          <div class="rel-acc-inner">
+            <div class="rel-acc-content">
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;opacity:.75">
+                  <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px">📊 Relatórios PDF</div>
+                  <div style="font-size:11px;color:#475569">Exportação automática com capa e resumo executivo</div>
+                </div>
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;opacity:.75">
+                  <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px">🔗 Integrações</div>
+                  <div style="font-size:11px;color:#475569">Conectores com Jira, Trello e sistemas legados</div>
+                </div>
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;opacity:.75">
+                  <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px">📱 App Mobile</div>
+                  <div style="font-size:11px;color:#475569">Acompanhamento de projetos no celular</div>
+                </div>
+                <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px 16px;opacity:.75">
+                  <div style="font-size:12px;font-weight:700;color:#64748b;margin-bottom:4px">🤖 IA Preditiva</div>
+                  <div style="font-size:11px;color:#475569">Previsão de atrasos e sugestões automáticas de ação</div>
+                </div>
+              </div>
+              <div style="margin-top:4px;font-size:12px;color:#475569;font-style:italic;display:flex;align-items:center;gap:6px">
+                <span>💡</span> Funcionalidades sujeitas a mudança conforme evolução do produto. Sua opinião importa!
+              </div>
+            </div>
           </div>
         </div>
+      </div><!-- /acc-v18 -->
 
-      </div>
-    </div>
-
+    </div><!-- /rel-accordion -->
   </div><!-- /releases-wrap -->
 </div><!-- /main -->
 </div><!-- /app -->
@@ -414,6 +439,10 @@ document.getElementById('sidebar-toggle').addEventListener('click',()=>{
   const lbl=document.getElementById('nav-alertas-label');
   if(lbl&&ativos>0) lbl.innerHTML=`Alertas <span style="background:#ef4444;color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:8px;margin-left:4px">${ativos}</span>`;
 })();
+
+function toggleAcc(id){
+  document.getElementById(id).classList.toggle('open');
+}
 
 function toggleTheme(){
   const t=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';

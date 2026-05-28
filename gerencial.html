@@ -374,15 +374,15 @@ function renderGerencial(){
   if(health>=75) insights.push({type:'positivo',icon:'✅',titulo:'Portfólio Saudável',msg:`Health <strong>${health}</strong> — portfólio em boa saúde.`});
   else if(health>=50) insights.push({type:'atencao',icon:'⚠️',titulo:'Requer Atenção',msg:`Health <strong>${health}</strong> — pontos de atenção que precisam acompanhamento.`});
   else insights.push({type:'critico',icon:'🔥',titulo:'Portfólio em Risco',msg:`Health <strong>${health}</strong> — situação crítica, intervenção recomendada.`});
-  if(atrasados.length) insights.push({type:'critico',icon:'⏰',titulo:`${atrasados.length} Projeto${atrasados.length!==1?'s':''} Atrasado${atrasados.length!==1?'s':''}`,msg:atrasados.slice(0,4).map(p=>`<strong>${p.nome}</strong>`).join(', ')+(atrasados.length>4?` +${atrasados.length-4} outros`:'')});
-  if(bloqueados.length) insights.push({type:'critico',icon:'🔒',titulo:`${bloqueados.length} Bloqueio${bloqueados.length!==1?'s':''} Ativo${bloqueados.length!==1?'s':''}`,msg:bloqueados.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
+  if(atrasados.length) insights.push({type:'critico',icon:'⏰',titulo:`Projeto${atrasados.length!==1?'s':''} Atrasado${atrasados.length!==1?'s':''}`,count:atrasados.length,msg:atrasados.slice(0,4).map(p=>`<strong>${p.nome}</strong>`).join(', ')+(atrasados.length>4?` +${atrasados.length-4} outros`:'')});
+  if(bloqueados.length) insights.push({type:'critico',icon:'🔒',titulo:`Bloqueio${bloqueados.length!==1?'s':''} Ativo${bloqueados.length!==1?'s':''}`,count:bloqueados.length,msg:bloqueados.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
   const glDias=p=>{const fe=getFimEfetivo(p)||p.fim;return fe?Math.round((new Date(fe)-HOJE)/86400000):null;};
   const gl14 =ativos.filter(p=>{const d=glDias(p);return d!==null&&d>=0&&d<=14;});
   const gl30 =ativos.filter(p=>{const d=glDias(p);return d!==null&&d>14&&d<=30;});
   const gl90 =ativos.filter(p=>{const d=glDias(p);return d!==null&&d>30&&d<=90;});
-  if(gl14.length)  insights.push({type:'critico', icon:'🚨',titulo:`${gl14.length} Go Live${gl14.length!==1?'s':''} em até 14 dias`, msg:gl14.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
-  if(gl30.length)  insights.push({type:'atencao', icon:'🚀',titulo:`${gl30.length} Go Live${gl30.length!==1?'s':''} em até 30 dias`, msg:gl30.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
-  if(gl90.length)  insights.push({type:'info',    icon:'📅',titulo:`${gl90.length} Go Live${gl90.length!==1?'s':''} em até 90 dias`, msg:gl90.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
+  if(gl14.length)  insights.push({type:'critico', icon:'🚨',titulo:`Go Live${gl14.length!==1?'s':''} em até 14 dias`,count:gl14.length, msg:gl14.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
+  if(gl30.length)  insights.push({type:'atencao', icon:'🚀',titulo:`Go Live${gl30.length!==1?'s':''} em até 30 dias`,count:gl30.length, msg:gl30.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
+  if(gl90.length)  insights.push({type:'info',    icon:'📅',titulo:`Go Live${gl90.length!==1?'s':''} em até 90 dias`,count:gl90.length, msg:gl90.map(p=>`<strong>${p.nome}</strong>`).join(', ')});
   const worst=pmoData[0];
   if(worst&&worst.score<70) insights.push({type:'atencao',icon:'👤',titulo:`${worst.nome} — Atenção`,msg:`Score <strong>${worst.score}</strong> · ${worst.total} projetos · ${worst.atrasados} atrasados · ${worst.bloqueados} bloqueados`});
   const iColors={positivo:{border:'rgba(34,197,94,.3)',bg:'rgba(34,197,94,.07)'},atencao:{border:'rgba(245,195,0,.3)',bg:'rgba(245,195,0,.07)'},critico:{border:'rgba(239,68,68,.3)',bg:'rgba(239,68,68,.07)'},info:{border:'rgba(59,130,246,.3)',bg:'rgba(59,130,246,.07)'}};
@@ -392,7 +392,7 @@ function renderGerencial(){
       <span style="font-size:11px;font-weight:400;color:var(--muted)">${insights.length} observações</span>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">
-      ${insights.map(ins=>{const c=iColors[ins.type];return`<div style="background:${c.bg};border:1px solid ${c.border};border-radius:var(--radius-sm);padding:12px 14px;display:flex;gap:10px;align-items:flex-start"><div style="font-size:18px;flex-shrink:0">${ins.icon}</div><div><div style="font-size:12px;font-weight:700;margin-bottom:3px">${ins.titulo}</div><div style="font-size:11px;color:var(--muted2);line-height:1.5">${ins.msg}</div></div></div>`;}).join('')}
+      ${insights.map(ins=>{const c=iColors[ins.type];const countBadge=ins.count!==undefined?`<span style="display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:1px 8px;font-size:11px;font-weight:800;letter-spacing:.3px;line-height:1.6;margin-left:6px;flex-shrink:0">${ins.count}</span>`:'';return`<div style="background:${c.bg};border:1px solid ${c.border};border-radius:var(--radius-sm);padding:12px 14px;display:flex;gap:10px;align-items:flex-start"><div style="font-size:18px;flex-shrink:0">${ins.icon}</div><div style="min-width:0"><div style="font-size:12px;font-weight:700;margin-bottom:3px;display:flex;align-items:center;flex-wrap:wrap;gap:4px">${ins.titulo}${countBadge}</div><div style="font-size:11px;color:var(--muted2);line-height:1.5">${ins.msg}</div></div></div>`;}).join('')}
     </div>
   </div>`;
 
