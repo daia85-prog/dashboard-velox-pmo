@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Velox PMO">
+<meta name="theme-color" content="#0a0e19">
 <title>Dashboard — Velox by Invent</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23F5C300'/><text x='16' y='23' text-anchor='middle' font-size='18' font-weight='900' font-family='Inter,sans-serif' fill='%230a0e19'>VX</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,7 +152,7 @@ a{color:inherit;text-decoration:none}
 .cmd-item:hover,.cmd-item.active{background:var(--brand-dim);color:var(--brand)}
 .cmd-empty{padding:20px;text-align:center;color:var(--muted);font-size:13px}
 /* TV Mode */
-#tv-overlay{position:fixed;inset:0;background:radial-gradient(ellipse 140% 90% at 50% -10%,#14093e 0%,#080420 45%,#020810 100%);z-index:8000;display:none;flex-direction:column;font-family:'Inter',sans-serif;overflow:hidden}
+#tv-overlay{position:fixed;inset:0;background:radial-gradient(ellipse 140% 90% at 50% -10%,#14093e 0%,#080420 45%,#020810 100%);z-index:8000;display:none;flex-direction:column;font-family:'Inter',sans-serif;overflow:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
 #tv-overlay.open{display:flex}
 .tv-bg-glow{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0}
 .tv-glow-orb{position:absolute;border-radius:50%;filter:blur(130px);animation:tvOrbDrift 14s infinite alternate ease-in-out}
@@ -163,9 +169,14 @@ a{color:inherit;text-decoration:none}
 .tv-clock-wrap{text-align:right}
 .tv-clock{font-size:34px;font-weight:800;color:#fff;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1}
 .tv-date-lbl{font-size:11px;color:#6d6e85;margin-top:3px;letter-spacing:.3px}
-.tv-body{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 48px;overflow:hidden;position:relative;z-index:2}
+.tv-body{flex:1;display:flex;align-items:stretch;justify-content:center;padding:16px 40px;overflow:hidden;position:relative;z-index:2;min-height:0}
 .tv-slide{display:none;width:100%;max-width:1480px;animation:tvIn .5s cubic-bezier(.22,1,.36,1)}
-.tv-slide.active{display:flex;flex-direction:column}
+.tv-slide.active{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.tv-golive-grid{display:grid;gap:14px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.tv-farol-grid{display:grid;gap:12px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.tv-pmo-grid{display:grid;gap:14px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.tv-conq-grid{display:grid;gap:12px;width:100%;flex:1;min-height:0;grid-auto-rows:minmax(0,1fr)}
+.tv-golive-card{border-radius:16px;padding:22px 24px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.025);position:relative;overflow:hidden;display:flex;flex-direction:column}
 @keyframes tvIn{from{opacity:0;transform:translateY(24px) scale(.99)}to{opacity:1;transform:none}}
 @keyframes tvRotAnim{0%,100%{transform:rotate(0deg)}30%{transform:rotate(90deg)}70%{transform:rotate(90deg)}}
 .tv-footer{padding:12px 52px;border-top:1px solid rgba(139,92,246,.12);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:2;background:rgba(10,6,28,.88);backdrop-filter:blur(20px)}
@@ -1044,7 +1055,7 @@ function buildSlides(){
   const taxaConc  = PROJETOS.length ? Math.round(concluidos.length/PROJETOS.length*100) : 0;
   const atrasadosTv = PROJETOS.filter(p=>calcStatus(p)==='Atrasado').length;
   const s0 = `
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;width:100%">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;width:100%;flex:1;min-height:0">
     <div style="display:flex;align-items:center;gap:40px">
       ${tvSvgRing(health,hColor,260)}
       <div>
@@ -1115,7 +1126,7 @@ function buildSlides(){
 
   const s2=`
   <div class="tv-s-title">⚠️ Alertas — Bloqueados & Críticos <span class="tv-s-title-sub">${bloqueados.length} projeto${bloqueados.length!==1?'s':''} requerem atenção</span></div>
-  <div style="width:100%">${bloqRows}</div>`;
+  <div style="width:100%;flex:1;min-height:0;overflow-y:auto">${bloqRows}</div>`;
 
   // ── helper: gera linha do farol — legível na TV ────────
   function _farolRow(p){
@@ -1151,7 +1162,7 @@ function buildSlides(){
     const fa=getFimEfetivo(a)||a.fim||'9999', fb=getFimEfetivo(b)||b.fim||'9999';
     return fa.localeCompare(fb);
   });
-  const maxFarol = 12;
+  const maxFarol = 8; // 2 linhas × 4 cols — cards grandes, sem distorcer
   const farolTiles = ativosSort.slice(0, maxFarol).map((p, idx)=>{
     const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
     const prog=calcProgresso(p);
@@ -1166,34 +1177,36 @@ function buildSlides(){
     const dc = dias===null?'#475569':dias<0?'#ef4444':dias<=7?'#ef4444':dias<=30?'#F5C300':'#94a3b8';
     const diasTxt = dias===null?'—':dias<0?`${Math.abs(dias)}d atr`:dias===0?'HOJE':dias+'d';
     const diasBig = dias!==null && (dias<0||dias<=7);
-    return `<div style="border-radius:16px;padding:16px 18px;background:linear-gradient(145deg,${tileColor}12,${tileColor}06);border:1px solid ${tileColor}35;border-top:3px solid ${tileColor};position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.04).toFixed(2)}s both">
-      <div style="position:absolute;bottom:-20px;right:-14px;font-size:52px;opacity:.06;pointer-events:none;line-height:1">${sm.icon}</div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:6px;margin-bottom:10px">
-        <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:${tileColor}25;color:${tileColor};white-space:nowrap">${sm.icon} ${sm.label}</span>
-        <span style="font-size:${diasBig?'20':'17'}px;font-weight:900;color:${dc};letter-spacing:-1px;white-space:nowrap;${diasBig?'animation:urgPulse 1.5s infinite':''}">${diasTxt}</span>
+    return `<div style="border-radius:18px;padding:20px 22px;background:linear-gradient(145deg,${tileColor}12,${tileColor}06);border:1px solid ${tileColor}35;border-top:4px solid ${tileColor};position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.04).toFixed(2)}s both;display:flex;flex-direction:column">
+      <div style="position:absolute;bottom:-16px;right:-10px;font-size:60px;opacity:.06;pointer-events:none;line-height:1">${sm.icon}</div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px">
+        <span style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:7px;background:${tileColor}25;color:${tileColor};white-space:nowrap">${sm.icon} ${sm.label}</span>
+        <span style="font-size:${diasBig?'26':'22'}px;font-weight:900;color:${dc};letter-spacing:-1px;white-space:nowrap;${diasBig?'animation:urgPulse 1.5s infinite':''}">${diasTxt}</span>
       </div>
-      <div style="font-size:15px;font-weight:800;color:#f1f5f9;line-height:1.25;margin-bottom:6px;min-height:38px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(p.nome)}</div>
-      <div style="font-size:11px;color:#475569;margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.pmo||p.local||'—')}</div>
-      <div style="display:flex;align-items:center;gap:8px">
-        <div style="flex:1;height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden">
-          <div style="height:100%;width:${prog}%;background:${tileColor};border-radius:4px;box-shadow:0 0 8px ${tileColor}66"></div>
+      <div style="font-size:18px;font-weight:800;color:#f1f5f9;line-height:1.25;margin-bottom:6px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(p.nome)}</div>
+      <div style="font-size:12px;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.pmo||p.local||'—')}</div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="flex:1;height:9px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden">
+          <div style="height:100%;width:${prog}%;background:${tileColor};border-radius:5px;box-shadow:0 0 10px ${tileColor}66"></div>
         </div>
-        <span style="font-size:15px;font-weight:900;color:${tileColor};flex-shrink:0">${prog}%</span>
+        <span style="font-size:17px;font-weight:900;color:${tileColor};flex-shrink:0">${prog}%</span>
       </div>
     </div>`;
   }).join('');
-  const maisLabel3 = ativos.length > maxFarol
-    ? `<div style="text-align:center;padding:10px 0 0;font-size:13px;color:#3d3d5c;font-weight:600">+ ${ativos.length-maxFarol} projetos adicionais</div>` : '';
+  const _maisFarol = ativos.length > maxFarol
+    ? `<div style="font-size:12px;color:#3d3d5c;font-weight:600;flex-shrink:0;padding-top:6px;text-align:center">+ ${ativos.length-maxFarol} projetos adicionais</div>` : '';
   const s3=`
-  <div class="tv-s-title">🚦 Farol de Projetos <span class="tv-s-title-sub">${ativos.length} ativos · urgência → verde</span></div>
-  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;width:100%">${farolTiles}</div>
-  ${maisLabel3}`;
+  <div class="tv-s-title">🚦 Farol de Projetos <span class="tv-s-title-sub">${ativos.length} ativos · top ${Math.min(ativos.length,maxFarol)} por urgência</span></div>
+  <div class="tv-farol-grid" style="grid-template-columns:repeat(4,1fr)">${farolTiles}</div>
+  ${_maisFarol}`;
 
   // ── Slide 5: Go Lives — próximos prazos ───────────────
-  const proximos = ativos
+  const proximosTodos = ativos
     .filter(p=>getFimEfetivo(p)||p.fim)
-    .sort((a,b)=>new Date(getFimEfetivo(a)||a.fim)-new Date(getFimEfetivo(b)||b.fim))
-    .slice(0,8);
+    .sort((a,b)=>new Date(getFimEfetivo(a)||a.fim)-new Date(getFimEfetivo(b)||b.fim));
+  // TV: máx 4 para 1 linha grande (mais impacto visual)
+  const proximos = proximosTodos.slice(0,4);
   const goCards = proximos.map((p,idx)=>{
     const fe=getFimEfetivo(p)||p.fim;
     const dias=Math.round((new Date(fe)-HOJE)/86400000);
@@ -1203,27 +1216,30 @@ function buildSlides(){
     const prog=calcProgresso(p);
     const label=isAtras?`${Math.abs(dias)}d atraso`:dias===0?'HOJE':dias+'d';
     const sm=STATUS_MAP[calcStatus(p)]||STATUS_MAP['Em andamento'];
-    return `<div style="border-radius:16px;padding:20px 22px;border:1px solid ${dc}35;background:linear-gradient(145deg,${dc}09,rgba(255,255,255,.015));position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.06).toFixed(2)}s both">
-      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,${dc},transparent);opacity:.8"></div>
-      <div style="position:absolute;top:0;right:0;bottom:0;width:3px;background:linear-gradient(180deg,${dc},transparent);opacity:.3"></div>
-      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:8px">
-        <div style="font-size:15px;font-weight:800;color:#f1f5f9;line-height:1.2;flex:1">${escHtml(p.nome)}</div>
-        <span style="font-size:10px;background:${sm.bg};color:${sm.color};padding:3px 8px;border-radius:8px;font-weight:700;flex-shrink:0">${sm.label}</span>
+    return `<div style="border-radius:20px;padding:28px 28px;border:1px solid ${dc}35;background:linear-gradient(145deg,${dc}09,rgba(255,255,255,.015));position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.06).toFixed(2)}s both;display:flex;flex-direction:column">
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,transparent,${dc},transparent);opacity:.9"></div>
+      <div style="position:absolute;top:0;right:0;bottom:0;width:4px;background:linear-gradient(180deg,${dc},transparent);opacity:.4"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px;gap:10px">
+        <div style="font-size:20px;font-weight:900;color:#f1f5f9;line-height:1.2;flex:1">${escHtml(p.nome)}</div>
+        <span style="font-size:11px;background:${sm.bg};color:${sm.color};padding:4px 10px;border-radius:9px;font-weight:700;flex-shrink:0">${sm.label}</span>
       </div>
-      <div style="font-size:11px;color:#475569;margin-bottom:14px">${escHtml(p.pmo||'—')}</div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
-        <div style="font-size:13px;color:#64748b;font-weight:600">${formatDate(fe)}</div>
-        <div style="font-size:${isAtras||isUrgente?'40':'36'}px;font-weight:900;color:${dc};letter-spacing:-2px;line-height:1;${isAtras?'animation:urgPulse 1.5s infinite':''}">${label}</div>
+      <div style="font-size:13px;color:#64748b;font-weight:600;margin-bottom:6px">${escHtml(p.pmo||'—')}</div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+        <div style="font-size:15px;color:#64748b;font-weight:600">${formatDate(fe)}</div>
+        <div style="font-size:${isAtras||isUrgente?'56':'52'}px;font-weight:900;color:${dc};letter-spacing:-3px;line-height:1;${isAtras?'animation:urgPulse 1.5s infinite':''}">${label}</div>
       </div>
-      <div style="height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;margin-bottom:6px">
-        <div style="height:100%;width:${prog}%;background:${dc};border-radius:4px;box-shadow:0 0 10px ${dc}77;transition:width .8s ease"></div>
+      <div style="height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;margin-bottom:8px">
+        <div style="height:100%;width:${prog}%;background:${dc};border-radius:5px;box-shadow:0 0 14px ${dc}77;transition:width .8s ease"></div>
       </div>
-      <div style="font-size:11px;color:#475569;font-weight:600">${prog}% concluído</div>
+      <div style="font-size:13px;color:#475569;font-weight:700">${prog}% concluído</div>
     </div>`;
   }).join('')||`<div style="text-align:center;padding:60px;color:#22c55e;font-size:22px;font-weight:700">✅ Nenhum Go Live próximo</div>`;
+  const _gCols5=Math.min(proximos.length||1,4);
+  const _maisGoLives = proximosTodos.length > 4 ? ` · +${proximosTodos.length-4} no portfólio` : '';
   const s5=`
-  <div class="tv-s-title">📅 Go Lives — Próximos Prazos <span class="tv-s-title-sub">${proximos.length} projetos ordenados por data</span></div>
-  <div class="tv-golive-grid" style="grid-template-columns:repeat(${Math.min(proximos.length,4)},1fr)">${goCards}</div>`;
+  <div class="tv-s-title">📅 Go Lives — Próximos Prazos <span class="tv-s-title-sub">top ${proximos.length} por urgência${_maisGoLives}</span></div>
+  <div class="tv-golive-grid" style="grid-template-columns:repeat(${_gCols5},1fr)">${goCards}</div>`;
 
   // ── Slide 6: Por PMO — cards visuais ──────────────────
   const wl=calcWorkload();
@@ -1238,7 +1254,7 @@ function buildSlides(){
       const dotC = pr.crit?'#ef4444':pr.bloq?'#f97316':(pr.status==='Atrasado'?'#F5C300':'#6366f1');
       return `<span style="width:9px;height:9px;border-radius:50%;background:${dotC};display:inline-block;box-shadow:0 0 5px ${dotC}88" title="${pr.nome}"></span>`;
     }).join('');
-    return `<div style="background:${riskBg};border:1px solid ${riskColor}40;border-top:2px solid ${riskColor};border-radius:16px;padding:18px 20px;animation:bentoIn .4s ease ${(idx*.08).toFixed(2)}s both">
+    return `<div style="background:${riskBg};border:1px solid ${riskColor}40;border-top:2px solid ${riskColor};border-radius:16px;padding:18px 20px;animation:bentoIn .4s ease ${(idx*.08).toFixed(2)}s both;display:flex;flex-direction:column">
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
         <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,${riskColor}40,${riskColor}20);border:1px solid ${riskColor}50;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:${riskColor};flex-shrink:0">${initials}</div>
         <div style="flex:1;min-width:0">
@@ -1246,6 +1262,7 @@ function buildSlides(){
           <div style="display:flex;gap:6px;margin-top:3px;flex-wrap:wrap">${dots}</div>
         </div>
       </div>
+      <div style="flex:1"></div>
       <div style="height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;margin-bottom:10px">
         <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,${riskColor}cc,${riskColor}66);border-radius:5px;box-shadow:0 0 8px ${riskColor}55"></div>
       </div>
@@ -1256,9 +1273,10 @@ function buildSlides(){
       </div>
     </div>`;
   }).join('');
+  const _gCols6=Math.min(wlEntries.length||1,4);
   const s6=`
   <div class="tv-s-title">👥 Carga por PMO / Gestor <span class="tv-s-title-sub">${wlEntries.length} gestores · portfólio ativo</span></div>
-  <div style="display:grid;grid-template-columns:repeat(${Math.min(wlEntries.length,4)},1fr);gap:14px;width:100%">${pmoCards}</div>`;
+  <div class="tv-pmo-grid" style="grid-template-columns:repeat(${_gCols6},1fr)">${pmoCards}</div>`;
 
   // ── Slide Conquistas ──────────────────────────────────────────
   const hoje90c=new Date(HOJE); hoje90c.setDate(hoje90c.getDate()-90);
@@ -1271,14 +1289,15 @@ function buildSlides(){
       const diasAtras=fim?Math.round((HOJE-new Date(fim))/86400000):null;
       const diasLabel=diasAtras===null?'—':diasAtras===0?'Hoje':diasAtras===1?'Ontem':`${diasAtras}d atrás`;
       const isRecente=diasAtras!==null&&diasAtras<=30;
-      return `<div style="border-radius:16px;padding:18px 20px;background:linear-gradient(145deg,rgba(34,197,94,.09),rgba(16,185,129,.04));border:1px solid rgba(34,197,94,.3);border-top:3px solid #22c55e;position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.05).toFixed(2)}s both">
+      return `<div style="border-radius:16px;padding:18px 20px;background:linear-gradient(145deg,rgba(34,197,94,.09),rgba(16,185,129,.04));border:1px solid rgba(34,197,94,.3);border-top:3px solid #22c55e;position:relative;overflow:hidden;animation:bentoIn .4s ease ${(idx*.05).toFixed(2)}s both;display:flex;flex-direction:column">
       <div style="position:absolute;bottom:-14px;right:-10px;font-size:56px;opacity:.07;pointer-events:none;line-height:1">🏆</div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:8px">
         <span style="font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;background:rgba(34,197,94,.2);color:#22c55e;white-space:nowrap">✅ Concluído</span>
         <span style="font-size:${isRecente?'16':'14'}px;font-weight:900;color:${isRecente?'#4ade80':'#94a3b8'};letter-spacing:-.5px;white-space:nowrap">${diasLabel}</span>
       </div>
-      <div style="font-size:15px;font-weight:800;color:#f1f5f9;line-height:1.25;margin-bottom:6px;min-height:38px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(p.nome)}</div>
-      <div style="font-size:11px;color:#475569;margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.pmo||p.local||'—')}</div>
+      <div style="font-size:15px;font-weight:800;color:#f1f5f9;line-height:1.25;margin-bottom:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${escHtml(p.nome)}</div>
+      <div style="font-size:11px;color:#475569;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(p.pmo||p.local||'—')}</div>
+      <div style="flex:1"></div>
       <div style="display:flex;align-items:center;gap:8px">
         <div style="flex:1;height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden"><div style="height:100%;width:100%;background:linear-gradient(90deg,#22c55e,#4ade80);border-radius:4px;box-shadow:0 0 8px #22c55e55"></div></div>
         <span style="font-size:15px;font-weight:900;color:#22c55e;flex-shrink:0">100%</span>
@@ -1286,9 +1305,10 @@ function buildSlides(){
       ${fim?`<div style="font-size:10px;color:#1e3a1e;margin-top:6px;font-weight:600">${formatDate(fim)}</div>`:''}
     </div>`;
     }).join('');
+  const _gColsC=Math.min(concShow.length||1,4);
   const sConq=`
   <div class="tv-s-title">🏆 Conquistas <span class="tv-s-title-sub">${concShow.length} projeto${concShow.length!==1?'s':''} entregues</span></div>
-  <div style="display:grid;grid-template-columns:repeat(${Math.min(concShow.length||1,4)},1fr);gap:12px;width:100%">${conquCards}</div>`;
+  <div class="tv-conq-grid" style="grid-template-columns:repeat(${_gColsC},1fr)">${conquCards}</div>`;
 
   // ── Slide Atenção Imediata (TV) ────────────────────────────────
   const tvAtvItems=[];
@@ -1352,8 +1372,8 @@ function buildSlides(){
     ${tvP1list.length?`<div style="display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:10px;background:rgba(249,115,22,.10);border:1px solid rgba(249,115,22,.3)"><span style="width:11px;height:11px;border-radius:50%;background:#f97316;display:inline-block;animation:blink 2.5s infinite;box-shadow:0 0 8px #f97316"></span><span style="font-size:13px;font-weight:800;color:#fb923c">P1 — ${tvP1list.length} alerta${tvP1list.length!==1?'s':''}</span></div>`:''}
     ${tvP2list.length?`<div style="display:flex;align-items:center;gap:8px;padding:7px 16px;border-radius:10px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.3)"><span style="width:11px;height:11px;border-radius:50%;background:#3b82f6;display:inline-block;box-shadow:0 0 8px #3b82f6"></span><span style="font-size:13px;font-weight:800;color:#60a5fa">P2 — ${tvP2list.length} prazo${tvP2list.length!==1?'s':''}</span></div>`:''}
   </div>
-  <div style="width:100%;overflow:hidden">
-    <svg width="100%" viewBox="0 0 ${tvAtvW} ${tvBViewH}" preserveAspectRatio="xMidYMid meet" style="overflow:visible">
+  <div style="width:100%;flex:1;min-height:0;overflow:hidden;display:flex;align-items:center">
+    <svg width="100%" height="100%" viewBox="0 0 ${tvAtvW} ${tvBViewH}" preserveAspectRatio="xMidYMid meet" style="overflow:visible;max-height:100%">
       ${tvBRows}
     </svg>
   </div>`;
@@ -1393,11 +1413,45 @@ function tvCheckOrientation(){
 // ── TV: Fullscreen helpers ────────────────────────────────
 function tvEnterFullscreen(){
   const el=document.documentElement;
+  const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  const hasFullscreen=!!(el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen);
+  if(isIOS||!hasFullscreen){
+    // iOS Safari: Fullscreen API não disponível — exibe dica de PWA
+    _tvShowIOSHint();
+    return;
+  }
   try{
-    if(el.requestFullscreen)          el.requestFullscreen({navigationUI:'hide'});
+    if(el.requestFullscreen)           el.requestFullscreen({navigationUI:'hide'});
     else if(el.webkitRequestFullscreen) el.webkitRequestFullscreen();
     else if(el.mozRequestFullScreen)    el.mozRequestFullScreen();
   }catch(e){}
+}
+function _tvShowIOSHint(){
+  if(document.getElementById('tv-ios-hint')) return;
+  const isPWA=window.navigator.standalone===true;
+  if(isPWA) return; // já está em PWA, não precisa do aviso
+  const h=document.createElement('div');
+  h.id='tv-ios-hint';
+  h.style.cssText='position:fixed;bottom:72px;left:50%;transform:translateX(-50%);z-index:9999;'+
+    'background:rgba(15,20,35,.95);border:1px solid rgba(245,195,0,.4);border-radius:14px;'+
+    'padding:12px 18px;display:flex;align-items:center;gap:12px;max-width:320px;'+
+    'box-shadow:0 8px 32px rgba(0,0,0,.6);animation:tvIOSHintIn .3s ease;backdrop-filter:blur(8px);';
+  h.innerHTML=`
+    <div style="font-size:28px;flex-shrink:0">📲</div>
+    <div>
+      <div style="font-size:12px;font-weight:700;color:#f1f5f9;letter-spacing:.5px">TELA CHEIA NO iPHONE</div>
+      <div style="font-size:11px;color:#94a3b8;margin-top:3px;line-height:1.4">Toque em <strong style="color:#f5c300">Compartilhar ↑</strong> e depois <strong style="color:#f5c300">Adicionar à Tela Inicial</strong> para abrir sem a barra do Safari.</div>
+    </div>
+    <button onclick="this.parentNode.remove()" style="background:none;border:none;color:#64748b;font-size:18px;cursor:pointer;flex-shrink:0;padding:4px;line-height:1">✕</button>`;
+  // Keyframe
+  if(!document.getElementById('tv-ios-hint-style')){
+    const s=document.createElement('style');
+    s.id='tv-ios-hint-style';
+    s.textContent='@keyframes tvIOSHintIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}';
+    document.head.appendChild(s);
+  }
+  document.body.appendChild(h);
+  setTimeout(()=>{ if(h.parentNode) h.style.opacity='0'; h.style.transition='opacity .5s'; setTimeout(()=>h.remove(),500); }, 8000);
 }
 function tvExitFullscreen(){
   try{
@@ -1439,7 +1493,10 @@ window.addEventListener('resize',()=>{
 // ── TV: swipe touch — listener no document (mais robusto) ────
 (function(){
   let tx=0, ty=0;
-  document.addEventListener('touchstart',e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+  document.addEventListener('touchstart',e=>{
+    tx=e.touches[0].clientX; ty=e.touches[0].clientY;
+    window._tvTx=tx; // compartilhado com click-nav
+  },{passive:true});
   document.addEventListener('touchend',e=>{
     const ov=document.getElementById('tv-overlay');
     if(!ov||!ov.classList.contains('open')) return;
@@ -1449,23 +1506,40 @@ window.addEventListener('resize',()=>{
   },{passive:true});
 })();
 function tvFitSlide(){
-  const body=document.getElementById('tv-body');
-  if(!body) return;
-  const slide=body.querySelector('.tv-slide');
-  if(!slide) return;
-  slide.style.transform=''; slide.style.transformOrigin=''; body.style.alignItems='';
-  requestAnimationFrame(()=>{
-    const bH=body.clientHeight-8, bW=body.clientWidth-8;
-    const sH=slide.scrollHeight, sW=slide.scrollWidth;
-    // Escala até 1.4× para preencher — e reduz se ultrapassar
-    const scale=Math.min(1.4, bH/Math.max(sH,1), bW/Math.max(sW,1));
-    if(scale<0.97){
-      body.style.alignItems='flex-start';
-      slide.style.transformOrigin='top center';
-      slide.style.transform=`scale(${scale.toFixed(3)})`;
-    }
-  });
+  // CSS grid-auto-rows:minmax(0,1fr) + flex:1 + align-items:stretch cuidam do layout.
+  // Esta função apenas garante que nenhum transform residual de slides anteriores persista.
+  const slide=document.querySelector('#tv-body .tv-slide');
+  if(slide){ slide.style.transform=''; slide.style.transformOrigin=''; }
 }
+// Navegação por toque/clique nas zonas esquerda e direita do tv-body
+(function(){
+  let _wasSwiped=false;
+  // Marca swipe para não disparar click após touchend
+  document.addEventListener('touchstart',()=>{ _wasSwiped=false; },{passive:true,capture:true});
+  document.addEventListener('touchend',e=>{
+    const ov=document.getElementById('tv-overlay');
+    if(!ov||!ov.classList.contains('open')) return;
+    // Já tratado pelo listener de swipe acima — apenas marca flag
+    const dx=Math.abs(e.changedTouches[0].clientX - (window._tvTx||0));
+    if(dx>20) _wasSwiped=true;
+  },{passive:true,capture:true});
+
+  function tvBodyNav(e){
+    if(_wasSwiped){ _wasSwiped=false; return; } // era swipe, ignora click
+    const ov=document.getElementById('tv-overlay');
+    if(!ov||!ov.classList.contains('open')) return;
+    if(e.target.closest('.tv-footer,.tv-header,.tv-btn')) return;
+    const body=document.getElementById('tv-body');
+    if(!body) return;
+    const rect=body.getBoundingClientRect();
+    const relX=(e.clientX-rect.left)/rect.width;
+    if(relX<0.35) tvPrev();
+    else if(relX>0.65) tvNext();
+  }
+  // DOM já carregado (script no fim do body)
+  const tvb=document.getElementById('tv-body');
+  if(tvb) tvb.addEventListener('click', tvBodyNav);
+})();
 function tvRender(){
   const s=tvSlides[tvSlide];
   document.getElementById('tv-body').innerHTML=`<div class="tv-slide active">${s.html}</div>`;

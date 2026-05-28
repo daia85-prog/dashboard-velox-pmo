@@ -114,14 +114,21 @@
   .tv-slide-badge-txt { font-size: 11px !important; letter-spacing: .8px !important; }
   .tv-clock { font-size: 16px !important; }
   .tv-date-lbl { display: none !important; }
-  .tv-body { padding: 12px 14px !important; overflow-y: auto !important; }
-  .tv-s-title { font-size: 16px !important; margin-bottom: 12px !important; }
+  .tv-body { padding: 10px 12px !important; overflow: hidden !important; }
+  .tv-s-title { font-size: 15px !important; margin-bottom: 10px !important; padding-bottom: 10px !important; flex-shrink: 0 !important; }
   .tv-s-title-sub { font-size: 10px !important; }
   .tv-kpi-val { font-size: 48px !important; }
   .tv-kpi-lbl { font-size: 11px !important; }
   .tv-kpi-sub { font-size: 10px !important; }
   .tv-footer { padding: 10px 14px !important; }
-  .tv-golive-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  /* Portrait: 2 colunas — grid-auto-rows:1fr cuida das linhas automaticamente */
+  .tv-golive-grid,
+  .tv-farol-grid,
+  .tv-pmo-grid,
+  .tv-conq-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .tv-golive-card { padding: 14px 16px !important; }
+  .tv-golive-name { font-size: 13px !important; }
+  .tv-golive-date { font-size: 20px !important; }
   .tv-kbd { display: none !important; }
 
   /* ── Urgency Banner ── */
@@ -255,24 +262,35 @@
 /* ── TV Overlay: landscape mobile (altura < 560px) ─────────────
    Breakpoint por ALTURA — cobre landscape em qualquer largura   */
 @media (max-height: 560px) {
-  /* Header compacto */
-  .tv-header { padding: 7px 14px !important; gap: 6px !important; }
-  .tv-logo-icon { width: 26px !important; height: 26px !important; font-size: 10px !important; }
-  .tv-logo-name { font-size: 14px !important; }
+  /* Header super-compacto */
+  .tv-header { padding: 5px 12px !important; gap: 5px !important; }
+  .tv-logo-icon { width: 24px !important; height: 24px !important; font-size: 10px !important; }
+  .tv-logo-name { font-size: 13px !important; }
   .tv-logo-by   { display: none !important; }
-  .tv-logo-row  { gap: 7px !important; }
-  .tv-slide-badge { padding: 4px 12px !important; }
-  .tv-slide-badge-txt { font-size: 10px !important; letter-spacing: .6px !important; }
-  .tv-clock { font-size: 15px !important; }
+  .tv-logo-row  { gap: 6px !important; }
+  .tv-slide-badge { padding: 3px 10px !important; }
+  .tv-slide-badge-txt { font-size: 9px !important; letter-spacing: .5px !important; }
+  .tv-clock { font-size: 13px !important; }
   .tv-date-lbl { display: none !important; }
-  /* Body: sem padding extra, permite o fit-scale trabalhar */
-  .tv-body { padding: 8px 12px !important; overflow: hidden !important; }
-  .tv-s-title { font-size: 15px !important; margin-bottom: 8px !important; }
+  /* Body: padding mínimo — CSS fill cuida do resto */
+  .tv-body { padding: 6px 10px !important; overflow: hidden !important; }
+  .tv-s-title { font-size: 13px !important; margin-bottom: 6px !important; padding-bottom: 6px !important; flex-shrink: 0 !important; }
   .tv-s-title-sub { font-size: 9px !important; }
+  /* Landscape: 4 colunas (mais largura disponível) — grid-auto-rows cuida das linhas */
+  .tv-golive-grid,
+  .tv-farol-grid,
+  .tv-pmo-grid,
+  .tv-conq-grid { grid-template-columns: repeat(4,1fr) !important; gap: 6px !important; }
+  .tv-golive-card { padding: 10px 12px !important; border-radius: 10px !important; }
+  .tv-golive-name { font-size: 12px !important; margin-bottom: 2px !important; }
+  .tv-golive-pmo  { font-size: 9px !important; margin-bottom: 8px !important; }
+  .tv-golive-date { font-size: 22px !important; }
+  .tv-golive-countdown { font-size: 11px !important; }
+  .tv-golive-prog { margin-top: 8px !important; }
   /* Footer compacto */
-  .tv-footer { padding: 7px 12px !important; }
-  .tv-btn { width: 30px !important; height: 30px !important; font-size: 14px !important; }
+  .tv-footer { padding: 5px 12px !important; }
+  .tv-btn { width: 28px !important; height: 28px !important; font-size: 13px !important; }
   .tv-kbd  { display: none !important; }
   .tv-slide-dots { gap: 4px !important; }
-  .tv-dot { width: 6px !important; height: 6px !important; }
+  .tv-dot { width: 5px !important; height: 5px !important; }
 }
