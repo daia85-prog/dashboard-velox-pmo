@@ -119,7 +119,7 @@ a{color:inherit;text-decoration:none}
 .urg-item.overdue{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#ef4444}
 .urg-item.overdue{animation:urgPulse 2s infinite}
 @keyframes urgPulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 3px rgba(239,68,68,.15)}}
-@keyframes cardAlertPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0),0 0 0 0 rgba(239,68,68,0)}50%{box-shadow:0 0 0 5px rgba(239,68,68,.35),0 0 40px rgba(239,68,68,.2)}}
+@keyframes cardAlertPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0)}50%{box-shadow:0 0 0 4px rgba(239,68,68,.9),0 0 28px rgba(239,68,68,.35)}}
 @keyframes txtFlash{0%,100%{opacity:1}50%{opacity:.35}}
 /* Live clock */
 .topbar-clock{font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--muted2);letter-spacing:.3px;padding:7px 13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);white-space:nowrap}
@@ -1111,7 +1111,7 @@ function buildSlides(){
 
 
   // ── Slide 2: Críticos & Bloqueados ─────────────────────
-  const bloqRows = bloqueados.length ? bloqueados.slice(0,8).map((p,idx)=>{
+  const bloqRows = bloqueados.length ? bloqueados.slice(0,6).map((p,idx)=>{
     const st=calcStatus(p), sm=STATUS_MAP[st]||STATUS_MAP['Em andamento'];
     const sema=tvSemaforoClass(p);
     const fe=getFimEfetivo(p)||p.fim;
@@ -1139,7 +1139,7 @@ function buildSlides(){
 
   const s2=`
   <div class="tv-s-title">⚠️ Alertas — Bloqueados & Críticos <span class="tv-s-title-sub">${bloqueados.length} projeto${bloqueados.length!==1?'s':''} requerem atenção</span></div>
-  <div style="width:100%;flex:1;min-height:0;overflow-y:auto">${bloqRows}</div>`;
+  <div style="width:100%;flex:1;min-height:0;overflow:visible">${bloqRows}</div>`;
 
   // ── helper: gera linha do farol — legível na TV ────────
   function _farolRow(p){
@@ -1212,13 +1212,18 @@ function buildSlides(){
         </div>
       </div>
     </div>`;
-  }).join('');
-  const _maisFarol = ativos.length > maxFarol
+  }); // array — não join aqui
+  const _maisFarolNote = ativos.length > maxFarol
     ? `<div style="font-size:12px;color:#3d3d5c;font-weight:600;flex-shrink:0;padding-top:6px;text-align:center">+ ${ativos.length-maxFarol} projetos adicionais</div>` : '';
+  const _fPg1=farolTiles.slice(0,4).join('');
+  const _fPg2=farolTiles.slice(4).join('');
   const s3=`
-  <div class="tv-s-title">🚦 Farol de Projetos <span class="tv-s-title-sub">${ativos.length} ativos · top ${Math.min(ativos.length,maxFarol)} por urgência</span></div>
-  <div class="tv-farol-grid" style="grid-template-columns:repeat(4,1fr)">${farolTiles}</div>
-  ${_maisFarol}`;
+  <div class="tv-s-title">🚦 Farol de Projetos <span class="tv-s-title-sub">${ativos.length} ativos · 1/2</span></div>
+  <div class="tv-farol-grid" style="grid-template-columns:repeat(4,1fr)">${_fPg1}</div>`;
+  const s3b=_fPg2?`
+  <div class="tv-s-title">🚦 Farol de Projetos <span class="tv-s-title-sub">${ativos.length} ativos · 2/2</span></div>
+  <div class="tv-farol-grid" style="grid-template-columns:repeat(4,1fr)">${_fPg2}</div>
+  ${_maisFarolNote}`:null;
 
   // ── Slide 5: Go Lives — próximos prazos ───────────────
   const proximosTodos = ativos
@@ -1280,21 +1285,35 @@ function buildSlides(){
   const wl=calcWorkload();
   const wlEntries=Object.entries(wl).sort((a,b)=>b[1].total-a[1].total);
   const maxWl=wlEntries.reduce((m,[,d])=>Math.max(m,d.total),1);
+  const _pmoCompact = wlEntries.length >= 5; // 5+ gestores → cards compactos (sem barra de progresso)
   const pmoCards=wlEntries.map(([nome,d],idx)=>{
     const riskColor=d.criticos>0?'#ef4444':d.bloqueados>0?'#f97316':d.atrasados>0?'#F5C300':'#22c55e';
     const riskBg   =d.criticos>0?'rgba(239,68,68,.07)':d.bloqueados>0?'rgba(249,115,22,.06)':d.atrasados>0?'rgba(245,195,0,.06)':'rgba(34,197,94,.05)';
     const initials = nome.split(' ').slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||nome.substring(0,2).toUpperCase();
-    const projList=(d.projetos||[]).slice(0,5).map(pr=>{
-      const dotC=pr.crit?'#ef4444':pr.bloq?'#f97316':(pr.status==='Atrasado'?'#F5C300':pr.status==='Em andamento'?'#6366f1':'#475569');
-      const pctW=pr.prog||0;
-      return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
-        <span style="width:7px;height:7px;border-radius:50%;background:${dotC};flex-shrink:0;box-shadow:0 0 4px ${dotC}88"></span>
-        <span style="font-size:12px;color:#cbd5e1;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${escHtml(pr.nome)}</span>
-        <div style="width:48px;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;flex-shrink:0"><div style="height:100%;width:${pctW}%;background:${dotC};border-radius:3px"></div></div>
-        <span style="font-size:10px;color:#475569;font-weight:700;min-width:26px;text-align:right;flex-shrink:0">${pctW}%</span>
-      </div>`;
-    }).join('');
-    const extras=(d.projetos||[]).length>5?`<div style="font-size:10px;color:#475569;text-align:center;padding-top:5px;font-weight:600">+${(d.projetos||[]).length-5} projetos</div>`:'';
+    let projList, extras;
+    if(_pmoCompact){
+      // Modo compacto: só nome + dot colorido, sem barra de progresso
+      projList=(d.projetos||[]).slice(0,5).map(pr=>{
+        const dotC=pr.crit?'#ef4444':pr.bloq?'#f97316':(pr.status==='Atrasado'?'#F5C300':pr.status==='Em andamento'?'#6366f1':'#475569');
+        return `<div style="display:flex;align-items:center;gap:5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+          <span style="width:6px;height:6px;border-radius:50%;background:${dotC};flex-shrink:0"></span>
+          <span style="font-size:11px;color:#94a3b8;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${escHtml(pr.nome)}</span>
+        </div>`;
+      }).join('');
+      extras=(d.projetos||[]).length>5?`<div style="font-size:10px;color:#475569;text-align:center;padding-top:4px;font-weight:600">+${(d.projetos||[]).length-5}</div>`:'';
+    } else {
+      projList=(d.projetos||[]).slice(0,5).map(pr=>{
+        const dotC=pr.crit?'#ef4444':pr.bloq?'#f97316':(pr.status==='Atrasado'?'#F5C300':pr.status==='Em andamento'?'#6366f1':'#475569');
+        const pctW=pr.prog||0;
+        return `<div style="display:flex;align-items:center;gap:7px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+          <span style="width:7px;height:7px;border-radius:50%;background:${dotC};flex-shrink:0;box-shadow:0 0 4px ${dotC}88"></span>
+          <span style="font-size:12px;color:#cbd5e1;flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${escHtml(pr.nome)}</span>
+          <div style="width:48px;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden;flex-shrink:0"><div style="height:100%;width:${pctW}%;background:${dotC};border-radius:3px"></div></div>
+          <span style="font-size:10px;color:#475569;font-weight:700;min-width:26px;text-align:right;flex-shrink:0">${pctW}%</span>
+        </div>`;
+      }).join('');
+      extras=(d.projetos||[]).length>5?`<div style="font-size:10px;color:#475569;text-align:center;padding-top:5px;font-weight:600">+${(d.projetos||[]).length-5} projetos</div>`:'';
+    }
     return `<div style="grid-column:${idx+1};min-width:0;overflow:hidden;background:${riskBg};border:1px solid ${riskColor}35;border-top:3px solid ${riskColor};border-radius:16px;padding:16px 18px;animation:bentoIn .4s ease ${(idx*.08).toFixed(2)}s both;display:flex;flex-direction:column">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
         <div style="width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,${riskColor}35,${riskColor}15);border:1px solid ${riskColor}45;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:${riskColor};flex-shrink:0">${initials}</div>
@@ -1405,7 +1424,7 @@ function buildSlides(){
   let tvBH=20,tvBRows='';
   // P0 sozinho na 1ª linha — maior destaque; P1+P2 juntos na 2ª linha
   // Resultado: viewBox mais curto → bolas 40% maiores no mobile
-  if(tvP0list.length){tvBRows+=tvBubRow(tvP0list,tvSevR.P0,tvBH+tvSevR.P0+10);tvBH+=tvSevR.P0*2+20;}
+  if(tvP0list.length){tvBRows+=tvBubRow(tvP0list,tvSevR.P0,tvBH+tvSevR.P0+10);tvBH+=tvSevR.P0*2+40;}
   const tvP1P2=[...tvP1list,...tvP2list];
   if(tvP1P2.length){tvBRows+=tvBubRow(tvP1P2,tvSevR.P1,tvBH+tvSevR.P1+8);tvBH+=tvSevR.P1*2+16;}
   const tvBViewH=Math.max(100,tvBH+10);
@@ -1438,7 +1457,8 @@ function buildSlides(){
     {title:'GO LIVES',           html:s5},
     {title:'ALERTAS · CRÍTICOS', html:s2},
     {title:'CONQUISTAS',         html:sConq},
-    {title:'FAROL · ATIVOS',     html:s3},
+    {title:'FAROL · ATIVOS 1/2', html:s3},
+    ...(s3b?[{title:'FAROL · ATIVOS 2/2',html:s3b}]:[]),
     {title:'CARGA POR PMO',      html:s6},
     {title:'ATENÇÃO IMEDIATA',   html:sAtencao},
   ];
@@ -1656,13 +1676,20 @@ function tvFitSlide(){
 })();
 function tvRender(){
   const s=tvSlides[tvSlide];
-  document.getElementById('tv-body').innerHTML=`<div class="tv-slide active">${s.html}</div>`;
+  const body=document.getElementById('tv-body');
+  // opacity:0 antes de renderizar — evita flash de tela grande antes do scale
+  body.innerHTML=`<div class="tv-slide active" style="opacity:0">${s.html}</div>`;
   document.getElementById('tv-slide-title').textContent=s.title;
   document.getElementById('tv-progress').style.width='0%';
   tvProg=0;
   tvUpdateDots();
   tvUpdateTheme();
   tvFitSlide();
+  // Fade in depois que o scale foi aplicado — transição suave
+  requestAnimationFrame(()=>{
+    const sl=body.querySelector('.tv-slide.active');
+    if(sl){sl.style.transition='opacity .22s ease';sl.style.opacity='1';}
+  });
 }
 function tvNext(){ clearInterval(tvTimer); tvSlide=(tvSlide+1)%tvSlides.length; tvRender(); if(!tvPaused)tvStart(); }
 function tvPrev(){ clearInterval(tvTimer); tvSlide=(tvSlide-1+tvSlides.length)%tvSlides.length; tvRender(); if(!tvPaused)tvStart(); }
